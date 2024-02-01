@@ -1,0 +1,192 @@
+{{>navTwoUser}}
+{{>profileLayout}}
+
+
+<div class="info-section text-dark 
+            w-75 h-100 p-3">
+
+    <h2 class=" pb-5 ">Add New Address</h2>
+
+    <form class="row g-3" method="post" action="/profile/manageaddress/addaddress/{{personalInfo._id}}">
+        <div class="col-md-6">
+            <label for="inputEmail4" class="form-label">Name</label>
+            <input type="text" value="{{addressData.name}}" name="name" class="form-control" id="name" required="ture">
+        </div>
+        <div class="col-md-6">
+            <label for="inputPassword4" class="form-label">Mobile Number</label>
+            <input type="text" value="{{addressData.mobile}}" name="mobileNumber" class="form-control" id="mobileNumber" required>
+        </div>
+        <div class="col-12">
+            <label for="inputAddress" class="form-label">Address Line 1</label>
+            <input type="text" value="{{addressData.addressLine1}}" name="address1" class="form-control" id="address1" placeholder="1234 Main St" required="ture">
+        </div>
+        <div class="col-12">
+            <label for="inputAddress2" class="form-label">Address Line 2</label>
+            <input type="text" name="address2" class="form-control" id="address2" placeholder="Apartment, studio, or floor" value="{{addressData.addressLine2}}" required="ture">
+        </div>
+        <div class="col-md-6">
+            <label for="inputCity" class="form-label">City</label>
+            <input type="text" name="city" class="form-control" id="city" value="{{addressData.city_dist_town}}" required="ture">
+        </div>
+        <div class="col-md-4">
+            <label for="inputState" class="form-label">State</label>
+            <select id="state" name="state" class="form-select">
+                <option value="{{addressData.state}}">{{addressData.state}}</option>
+                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Chhattisgarh">Chhattisgarh</option>
+                <option value="Goa">Goa</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Manipur">Manipur</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Mizoram">Mizoram</option>
+                <option value="Nagaland">Nagaland</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Sikkim">Sikkim</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputZip" class="form-label">Pincode</label>
+            <input type="text" value="{{addressData.pincode}}" name="pincode" class="form-control" id="pincode" required="ture">
+        </div>
+         <div class="col-md-4">
+            <label for="inputState" class="form-label">Type</label>
+            <select id="addresstype" name="addresstype" class="form-select">
+                <option value="{{addressData.type}}">{{addressData.type}}</option>
+                <option value="Home">Home</option>
+                <option value="Work">Work</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary pl-5 pr-5 " data-id="{{addressData._id}}" id="address-save-button">Save Address</button>
+        </div>
+    </form>
+
+</div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+{{>userFooter}}
+
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded",function(){
+
+
+    const saveButton = document.getElementById('address-save-button')
+
+    saveButton.addEventListener('click',(event)=>{
+
+        event.preventDefault()
+
+        const name = document.getElementById('name').value
+        const mobileNumber = document.getElementById('mobileNumber').value
+        const address1 = document.getElementById('address1').value
+        const address2 = document.getElementById('address2').value
+        const city = document.getElementById('city').value
+        const state = document.getElementById('state').value
+        const pincode = document.getElementById('pincode').value
+        const addresstype = document.getElementById('addresstype').value
+        const id = saveButton.getAttribute('data-id')
+
+            console.log(id)
+
+
+            fetch('/profile/editaddress', {
+
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id,name,mobileNumber,address1,address2,city,state,pincode,addresstype}),
+    })
+        .then(response => response.json())
+        .then(data => {
+    
+            if (data) {
+                        swal({
+                    title: 'Address Edited!',
+                    text: "You can close this window",
+                    icon: 'success'
+                }).then(() => {
+                    
+                     window.history.go(-1);
+                });
+            } else
+            {
+                        swal({
+                            title: 'Something Error',
+                            text: "Try again",
+                            icon: 'error'
+                        });
+            }
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    
+
+
+
+    })
+
+
+
+
+
+})
+
+
+
+
+
+</script>
+
+
+
+
+
+<script>
+                $(document).ready(function () {
+                    var currentPage = window.location.pathname;
+
+                    $('.side-button').each(function () {
+                        var buttonHref = $(this).parent().attr('href');
+
+                        if (currentPage === buttonHref) {
+                            // Change button color directly using jQuery
+                            $(this).css({
+                                'background-color': 'white', // Your desired active color
+                                'color': 'black'
+                            });
+                        }
+                    });
+                });
+ </script>

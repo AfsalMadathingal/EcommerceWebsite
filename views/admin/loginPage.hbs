@@ -1,0 +1,34 @@
+<link rel="stylesheet" type="text/css" href="/css/adminLogin.css">
+<div class="adminpage">
+    <div class="login-page">
+
+
+        <div class="form">
+            <h4 id="text-above-username">Welcome </h4>
+            {{#if alert}}
+            <h5 style="color:red; padding-bottom: 10px;" id="errorMessage">Wrong ID or Password</h5>
+            {{else}}
+            <h5 id="admin-login-sub">Please enter your
+                credentials</h5>
+            {{/if}}
+
+            <form class="login-form" action="/admin/login" method="post">
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="floatingInput" type="text" name="admin_id" placeholder="adminID">
+                    <label for="floatingInput">Admin id</label>
+                </div>
+                <div class="form-floating">
+                    <input class="form-control" id="floatingPassword" type="password" name="password"
+                        placeholder="password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+                <button class="btn  btn-primary pe-5 ps-5 ">login</button>
+
+               
+
+            </form>
+        </div>
+
+
+    </div>
+</div>

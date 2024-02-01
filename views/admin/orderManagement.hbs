@@ -1,0 +1,479 @@
+<link rel="stylesheet" href="/css/table-user.css">
+<link rel="stylesheet" href="/css/responsiveTable.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+<div class="details-section">
+   
+    {{!-- <div class="table-user datatable overflow-scroll">
+        <table class="table  table-hover user-table-data">
+
+            <thead>
+                <tr>
+                    <th scope="col">SL</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Customer Details</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Other Action</th>
+                </tr>
+            </thead>
+            {{#each orderData}}
+            <tbody>
+                <tr data-product-id="{{this.product_id}}">
+
+                    <td>{{@index}}</td>
+                    <td>{{this.orderNo}}</td>
+                    <td>{{this.deliveryName}}
+                        {{this.deliveryAddress1}}
+                        {{this.deliveryAddress2}}
+                        {{this.mobile}}
+                        {{this.city}}
+                        {{this.state}}
+                        {{this.type}}
+                    </td>
+                    <td>{{this.orderAmount}}</td>
+                    <td id="order-status">{{this.orderStatus}}</td>
+                    <td>
+
+                        
+                        <!-- Example single danger button -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Change Order Status
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-status="Shipped"
+                                data-id="{{this._id}}">Shipped</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" data-status="Pending"
+                                data-id="{{this._id}}">Pending</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" data-status="Delivered"
+                                data-id="{{this._id}}">Delivered</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" data-status="Cancelled"
+                                data-id="{{this._id}}"
+                                >Cancelled</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+            {{/each}}
+        </table>
+    </div> --}}
+{{!-- gpt --}}
+<div class="ms-auto me-auto mt-1 ">
+    <main class="table" id="orders_table ">
+        <section class="table__header">
+            <h1>Orders Details</h1>
+            
+            <div class="input-group1">
+                <input type="search" placeholder="Search Data...">
+                <i class="fa-solid fa-magnifying-glass bg-transparent"></i>
+            </div>
+            <div class="export__file" data-bs-toggle="modal" data-bs-target="#createModal">
+                <label for="export-file" class="export__file-btn" title="Create Order"></label>
+                <input type="checkbox" id="export-file">
+            </div>
+
+        </section>
+        <section class="table__body1 restable-user ">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SL</th>
+                        <th>Order Id</th>
+                        <th>Customer Details</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Other Action</th>
+                    </tr>
+                </thead>
+                {{#each orderData}}
+                <tbody >
+                    <tr class="tbody" data-order-id="{{this._id}}">
+                        <td>{{@index}}</td>
+                        <td>{{this.orderNo}}</td>
+                        <td>
+                            {{this.deliveryName}}
+                            {{this.deliveryAddress1}}
+                            {{this.deliveryAddress2}}
+                            {{this.mobile}}
+                            {{this.city}}
+                            {{this.state}}
+                            {{this.type}}
+                        </td>
+                        <td>{{this.orderAmount}}</td>
+                        <td id="order-status">{{this.orderStatus}}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Change Order Status
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-status="Shipped"
+                                            data-id="{{this._id}}">Shipped</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" data-status="Pending"
+                                            data-id="{{this._id}}">Pending</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" data-status="Delivered"
+                                            data-id="{{this._id}}">Delivered</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" data-status="Cancelled"
+                                            data-id="{{this._id}}">Cancelled</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                {{/each}}
+            </table>
+        </section>
+    </main>
+</div>
+
+
+
+
+
+
+
+</div>
+</div>
+<script src="/vendor/sweetalert/sweetalert.min.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.user1-count {
+    background-color: white;
+    color: black;
+    padding: 15px; /* Adjust padding as needed */
+    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+    border-radius: 10px; /* Add border-radius for curved corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    margin: 10px; /* Add margin for spacing */
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    /* Adjust styles for smaller screens if needed */
+    .user1-count {
+        padding: 10px; /* Adjust padding for smaller screens */
+        margin: 5px; /* Adjust margin for smaller screens */
+    }
+}
+
+.dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+}
+
+.restable-user {
+    height: 600px!important; /* Adjust the maximum height as needed */
+    overflow: auto;
+}
+
+.tbody:hover
+{
+    color: purple;
+    background-color: rgba(145, 142, 142, 0.479)!important;
+    cursor:pointer;
+}
+</style>
+
+
+<script>
+
+
+// Assuming you have jQuery loaded in your project
+
+    $(document).ready(function () {
+        // Attach a click event to the dropdown items with class 'dropdown-item'
+        $('.dropdown-item').on('click', function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+            
+            var newStatus = $(this).data('status'); // Get the new status from data attribute
+            var orderId = $(this).data('id'); // Get the order ID from data attribute
+
+            // Find the closest 'tr' element for the clicked dropdown and update the order status cell
+            $(this).closest('tr').find('#order-status').text(newStatus);
+
+            // TODO: Add logic to send an AJAX request to update the order status in the backend
+            // You might want to make an AJAX call to your server to update the status in the database
+
+            // Example AJAX call (replace with your actual implementation)
+            $.ajax({
+                url: '/admin/ordersManagement/changeStatus',
+                method: 'PATCH',
+                data: { id: orderId, status: newStatus },
+                success: function (response) {
+                        swal({
+                            title: `Order status changed to ${newStatus}` ,
+                            text: "Click Ok to close",
+                            icon: 'success'
+                        });
+                    console.log(response);
+                },
+                error: function (error) {
+
+
+                    console.error(error);
+                }
+            });
+
+        });
+
+
+});
+
+
+
+
+  
+    /**
+Responsive HTML Table With Pure CSS - Web Design/UI Design
+
+Code written by:
+👨🏻‍⚕️ @Coding Design (Jeet Saru)
+
+> You can do whatever you want with the code. However if you love my content, you can **SUBSCRIBED** my YouTube Channel.
+
+🌎link: www.youtube.com/codingdesign 
+*/
+
+const search = document.querySelector('.input-group1 input'),
+    table_rows = document.querySelectorAll('tbody tr'),
+    table_headings = document.querySelectorAll('thead th');
+
+// 1. Searching for specific data of HTML table
+search.addEventListener('input', searchTable);
+
+function searchTable() {
+    table_rows.forEach((row, i) => {
+        let table_data = row.textContent.toLowerCase(),
+            search_data = search.value.toLowerCase();
+
+        row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+        row.style.setProperty('--delay', i / 25 + 's');
+    })
+
+    document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+        visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
+    });
+}
+
+// 2. Sorting | Ordering data of HTML table
+
+table_headings.forEach((head, i) => {
+    let sort_asc = true;
+    head.onclick = () => {
+        table_headings.forEach(head => head.classList.remove('active'));
+        head.classList.add('active');
+
+        document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+        table_rows.forEach(row => {
+            row.querySelectorAll('td')[i].classList.add('active');
+        })
+
+        head.classList.toggle('asc', sort_asc);
+        sort_asc = head.classList.contains('asc') ? false : true;
+
+        sortTable(i, sort_asc);
+    }
+})
+
+
+function sortTable(column, sort_asc) {
+    [...table_rows].sort((a, b) => {
+        let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
+            second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+
+        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+    })
+        .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
+}
+
+// 3. Converting HTML table to PDF
+
+const pdf_btn = document.querySelector('#toPDF');
+const customers_table = document.querySelector('#customers_table');
+
+
+const toPDF = function (customers_table) {
+    const html_code = `
+    <!DOCTYPE html>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <main class="table" id="customers_table">${customers_table.innerHTML}</main>`;
+
+    const new_window = window.open();
+     new_window.document.write(html_code);
+
+    setTimeout(() => {
+        new_window.print();
+        new_window.close();
+    }, 400);
+}
+
+pdf_btn.onclick = () => {
+    toPDF(customers_table);
+}
+
+// 4. Converting HTML table to JSON
+
+const json_btn = document.querySelector('#toJSON');
+
+const toJSON = function (table) {
+    let table_data = [],
+        t_head = [],
+
+        t_headings = table.querySelectorAll('th'),
+        t_rows = table.querySelectorAll('tbody tr');
+
+    for (let t_heading of t_headings) {
+        let actual_head = t_heading.textContent.trim().split(' ');
+
+        t_head.push(actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase());
+    }
+
+    t_rows.forEach(row => {
+        const row_object = {},
+            t_cells = row.querySelectorAll('td');
+
+        t_cells.forEach((t_cell, cell_index) => {
+            const img = t_cell.querySelector('img');
+            if (img) {
+                row_object['customer image'] = decodeURIComponent(img.src);
+            }
+            row_object[t_head[cell_index]] = t_cell.textContent.trim();
+        })
+        table_data.push(row_object);
+    })
+
+    return JSON.stringify(table_data, null, 4);
+}
+
+json_btn.onclick = () => {
+    const json = toJSON(customers_table);
+    downloadFile(json, 'json')
+}
+
+// 5. Converting HTML table to CSV File
+
+const csv_btn = document.querySelector('#toCSV');
+
+const toCSV = function (table) {
+    // Code For SIMPLE TABLE
+    // const t_rows = table.querySelectorAll('tr');
+    // return [...t_rows].map(row => {
+    //     const cells = row.querySelectorAll('th, td');
+    //     return [...cells].map(cell => cell.textContent.trim()).join(',');
+    // }).join('\n');
+
+    const t_heads = table.querySelectorAll('th'),
+        tbody_rows = table.querySelectorAll('tbody tr');
+
+    const headings = [...t_heads].map(head => {
+        let actual_head = head.textContent.trim().split(' ');
+        return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+    }).join(',') + ',' + 'image name';
+
+    const table_data = [...tbody_rows].map(row => {
+        const cells = row.querySelectorAll('td'),
+            img = decodeURIComponent(row.querySelector('img').src),
+            data_without_img = [...cells].map(cell => cell.textContent.replace(/,/g, ".").trim()).join(',');
+
+        return data_without_img + ',' + img;
+    }).join('\n');
+
+    return headings + '\n' + table_data;
+}
+
+csv_btn.onclick = () => {
+    const csv = toCSV(customers_table);
+    downloadFile(csv, 'csv', 'customer orders');
+}
+
+// 6. Converting HTML table to EXCEL File
+
+const excel_btn = document.querySelector('#toEXCEL');
+
+const toExcel = function (table) {
+    // Code For SIMPLE TABLE
+    // const t_rows = table.querySelectorAll('tr');
+    // return [...t_rows].map(row => {
+    //     const cells = row.querySelectorAll('th, td');
+    //     return [...cells].map(cell => cell.textContent.trim()).join('\t');
+    // }).join('\n');
+
+    const t_heads = table.querySelectorAll('th'),
+        tbody_rows = table.querySelectorAll('tbody tr');
+
+    const headings = [...t_heads].map(head => {
+        let actual_head = head.textContent.trim().split(' ');
+        return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+    }).join('\t') + '\t' + 'image name';
+
+    const table_data = [...tbody_rows].map(row => {
+        const cells = row.querySelectorAll('td'),
+            img = decodeURIComponent(row.querySelector('img').src),
+            data_without_img = [...cells].map(cell => cell.textContent.trim()).join('\t');
+
+        return data_without_img + '\t' + img;
+    }).join('\n');
+
+    return headings + '\n' + table_data;
+}
+
+excel_btn.onclick = () => {
+    const excel = toExcel(customers_table);
+    downloadFile(excel, 'excel');
+}
+
+const downloadFile = function (data, fileType, fileName = '') {
+    const a = document.createElement('a');
+    a.download = fileName;
+    const mime_types = {
+        'json': 'application/json',
+        'csv': 'text/csv',
+        'excel': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+    a.href = `
+        data:${mime_types[fileType]};charset=utf-8,${encodeURIComponent(data)}
+    `;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+
+
+
+
+
+
+    </script>

@@ -1,0 +1,479 @@
+<link rel="stylesheet" href="/css/table-user.css">
+<link rel="stylesheet" href="/css/responsiveTable.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+
+<div class="details-section">
+    {{!-- <div class="top-options">
+        <div class="user1-count">
+            <h3>Total Users</h3>
+            <h2>{{count}}</h2>
+        </div>
+    </div> --}}
+
+
+<div class="ms-auto me-auto mt-1">
+
+ <main class="table" id="customers_table">
+        <section class="table__header">
+            <h1>Users Details</h1>
+            
+            <div class="input-group1">
+                <input type="search" placeholder="Search Data...">
+               <i class="fa-solid fa-magnifying-glass bg-transparent "></i>
+            </div>
+            <div class="export__file"  data-bs-toggle="modal"
+            data-bs-target="#createModal">
+                <label for="export-file" class="export__file-btn" title="Create Category"></label>
+                <input type="checkbox" id="export-file">
+            </div>
+
+        </section>
+        <section class="table__body1">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Name<span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Email <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Mobile <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Date Joined <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Actions <span class="icon-arrow">&UpArrow;</span></th>
+                    </tr>
+                </thead>
+                 {{#each usersData}}
+                <tbody class="tbody">
+                   <tr data-user-id="{{this._id}}">
+                       <td>{{this.name}}</td>
+                    <td>{{this.email}}</td>
+                    <td>{{this.phone}}</td>
+                    <td>{{this.datejoined}}</td>
+                        <td>
+                        <button class="btn btn-info  edit-button" data-bs-toggle="modal"
+            data-bs-target="#EditModal">Edit</button>
+                        {{#if this.is_Blocked}}
+
+                        <button type="button" class="unblock-button btn  btn-dark ">UnBlock</button>
+                        {{else}}
+                        <button type="button" class="block-button btn  btn-success">Block</button>
+                        {{/if}}
+                    </td>
+                    </tr>
+                </tbody>
+                  {{/each}}
+            </table>
+        </section>
+    </main>
+
+
+</div>
+
+
+  {{!-- modal for create user --}}
+
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog  ">
+                <div class="modal-content bg-warning">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Create User</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bg-light ">
+                        <form action="/admin/create" method="post" onsubmit="return createValidation()">
+                            <div class="mb-3">
+                                <h6 id="createalert" style="color: red;"></h6>
+                                <label for="user-name" class="col-form-label">Name:</label>
+                                <input name="user_name" type="text" class="form-control" id="user-name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Email Id:</label>
+                                <input type="email" name="user_email" class="form-control" id="createEmail" required>
+                            </div>
+                            <h6 style="color: red;" id="createmailalert"></h6>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Mobile:</label>
+                                <input type="text" name="user_phone" class="form-control" id="createEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="label-field-add-product" for="gender">Gender</label>
+                                <select name="category" id="Category" class="input-field-add-product">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Password:</label>
+                                <input pattern="[A-Za-z0-9]+" type="password" name="password" class="form-control"
+                                    id="Cpassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Confirm Password:</label>
+                                <input pattern="[A-Za-z0-9]+" type="password" name="confirm_password"
+                                    class="form-control" id="confirmpassword" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        {{!-- modal for edit user --}}
+
+        <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog  ">
+                <div class="modal-content bg-warning">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Create User</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bg-light ">
+                        <form action="/admin/create" method="post" onsubmit="return createValidation()">
+                            <div class="mb-3">
+                                <h6 id="createalert" style="color: red;"></h6>
+                                <label for="user-name" class="col-form-label">Name:</label>
+                                <input name="user_name" type="text" class="form-control" id="user-name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Email Id:</label>
+                                <input type="email" name="user_email" class="form-control" id="createEmail" required>
+                            </div>
+                            <h6 style="color: red;" id="createmailalert"></h6>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Mobile:</label>
+                                <input type="text" name="user_phone" class="form-control" id="createEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="label-field-add-product" for="gender">Gender</label>
+                                <select name="category" id="Category" class="input-field-add-product">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Password:</label>
+                                <input pattern="[A-Za-z0-9]+" type="password" name="password" class="form-control"
+                                    id="Cpassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Confirm Password:</label>
+                                <input pattern="[A-Za-z0-9]+" type="password" name="confirm_password"
+                                    class="form-control" id="confirmpassword" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+</div>
+</div>
+
+<script>
+
+    
+    /**
+Responsive HTML Table With Pure CSS - Web Design/UI Design
+
+Code written by:
+👨🏻‍⚕️ @Coding Design (Jeet Saru)
+
+> You can do whatever you want with the code. However if you love my content, you can **SUBSCRIBED** my YouTube Channel.
+
+🌎link: www.youtube.com/codingdesign 
+*/
+
+const search = document.querySelector('.input-group1 input'),
+    table_rows = document.querySelectorAll('tbody tr'),
+    table_headings = document.querySelectorAll('thead th');
+
+// 1. Searching for specific data of HTML table
+search.addEventListener('input', searchTable);
+
+function searchTable() {
+    table_rows.forEach((row, i) => {
+        let table_data = row.textContent.toLowerCase(),
+            search_data = search.value.toLowerCase();
+
+        row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+        row.style.setProperty('--delay', i / 25 + 's');
+    })
+
+    document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+        visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
+    });
+}
+
+// 2. Sorting | Ordering data of HTML table
+
+table_headings.forEach((head, i) => {
+    let sort_asc = true;
+    head.onclick = () => {
+        table_headings.forEach(head => head.classList.remove('active'));
+        head.classList.add('active');
+
+        document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+        table_rows.forEach(row => {
+            row.querySelectorAll('td')[i].classList.add('active');
+        })
+
+        head.classList.toggle('asc', sort_asc);
+        sort_asc = head.classList.contains('asc') ? false : true;
+
+        sortTable(i, sort_asc);
+    }
+})
+
+
+function sortTable(column, sort_asc) {
+    [...table_rows].sort((a, b) => {
+        let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
+            second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+
+        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+    })
+        .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
+}
+
+// 3. Converting HTML table to PDF
+
+const pdf_btn = document.querySelector('#toPDF');
+const customers_table = document.querySelector('#customers_table');
+
+
+const toPDF = function (customers_table) {
+    const html_code = `
+    <!DOCTYPE html>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <main class="table" id="customers_table">${customers_table.innerHTML}</main>`;
+
+    const new_window = window.open();
+     new_window.document.write(html_code);
+
+    setTimeout(() => {
+        new_window.print();
+        new_window.close();
+    }, 400);
+}
+
+pdf_btn.onclick = () => {
+    toPDF(customers_table);
+}
+
+// 4. Converting HTML table to JSON
+
+const json_btn = document.querySelector('#toJSON');
+
+const toJSON = function (table) {
+    let table_data = [],
+        t_head = [],
+
+        t_headings = table.querySelectorAll('th'),
+        t_rows = table.querySelectorAll('tbody tr');
+
+    for (let t_heading of t_headings) {
+        let actual_head = t_heading.textContent.trim().split(' ');
+
+        t_head.push(actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase());
+    }
+
+    t_rows.forEach(row => {
+        const row_object = {},
+            t_cells = row.querySelectorAll('td');
+
+        t_cells.forEach((t_cell, cell_index) => {
+            const img = t_cell.querySelector('img');
+            if (img) {
+                row_object['customer image'] = decodeURIComponent(img.src);
+            }
+            row_object[t_head[cell_index]] = t_cell.textContent.trim();
+        })
+        table_data.push(row_object);
+    })
+
+    return JSON.stringify(table_data, null, 4);
+}
+
+json_btn.onclick = () => {
+    const json = toJSON(customers_table);
+    downloadFile(json, 'json')
+}
+
+// 5. Converting HTML table to CSV File
+
+const csv_btn = document.querySelector('#toCSV');
+
+const toCSV = function (table) {
+    // Code For SIMPLE TABLE
+    // const t_rows = table.querySelectorAll('tr');
+    // return [...t_rows].map(row => {
+    //     const cells = row.querySelectorAll('th, td');
+    //     return [...cells].map(cell => cell.textContent.trim()).join(',');
+    // }).join('\n');
+
+    const t_heads = table.querySelectorAll('th'),
+        tbody_rows = table.querySelectorAll('tbody tr');
+
+    const headings = [...t_heads].map(head => {
+        let actual_head = head.textContent.trim().split(' ');
+        return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+    }).join(',') + ',' + 'image name';
+
+    const table_data = [...tbody_rows].map(row => {
+        const cells = row.querySelectorAll('td'),
+            img = decodeURIComponent(row.querySelector('img').src),
+            data_without_img = [...cells].map(cell => cell.textContent.replace(/,/g, ".").trim()).join(',');
+
+        return data_without_img + ',' + img;
+    }).join('\n');
+
+    return headings + '\n' + table_data;
+}
+
+csv_btn.onclick = () => {
+    const csv = toCSV(customers_table);
+    downloadFile(csv, 'csv', 'customer orders');
+}
+
+// 6. Converting HTML table to EXCEL File
+
+const excel_btn = document.querySelector('#toEXCEL');
+
+const toExcel = function (table) {
+    // Code For SIMPLE TABLE
+    // const t_rows = table.querySelectorAll('tr');
+    // return [...t_rows].map(row => {
+    //     const cells = row.querySelectorAll('th, td');
+    //     return [...cells].map(cell => cell.textContent.trim()).join('\t');
+    // }).join('\n');
+
+    const t_heads = table.querySelectorAll('th'),
+        tbody_rows = table.querySelectorAll('tbody tr');
+
+    const headings = [...t_heads].map(head => {
+        let actual_head = head.textContent.trim().split(' ');
+        return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+    }).join('\t') + '\t' + 'image name';
+
+    const table_data = [...tbody_rows].map(row => {
+        const cells = row.querySelectorAll('td'),
+            img = decodeURIComponent(row.querySelector('img').src),
+            data_without_img = [...cells].map(cell => cell.textContent.trim()).join('\t');
+
+        return data_without_img + '\t' + img;
+    }).join('\n');
+
+    return headings + '\n' + table_data;
+}
+
+excel_btn.onclick = () => {
+    const excel = toExcel(customers_table);
+    downloadFile(excel, 'excel');
+}
+
+const downloadFile = function (data, fileType, fileName = '') {
+    const a = document.createElement('a');
+    a.download = fileName;
+    const mime_types = {
+        'json': 'application/json',
+        'csv': 'text/csv',
+        'excel': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }
+    a.href = `
+        data:${mime_types[fileType]};charset=utf-8,${encodeURIComponent(data)}
+    `;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+</script>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        // Use event delegation on a static parent element (replace "table" with the appropriate parent)
+        $('table').on('click', '.block-button', function () {
+            const userId = $(this).closest('tr').data('user-id');
+            const blockButton = $(this);
+
+            $.ajax({
+                url: '/admin/block',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ userId }),
+                success: function (response) {
+                    const htmlCode = '<button type="button" class=" btn  btn-dark unblock-button">UnBlock</button>';
+                    blockButton.replaceWith(htmlCode);
+                    console.log('Server response:', response);
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        // Use event delegation for the "Unblock" button as well
+        $('table').on('click', '.unblock-button', function () {
+            const userId = $(this).closest('tr').data('user-id');
+            const unblockButton = $(this);
+
+            $.ajax({
+                url: '/admin/unblock', // Adjust the endpoint for unblocking
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ userId }),
+                success: function (response) {
+                    const htmlCode = '<button type="button" class="block-button btn  btn-successblock-button">Block</button>';
+                    unblockButton.replaceWith(htmlCode);
+                    console.log('Server response:', response);
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+
+
+
+</script>
+
+<style>
+
+
+.user1-count {
+    background-color: white;
+    color: black;
+    padding: 15px; /* Adjust padding as needed */
+    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+    border-radius: 10px; /* Add border-radius for curved corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+    margin: 10px; /* Add margin for spacing */
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    /* Adjust styles for smaller screens if needed */
+    .user1-count {
+        padding: 10px; /* Adjust padding for smaller screens */
+        margin: 5px; /* Adjust margin for smaller screens */
+    }
+}
+
+
+
+</style>

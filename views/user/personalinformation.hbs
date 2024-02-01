@@ -1,0 +1,179 @@
+{{>navTwoUser}}
+{{>profileLayout}}
+
+<div class="info-section text-dark shadow  w-75 h-100 p-3 ">
+
+    <h2 class=" pb-5 ">Personal Information</h2>
+
+    <form action="" id="editForm">
+
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" >FULL NAME</span>
+            <input type="text" id="fullName" class="form-control shadow" placeholder="{{personalInfo.name}}" value="{{personalInfo.name}}"  aria-label="Username"
+                aria-describedby="basic-addon1" disabled="true">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" >MOBILE NUMBER</span>
+            <input type="text" id="phone" class="form-control shadow" placeholder="{{personalInfo.phone}}" value="{{personalInfo.phone}}"
+                aria-label="MOBILE NUMBER" aria-describedby="basic-addon1" disabled="true">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" >EMAIL ADDRESS</span>
+            <input type="text" id="email" class="form-control shadow" placeholder="{{personalInfo.email}}" value="{{personalInfo.email}}"
+                aria-label="MOBILE NUMBER" aria-describedby="basic-addon1" disabled="true">
+        </div>
+
+        <div class="input-group mb-3">
+           <span class="input-group-text shadow" id="basic-addon3"> Gender</span>
+            <select class="form-select shadow " id="gender" disabled="true" >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <h6 class="pt-4">Looking for change password ?<a class="text-info " href="/profile/changePassword">Click
+                here</a></h6>
+        <button class="btn btn-dark mt-5 me-4" id="save-button" data-userId="{{personalInfo._id}}">SAVE</button>
+        <button class="btn btn-danger mt-5" id="edit-button">EDIT</button>
+    </form>
+
+</div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+{{>userFooter}}
+
+<script src="/vendor/sweetalert/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var currentPage = window.location.pathname;
+
+        $('.side-button').each(function () {
+            var buttonHref = $(this).parent().attr('href');
+
+            if (currentPage === buttonHref) {
+                // Change button color directly using jQuery
+                $(this).css({
+                    'background-color': 'white', // Your desired active color
+                    'color': 'black'
+                });
+            }
+        });
+    });
+
+
+
+
+
+
+
+// to enable tha input for editing
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+
+            const editButton = document.getElementById('edit-button')
+            const saveButton = document.getElementById('save-button')
+
+
+            var form = document.getElementById("editForm");
+
+            var elements = form.querySelectorAll("input, select");
+            const userId = saveButton.getAttribute('data-userId')
+
+
+
+            editButton.addEventListener('click', function (event) {
+
+                console.log('cliked')
+
+                event.preventDefault()
+
+                elements.forEach(function (element) {
+                    element.removeAttribute("disabled");
+                });
+
+
+
+
+            })
+
+            saveButton.addEventListener('click', function (event) {
+
+            const fullname = document.getElementById('fullName').value
+            const phone = document.getElementById('phone').value
+            const email = document.getElementById('email').value
+            const gender = document.getElementById('gender').value
+
+
+            event.preventDefault()
+
+            console.log(userId)
+            console.log(phone,email,gender)
+            
+
+
+            fetch('/profile/editprofile', {
+
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({ userId ,fullname, phone,email,gender }),
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data) {
+                        swal({
+                        title: 'Your Edits Saved',
+                        text: "Click ok to close this window",
+                        icon: 'success'
+                    });
+                    }
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+
+
+
+
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+    })
+
+
+
+
+    
+
+
+
+
+</script>

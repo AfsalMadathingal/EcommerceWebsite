@@ -1,0 +1,110 @@
+body
+{
+    background-color: rgb(255, 255, 255);
+    padding-top: 70px;
+    font-family: Jost;
+}
+
+/* loading fonts */
+
+.logo-image
+{
+   display: flex;
+   justify-content: center;
+   padding: 10px;
+}
+.logo-signup
+{
+
+    height: 30px; 
+    
+}
+
+.jost-font {
+
+    font-family: "Jost", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+  }
+
+/* loading fonts */
+.user_login_title
+{
+    color: #000000;
+    text-align: center;
+    font-family: Jost;
+    font-style: normal;
+    font-weight: 400;
+    text-transform: capitalize;
+    padding-top: 30px;
+    padding-bottom: 15px;
+}
+.user-login-main
+{
+    height: 85%;
+    width: 40%;
+    margin: auto;
+    background: #FFF;
+    box-shadow: 0px 33.117px 99.35px 0px rgba(13, 12, 13, 0.20);
+    border: black;
+    background-color:white;
+}
+.subtitle-loginpage
+{
+    text-align: center;
+    color: #292828;
+}
+
+.input-email-user
+{
+    
+    border: 1px solid black; 
+    padding: 5px; 
+    width: 100%;
+  
+}
+.input-for-login
+{
+    padding-top: 20px;
+    /* padding-left: 30px; */
+}
+.forgot_password
+{
+    text-align: end;
+    /* padding-right: 60px; */
+    padding-top: 40px;
+   
+}
+.login-form-for-user
+{
+ margin:  30px;
+  
+
+}
+#forgot-password-link
+{
+    color: red;
+}
+.user-login-btn
+{
+    color: white;
+    background-color: black;
+    width: 20%;
+    height: 50px
+}
+.login-button
+{
+    padding-top: 20px;
+    display: flex;
+    justify-content: end;
+}
+.click-to-signup
+{
+    color: red;
+}
+#bottom-text
+{
+    text-align: center;
+    padding-top: 10px;
+}

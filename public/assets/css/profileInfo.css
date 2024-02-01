@@ -1,0 +1,26 @@
+.input-personal{
+    
+    background-color: rgb(182, 182, 182);
+    height: 30px;
+    width: 150px;
+    border: solid black 1px;
+}
+
+.info-section
+{
+   
+    background-color: white;
+    border: solid black 2px;
+    margin-top: 10px;
+    margin-left: 10px;
+    border-radius: 15px;
+    overflow: auto; /* Make the div scrollable */
+    border: 1px solid #ccc; /* Optional: add a border for better visibility */
+    
+}
+
+.main-div
+{
+    margin-bottom: 25px;
+}
+

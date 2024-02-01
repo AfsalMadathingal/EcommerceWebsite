@@ -1,0 +1,73 @@
+{{>navTwoUser}}
+{{>profileLayout}}
+
+<div class="info-section text-dark shadow  w-75 h-100 p-3 ">
+
+    <h2 class=" pb-5 ">Personal Information</h2>
+
+    <form action="">
+
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" id="basic-addon1">FULL NAME</span>
+            <input type="text" class="form-control shadow" placeholder="{{personalInfo.name}}" aria-label="Username"
+                aria-describedby="basic-addon1"disabled>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" id="basic-addon2">MOBILE NUMBER</span>
+            <input type="text" class="form-control shadow" placeholder="{{personalInfo.phone}}"
+                aria-label="MOBILE NUMBER" aria-describedby="basic-addon1"disabled>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text shadow" id="basic-addon3">EMAIL ADDRESS</span>
+            <input type="text" class="form-control shadow" placeholder="{{personalInfo.email}}"
+                aria-label="MOBILE NUMBER" aria-describedby="basic-addon1"disabled>
+        </div>
+
+        <div class="input-group mb-3">
+           <span class="input-group-text shadow" id="basic-addon3"> Gender</span>
+            <select class="form-select shadow " id="inputGroupSelect01" disabled >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <h6 class="pt-4">Looking for change password ?<a class="text-info " href="/profile/changePassword">Click
+                here</a></h6>
+        <button class="btn btn-dark mt-5 me-4">SAVE</button>
+        <button class="btn btn-danger mt-5  ">EDIT</button>
+    </form>
+
+</div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+{{>userFooter}}
+
+
+
+<script>
+    $(document).ready(function () {
+        var currentPage = window.location.pathname;
+
+        $('.side-button').each(function () {
+            var buttonHref = $(this).parent().attr('href');
+
+            if (currentPage === buttonHref) {
+                // Change button color directly using jQuery
+                $(this).css({
+                    'background-color': 'white', // Your desired active color
+                    'color': 'black'
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,55 @@
+<link rel="stylesheet" type="text/css" href="css/userLogin.css">
+
+  <div class="logo-image">
+
+                                <a  href="/">
+                                <img class="logo-signup" src="images/icons/logoourshop.png" alt="IMG-LOGO">
+                                </a>
+
+        </div>
+<div class="user-login-main">
+
+            <h3 class="user_login_title">Login</h3>
+            <h5 class="subtitle-loginpage">Enter Login details to get access</h5>
+<div class="login-form-for-user">
+    {{#if wrongCredentials}}
+    <div class="alert alert-danger" role="alert">
+        Enter Valid Mobile Number and Password
+    </div>
+    {{/if}}
+    {{#if blocked}}
+    <div class="alert alert-danger" role="alert">
+        You are blocked
+    </div>
+    {{/if}}
+
+            <form autocomplete="off" method="post"  action="/user_login">
+
+                            <div class="input-for-login">
+                                <label for="">Enter Your Mobile</label>
+                                <input autocomplete="false" name="phone" type="text" class="input-email-user" placeholder="Enter your Email or Mobile " >
+                            </div>
+                            <div class="input-for-login">
+                                <label for="">Enter Your Password</label>
+                                <input autocomplete="false" name="password" type="password" class="input-email-user" placeholder="Enter Your Password" >
+                            </div>
+
+                            <div class="forgot_password">
+                                <a id="forgot-password-link" href="
+                                "><h6>Forgot Password ?</h6>
+                                </a>
+                            </div>
+                            <div class="login-button">
+                                <button type="
+                                submit" class="user-login-btn">Login</button>
+                            </div>       
+            </form>
+
+                <h6>Don’t have an account? <a class="click-to-signup" href="/user_signup">Click Here</a> to Signup</h6>
+
+</div>
+      
+</div>
+
+                            <h6 id="bottom-text">©Copyright Our Shop E-Commerce Project  by Afsal </h6>   
+                            

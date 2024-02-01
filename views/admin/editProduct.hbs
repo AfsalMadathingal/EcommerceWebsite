@@ -1,0 +1,447 @@
+<link rel="stylesheet" href="/css/table-user.css">
+<link rel="stylesheet" href="/css/addproducts.css">
+
+<script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+  integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div class="details-section p-3 ">
+
+  <div class=" shadow rounded-5  input-add-pro p-5 bg-white  bg-opacity-75">
+
+
+    <form method="post" id="form-image" class="form-add-product" action="/admin/editProducts"
+      onsubmit="return Validation()">
+
+      <div class="row g-3 p-3 ">
+        <div class="col-md-6">
+          <!-- Left side -->
+          <label class="form-label" for="productName">Product Name</label>
+          <input name="productName" class="form-control" placeholder="Product Name" type="text" id="productName"
+            value="{{data.0.product_name}}">
+          <h6 class="alertAddProduct" id="productNameAlert"></h6>
+
+          <label class="form-label" for="category">Category</label>
+          <select name="category" id="category" class="form-select">
+            {{#each category}}
+            <option value="{{this.category}}">{{this.category}}</option>
+            {{/each}}
+          </select>
+
+          <label class="form-label" for="size">Size</label>
+          <select name="size" id="size" class="form-select">
+            {{#each size}}
+            <option value="{{this.size}}">{{this.size}}</option>
+            {{/each}}
+          </select>
+
+          <label class="form-label" for="qty">Quantity</label>
+          <input name="qty" class="form-control" placeholder="Quantity" type="text" id="Qty" value="{{data.0.stock}}">
+          <h6 class="alertAddProduct" id="qtyAlert"></h6>
+
+          <label class="form-label" for="color">Color</label>
+          <select name="color" id="color" class="form-select">
+            {{#each color}}
+            <option value="{{this.color}}">{{this.color}}</option>
+            {{/each}}
+          </select>
+
+          <!-- Right side -->
+          <label class="form-label" for="price">Price</label>
+          <input name="price" class="form-control" placeholder="Price" type="text" id="price" value="{{data.0.price}}">
+          <h6 class="alertAddProduct" id="priceAlert"></h6>
+
+          <label class="form-label" for="cost">Cost</label>
+          <input name="cost" class="form-control" placeholder="Cost" type="text" id="cost" value="{{data.0.cost}}">
+          <h6 class="alertAddProduct" id="costAlert"></h6>
+        </div>
+
+        <div class="col-md-6">
+          <h5>Chose images</h5>
+          <p class="text-danger">Please save the data before uploading image !</p>
+          <div class="form  pb-5 ps-5 ms-2  ">
+            <div class="grid mb-2 align-items-center image-tab ">
+              <div class="form-element    ">
+                <input type="file" id="file-1" name="images" accept="image/*">
+                <label for="file-1" id="file-1-preview">
+                {{#if data.0.image1}}
+                  <img src="/uploads/{{data.0.image1}}" alt="">
+                  {{else}}
+                  <img src="https://bit.ly/3ubuq5o" alt="">
+                  {{/if}}
+                  <div>
+                   <span >Change</span>
+                  </div>
+                </label>
+                <div class="p-4 bg-transparent ">
+                  <button data-inputid="file-1" data-imageName="{{data.0.image1}}"
+                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                      class="fa-solid fa-upload"></i>Upload</button>
+                </div>
+              </div>
+              <div class="form-element">
+                <input type="file" id="file-2" name="images" accept="image/*" >
+                <label for="file-2" id="file-2-preview">
+                 {{#if data.0.image2}}
+                  <img src="/uploads/{{data.0.image2}}" alt="">
+                  
+                  {{else}}
+                  <img src="https://bit.ly/3ubuq5o" alt="">
+                 
+                  {{/if}}
+                  <div>
+                    <span >Change</span>
+                  </div>
+                </label>
+                <div class="p-4 bg-transparent ">
+                  <button data-inputid="file-2" data-imageName="{{data.0.image2}}"
+                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                      class="fa-solid fa-upload"></i>Upload</button>
+                </div>
+              </div>
+              <div class="form-element">
+                
+                  <input  type="file" id="file-3" name="images" accept="image/*" >
+                  
+  
+                <label for="file-3" id="file-3-preview">
+                  {{#if data.0.image3}}
+                  <img src="/uploads/{{data.0.image3}}" alt="">
+                  {{else}}
+                  <img src="https://bit.ly/3ubuq5o" alt="">
+                  {{/if}}
+                  <div >
+                   <span >Change</span>
+                  </div>
+                </label>
+                <div class="p-4 bg-transparent ">
+
+                  <button data-imageName="{{data.0.image3}}" data-inputid="file-3"
+                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                      class="fa-solid fa-upload"></i>Upload</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <label class="form-label" for="aboutProduct">About Product</label>
+          <textarea class="form-control" placeholder="Enter a detailed description..." name="aboutProduct"
+            id="longdescription" rows="4">{{data.0.about_product}}</textarea>
+          <h6 class="alertAddProduct" id="longAlert"></h6>
+
+          <div class="barcode-product">
+            <label class="form-label" for="barcode">Barcode</label>
+            <input name="barcode" class="form-control" placeholder="Barcode" type="text" id="Barcode"
+              value="{{data.0.barcode}}">
+            <h6 class="alertAddProduct" id="BarcodeAlert"></h6>
+
+            <label class="form-label" for="productId">Product Id</label>
+            <input name="productId" class="form-control" placeholder="Product Id" type="text" id="ProductId"
+              value="{{data.0.product_id}}">
+            <h6 class="alertAddProduct" id="ProductIdAlert"></h6>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-12">
+        <div class="button-create-cancel">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a class="btn btn-danger" href="/admin/products-management">Cancel</a>
+        </div>
+      </div>
+  <input type="text" value="{{data.0.productVariant}}" id="imagename" name="ProductvariantId"  hidden>
+  <input type="text" value="{{data.0._id}}" name="variantId"  hidden>
+    </form>
+  </div>
+
+</div>
+</div>
+
+
+
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+
+    let uploadAll = document.querySelectorAll('.upload-button');
+    let editButton = document.querySelectorAll('edit-image-button');
+
+
+    uploadAll.forEach(function (upload) {
+
+      upload.addEventListener('click', function (event) {
+
+        event.preventDefault()
+
+        
+        const imageName= document.getElementById('imagename')
+        const id = upload.getAttribute('data-imageName')
+        const inputId = upload.getAttribute('data-inputid')
+        const varintid = upload.getAttribute('data-variantId')
+        imageName.value=id
+  
+
+
+        function uploadFile() {
+
+          const fileInput = document.getElementById('form-image');
+
+          const imageInput = document.getElementById(inputId)
+          const file = imageInput.files[0];
+
+          if (!file) {
+            swal({
+              icon: 'error',
+              title: 'File Not Selected',
+              text: 'Please choose a file before uploading.',
+            });
+            return;
+          }
+
+          const formData = new FormData(fileInput);
+
+
+          console.log(formData)
+
+          fetch('/admin/uploadimage', {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(data => {
+
+              swal({
+                icon: 'success',
+                title: 'Upload Successful',
+                text: 'The image has been uploaded successfully!',
+              }).then(()=>{
+                location.reload()
+              })
+              
+            })
+            .catch(error => {
+              console.error('Error uploading file:', error);
+            });
+        }
+
+
+        uploadFile();
+
+      });
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+  function enableFileInput(inputId) {
+
+
+    var fileInput = document.getElementById(inputId);
+    var uploadButton = document.querySelector(inputId);
+
+    if (fileInput.disabled) {
+      fileInput.removeAttribute('disabled');
+      uploadButton.textContent = 'Cancel'; // You can customize the text as needed
+    } else {
+      fileInput.setAttribute('disabled', true);
+      uploadButton.textContent = 'Upload/Edit';
+    }
+  }
+
+
+
+
+
+
+
+
+
+  function Validation() {
+
+    let productName = document.getElementById("productName").value;
+
+    let longdescription = document.getElementById("longdescription").value;
+    let Qty = document.getElementById("Qty").value;
+    let price = document.getElementById("price").value;
+    let cost = document.getElementById("cost").value;
+    let Barcode = document.getElementById("Barcode").value;
+    let ProductId = document.getElementById("ProductId").value;
+
+
+
+    let productNameRegex = /^\s*.*\S.*\s*$/;
+    let number = /^[1-9]\d*$/;
+    let descriptionRegex = /^(?!\s*$)[\s\S]{1,}$/
+
+
+    let productNameAlert = document.getElementById("productNameAlert");
+    let qtyAlert = document.getElementById("qtyAlert");
+    let priceAlert = document.getElementById("priceAlert");
+    let costAlert = document.getElementById("costAlert");
+    let BarcodeAlert = document.getElementById("BarcodeAlert");
+    let ProductIdAlert = document.getElementById("ProductIdAlert");
+    let longAlert = document.getElementById("longAlert");
+
+    if (!productName.match(productNameRegex)) {
+      productNameAlert.innerHTML = "Name Not Valid";
+      return false;
+    } else if (!Qty.match(number)) {
+      qtyAlert.innerHTML = "Please Check Qty Again";
+      return false;
+    } else if (!price.match(number)) {
+      priceAlert.innerHTML = "Please Check Price Again";
+      return false;
+    } else if (!cost.match(number)) {
+      costAlert.innerHTML = "Please Check Cost Again";
+      return false;
+    } else if (!Barcode.match(number)) {
+      BarcodeAlert.innerHTML = "Please Check Barcode Again";
+      return false;
+    } else if (!ProductId.match(number)) {
+      ProductIdAlert.innerHTML = "Please Check Id Again";
+      return false;
+    }
+    else if (!longdescription.match(descriptionRegex)) {
+      longAlert.innerHTML = "Please Check about Again";
+      return false;
+    }
+
+    else {
+
+
+
+
+
+
+      return true;
+    }
+
+  }
+
+  function previewBeforeUpload(id) {
+    document.querySelector("#" + id).addEventListener("change", function (e) {
+      if (e.target.files.length == 0) {
+        return;
+      }
+      let file = e.target.files[0];
+      let url = URL.createObjectURL(file);
+      document.querySelector("#" + id + "-preview div").innerText = file.name;
+      document.querySelector("#" + id + "-preview img").src = url;
+    });
+  }
+
+  previewBeforeUpload("file-1");
+  previewBeforeUpload("file-2");
+  previewBeforeUpload("file-3");
+
+
+
+
+
+
+
+
+
+
+</script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Raleway", sans-serif;
+    background: #f8f8f8;
+  }
+
+  .form {
+    margin: 40px 0 20px;
+    /* Reduced top margin */
+    padding: 20px;
+    /* Reduced padding */
+    display: flex;
+    /* Added flex property */
+    justify-content: center;
+    /* Center content horizontally */
+    align-items: center;
+    /* Center content vertically */
+    flex-direction: column;
+    /* Stack children vertically */
+  }
+
+  .form h5 {
+    text-align: center;
+    color: #acacac;
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  .form .grid {
+    margin-top: 20px;
+    /* Reduced top margin */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Reduced gap */
+    height: auto;
+    /* Allow the container to adjust its height based on content */
+  }
+
+  .form .grid .form-element {
+    width: 160px;
+    /* Reduced width */
+    height: 160px;
+    /* Reduced height */
+    box-shadow: 0 0 15px 3px rgba(100, 100, 100, 0.1);
+  }
+
+  .form .grid .form-element input {
+
+    display: none;
+    
+  }
+
+  .form .grid .form-element img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .form .grid .form-element div {
+    position: relative;
+    height: 30px;
+    /* Reduced height */
+    margin-top: -30px;
+    /* Adjusted margin */
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    line-height: 30px;
+    /* Reduced line-height */
+    font-size: 12px;
+    /* Reduced font-size */
+    color: #f5f5f5;
+    font-weight: 600;
+  }
+
+  .form .grid .form-element div span {
+    font-size: 24px;
+    /* Reduced font-size */
+  }
+</style>

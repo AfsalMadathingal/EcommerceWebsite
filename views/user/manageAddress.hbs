@@ -1,0 +1,154 @@
+{{>navTwoUser}}
+{{>profileLayout}}
+
+<div class="info-section text-dark 
+            w-75 h-100 p-3">
+
+    <h2 class=" pb-5 ">Manage Address</h2>
+
+    <div class="d-grid gap-2">
+        <a href="/profile/manageaddress/addaddress/{{personalInfo.id}}">
+            <button class="btn btn-dark" type="button"><i class="fa-solid fa-user-plus"></i> Add New Address</button>
+        </a>
+    </div>
+    {{#each addressData}}
+    <div class="card mt-5  shadow rounded-5 ">
+        <div class="card-header bg-primary ">
+            <i class="fa-solid fa-location-dot"></i>
+            {{this.type}}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{this.name}}</h5>
+            <p class="card-text">
+                {{this.mobile}}
+                <br>
+                {{this.pincode}}<br>
+                {{this.addressLine1}}<br>
+                {{this.addressLine2}}<br>
+                {{this.city_dist_town}}<br>
+                {{this.state}}
+            </p>
+            <a href="/profile/addressedit/{{this._id}}" class="btn btn-dark mt-3 ">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Edit</a>
+
+            <button class="btn btn-danger mt-3 delete-button"  data-id="{{this._id}}">
+                <i class="fa-solid fa-trash"></i>
+                Delete</button>
+
+        </div>
+    </div>
+
+    {{/each}}
+</div>
+
+
+</div>
+
+</div>
+
+
+
+{{>userFooter}}
+
+
+<script>
+
+
+
+   document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.delete-button');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const id = button.getAttribute('data-id');
+
+            swal({
+                title: 'Do you want to proceed?',
+                text: 'This action cannot be undone',
+                icon: 'warning',
+                buttons: {
+                    cancel: 'No',
+                    confirm: 'Yes'
+                },
+            }).then((isConfirmed) => {
+                
+                if (isConfirmed) {
+                    fetch('/profile/deleteAddress', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            swal({
+                                title: 'Deleted Successfully',
+                                text: "Address has been deleted",
+                                icon: 'success',
+                            }).then((data)=>{
+
+                                location.reload()
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                } else {
+
+                    console.log('User clicked No');
+                }
+            });
+        });
+    });
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    .info-section {
+        height: 80vh !important;
+        /* Set your desired fixed height */
+        overflow-y: auto !important;
+    }
+</style>
+
+
+
+<script>
+    $(document).ready(function () {
+        var currentPage = window.location.pathname;
+
+        $('.side-button').each(function () {
+            var buttonHref = $(this).parent().attr('href');
+
+            if (currentPage === buttonHref) {
+                // Change button color directly using jQuery
+                $(this).css({
+                    'background-color': 'white', // Your desired active color
+                    'color': 'black'
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,153 @@
+{{! css for this page }}
+<link rel="stylesheet" type="text/css" href="css/userSignup.css" />
+{{! css for this page }}
+<div class="logo-image">
+
+  <a href="/">
+    <img
+      class="logo-signup"
+      src="images/icons/logoourshop.png"
+      alt="IMG-LOGO"
+    />
+  </a>
+
+</div>
+<div class="user-signup-main">
+
+  <h3 class="user_signup_title">Sign Up</h3>
+  <h5 class="subtitle-signupage">Create your account to get full access</h5>
+  <div class="signup-form-for-user">
+
+    <form method="post" action="/user_register" onsubmit="return Validation()">
+      <h4  id="validation-alert"></h4>
+      {{#if alert}}
+    <div class="alert alert-danger" role="alert">
+  Email or Mobile Already Exists
+</div>
+{{/if}}
+      <div class="input-for-signup">
+        <label for="">Full Name</label>
+        <input
+          name="fullName"
+          id="fullName"
+          type="text"
+          class="input--user"
+          placeholder="Enter your Full Name"
+        />
+      </div>
+      <div class="input-for-signup">
+        <label for="gender">Gender</label>
+        <div class="gender-options">
+                <select name="gender" id="Category" class="input-field-add-product" >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                </select>
+        </div>
+      </div>
+      <div class="input-for-signup">
+        <label for="">Email Address</label>
+        <input
+          name="email"
+          id="email"
+          type="Email"
+          class="input--user"
+          placeholder="Enter your Email"
+        />
+      </div>
+      <div class="input-for-signup">
+        <label for="">Mobile</label>
+        <input
+          name="mobile"
+          id="mobile"
+          type="text"
+          class="input--user"
+          placeholder="Enter your Mobile"
+        />
+      </div>
+
+      <div class="input-for-signup">
+        <label for="">Password</label>
+        <input
+          name="password"
+          id="password"
+          type="password"
+          class="input--user"
+          placeholder="Enter Password"
+        />
+      </div>
+      <div class="input-for-signup">
+        <label for="">Confirm Password</label>
+        <input
+          name="comfirm_password"
+          id="comfirm_password"
+          type="password"
+          class="input--user"
+          placeholder="Confirm Password"
+        />
+      </div>
+
+      <div class="signup-button">
+        <button
+          type="
+                                        submit"
+          class="user-signup-btn"
+        >Signup</button>
+      </div>
+    </form>
+
+    <h6>Already have an account?
+      <a class="click-to-login" href="/user_login_form">Click Here</a>
+      to Login</h6>
+
+  </div>
+
+</div>
+
+<h6 id="bottom-text">©Copyright Our Shop E-Commerce Project by Afsal </h6>
+<script>
+    function  Validation()
+{
+
+  let password=document.getElementById("password").value
+  let confirmpassword=document.getElementById('comfirm_password').value
+  let email=document.getElementById('email').value
+  let name=document.getElementById('fullName').value
+  let mobile=document.getElementById('mobile').value
+  let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  let nameRegex=/^[a-zA-Z]+(?: [a-zA-Z]+)?$/;
+  let mobileRegex= /^\d{10}$/
+
+
+  let alert=document.getElementById('validation-alert')
+  let emailalert=document.getElementById('validation-alert')
+  let nameAlert=document.getElementById('validation-alert')
+
+  if(password!=confirmpassword)
+  {
+    alert.innerHTML="Password Not Matching"
+    return false
+  }else if(!email.match(emailRegex))
+  {
+     emailalert.innerHTML="Email Not Valid"
+    return false
+  }else if(!name.match(nameRegex))
+  {
+    nameAlert.innerHTML="Space Not Allowed"
+    return false
+  }else if(!mobile.match(mobileRegex))
+  {
+	return false
+  }else
+  {
+    return true
+  }
+
+}
+
+
+</script>
+
+
+
+{{!-- <script src="js/signupValidation.js"></script> --}}

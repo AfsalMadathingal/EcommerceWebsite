@@ -1,0 +1,112 @@
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+body {
+  background-color: #fdf9de;
+  /* Light grayish color */
+}
+
+#logo-nav {
+  width: 100%;
+}
+
+#admin-nav {
+  width: 100%;
+  height: 70px;
+  flex-shrink: 0;
+  background: #3498db;
+  /* Change to a different color */
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.50);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#logo-nav {
+  z-index: 100;
+  width: 200px;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+#admin-nav-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+ 
+}
+
+#logo-profile {
+  width: 50px;
+  padding-right: 10px;
+}
+
+#admin-profile-logo {
+  display: flex;
+  flex-direction: row;
+  text-align: right;
+  color: white;
+
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-nav {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #3498db;
+  /* Change to a different color */
+  width: 230px;
+  height: 85vh;
+  border-radius: 15px;
+  margin-left: 10px;
+  margin-top: 10px;
+  box-shadow: 0px 10px 10px 0px rgba(126, 134, 235, 0.5);
+}
+
+.main-div {
+  display: flex;
+  flex-direction: row;
+}
+
+.side-button {
+  background-color: #2980b9;
+  /* Change to a different color */
+  height: 50px;
+  width: 200px;
+  margin: 10px;
+  color: white;
+  border-radius: 25px;
+  border: none;
+  font-size: large;
+
+  text-align: left;
+}
+
+.side-button:hover {
+  background-color: #1c6396;
+  /* Change to a different color */
+}
+
+.side-button i {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.logout {
+  width: 110px;
+  margin-top: auto;
+  align-items: center;
+}

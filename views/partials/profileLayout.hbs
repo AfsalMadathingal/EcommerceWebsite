@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="/css/userSideBar.css" />
+<link rel="stylesheet" href="/css/profileInfo.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+
+<div class="profile-section-main container-fluid w-100   align-items-center pt-4 ">
+
+    <div class="content-section w-75 h-100 bg-danger  m-auto">
+
+
+        <div class="main-div">
+            <div class="sidebar-nav ">
+
+                <button class="side-button offers account-btn" type="button">
+                    <i class="fa-solid fa-user"></i>
+                    Hi {{personalInfo.name}}</button>
+
+
+                <a href="/profile/personalinformation/{{personalInfo._id}}">
+                    <button class="side-button dashboard  account-btn" type="button">
+                            
+                        Profile Information
+                    </button>
+                    <a href="/profile/manageaddress/{{personalInfo._id}}">
+                        <button class="side-button users  account-btn" type="button">
+
+                            Manage Addresses</button>
+                    </a>
+
+
+                    <a href="/profile/myorders/{{personalInfo._id}}">
+                        <button class="side-button products  account-btn" type="button">
+
+                            My Orders</button>
+
+                    </a>
+
+                    <a href="/profile/returnproducts/{{personalInfo._id}}">
+                        <button class="side-button orders  account-btn" type="button">
+
+                            Returned Products</button>
+
+
+                    </a>
+
+                    <a href="/profile/mywhishlist/{{personalInfo._id}}">
+
+                        <button class="side-button coupon  account-btn" type="button">
+
+                            My Wishlist</button>
+
+                    </a>
+
+                    <a href="/profile/mywallet/{{personalInfo._id}}">
+                        <button class="side-button coupon  account-btn" type="button">
+
+                            My Wallet</button>
+
+
+
+                    </a>
+
+            </div>
+
+
+
+            <script>
+                $(document).ready(function () {
+                    var currentPage = window.location.pathname;
+
+                    $('.side-button').each(function () {
+                        var buttonHref = $(this).parent().attr('href');
+
+                        if (currentPage === buttonHref) {
+                            // Change button color directly using jQuery
+                            $(this).css({
+                                'background-color': 'white', // Your desired active color
+                                'color': 'black'
+                            });
+                        }
+                    });
+                });
+            </script>
