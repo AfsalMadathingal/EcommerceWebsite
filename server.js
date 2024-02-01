@@ -46,14 +46,14 @@ app.listen(3000,()=>{
 //for user routes
 const user_route = require("./routes/userRoute");
 app.use("/", user_route);
-
+ 
 
 //for admin route
 const adminRoute = require("./routes/adminRoute");
 app.use("/admin", adminRoute);
 
 
-
+//afsal
 
 //error route
 app.use((req, res, next) => {
