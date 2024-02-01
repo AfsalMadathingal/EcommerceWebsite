@@ -7,3 +7,10 @@ Feel free to reach out if you have any questions or feedback!
 
 Best regards,
 Afsal
+
+
+![home page](https://github.com/AfsalMadathingal/EcommerceWebsite/assets/143309091/5576176c-4337-4ffa-b2bf-26d9a9435a20)
+![Screenshot 2024-02-01 175838](https://github.com/AfsalMadathingal/EcommerceWebsite/assets/143309091/5c18d2d2-e798-4475-bb9a-ef66cc796f37)
+![profile](https://github.com/AfsalMadathingal/EcommerceWebsite/assets/143309091/97b18191-422e-4dfc-871b-e426d1104694)
+![addproducts](https://github.com/AfsalMadathingal/EcommerceWebsite/assets/143309091/abee4eb3-8112-418c-b91a-f5699e3722a7)
+![admin user details](https://github.com/AfsalMadathingal/EcommerceWebsite/assets/143309091/2f908b83-a79a-4fcf-9590-48a908e319c0)
