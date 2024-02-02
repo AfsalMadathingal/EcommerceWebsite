@@ -27,11 +27,11 @@
 
                             <div class="input-for-login">
                                 <label for="">Enter Your Mobile</label>
-                                <input autocomplete="false" name="phone" type="text" class="input-email-user" placeholder="Enter your Email or Mobile " >
+                                <input autocomplete="off" name="phone" type="text" id="input-email-user" class="input-email-user" placeholder="Enter your Email or Mobile " >
                             </div>
                             <div class="input-for-login">
                                 <label for="">Enter Your Password</label>
-                                <input autocomplete="false" name="password" type="password" class="input-email-user" placeholder="Enter Your Password" >
+                                <input autocomplete="off" name="password" type="password" class="input-email-user" placeholder="Enter Your Password" >
                             </div>
 
                             <div class="forgot_password">
@@ -50,6 +50,64 @@
 </div>
       
 </div>
+                <h6 id="bottom-text">©Copyright Our Shop E-Commerce Project  by Afsal </h6>   
 
-                            <h6 id="bottom-text">©Copyright Our Shop E-Commerce Project  by Afsal </h6>   
-                            
+
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+
+
+
+
+const inputField = document.getElementById('input-email-user');
+
+    // Add an input event listener
+    inputField.addEventListener('input', function() {
+        // Get the current value of the input field
+        const inputString = inputField.value;
+        const alert = document.getElementById('alertLive')
+
+       
+
+        // Use fetch to send the input value to a server for checking
+        fetch('/inputcheck', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({inputString}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            
+            if(data)
+            {
+                 inputField.style.border = '5px solid green';
+                 inputField.style.boxShadow = '0 0 5px 2px green';
+
+            }else
+            {
+                 inputField.style.border = '5px solid red';
+                 inputField.style.boxShadow = '0 0 5px 2px red';
+            }
+           
+            // Handle the response from the server
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+
+             console.log('Server response:', error);
+            
+        });
+    });
+
+
+
+
+})             
+
+
+
+                </script>
+      

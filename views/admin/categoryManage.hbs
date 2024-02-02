@@ -35,7 +35,7 @@
                         <th> SL <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Category Name <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Products <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Status <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Change <span class="icon-arrow">&UpArrow;</span></th>
                     </tr>
                 </thead>
                 {{#each data}}
@@ -44,9 +44,15 @@
                         <td>{{inc @index}} </td>
                         <td>{{this._id.category}}</td>
                         <td> {{this.totalProducts}} </td>
-                        <td>
-                            <p class="status delivered">Active </p>
-                        </td>
+                        <td> 
+                    <button class="btn btn-danger  delete-button">Delete</button>
+                    <button class="btn btn-info  edit-button" data-bs-toggle="modal" data-bs-target="#EditModal"
+
+                        data-bs-category="{{this._id.category}}">
+                    
+                    
+                        Edit</button>
+                    </td>
                     </tr>
                 </tbody>
                   {{/each}}

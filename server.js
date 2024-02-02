@@ -8,6 +8,7 @@ const nocache = require("nocache");
 const app=express()
 var router=express.Router()
 require('dotenv').config()
+const Razorpay = require('razorpay')
 
 
 
@@ -16,6 +17,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
 
 // Logger
 // app.use(logger('dev'))
+
 
 
 
@@ -53,7 +55,7 @@ const adminRoute = require("./routes/adminRoute");
 app.use("/admin", adminRoute);
 
 
-//afsal
+
 
 //error route
 app.use((req, res, next) => {

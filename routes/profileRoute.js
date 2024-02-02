@@ -3,6 +3,9 @@ const express=require('express')
 const profileRoute=express();
 const profile= require ('../controller/userProfile.js');
 const productRoute = require('./productsRoute.js');
+const Razorpay = require('razorpay');
+
+
 
 
 
@@ -38,7 +41,7 @@ profileRoute.get('/mycart/checkout/placeOrder',profile.placeOrder)
 profileRoute.get('/myorders/:id',profile.loadOrders)
 profileRoute.patch('/cancelOrder',profile.cancelOrder)
 profileRoute.get('/myorders/view/:id',profile.viewOrder)
-productRoute.get('myorders/invoice/:id',profile.viewInvoice)
+profileRoute.get('/myorders/invoice/:id',profile.viewInvoice)
 
 
 

@@ -28,6 +28,9 @@ userRoute.get('/', auth.isLogin)
 //checking user blocked or not 
 userRoute.post('/blockChecker',auth.blockChecker)
 
+//input checking while typing
+userRoute.post('/inputcheck',auth.liveChecker)
+
 //routing to product related request
 userRoute.use('/products',productRoute)
 

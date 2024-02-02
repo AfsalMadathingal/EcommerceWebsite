@@ -13,6 +13,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { text } = require("express");
 const saltRounds = 10;
+const Razorpay = require('razorpay');
+
+
 
 
 //profile related Middlewares
@@ -370,6 +373,12 @@ const placeOrder = async (req, res) => {
   }
 };
 
+const placeOrderRazopay = async (req,res)=>{
+
+
+
+}
+
 const cancelOrder = async (req, res) => {
   try {
     const id = req.body.id;
@@ -571,6 +580,184 @@ const viewOrder = async (req,res)=>{
 
 }
 
+const viewInvoice = async (req,res)=>{
+
+  try {
+
+    const {id}= req.params;
+    
+    const orderData = await order.aggregate([{
+      $match: {_id: new mongoose.Types.ObjectId(id)}
+    },
+
+    {
+      $unwind:"$OrderedItems"
+    },
+    {
+      $lookup:{
+        from:"addresses",
+        foreignField:"_id",
+        localField:"deliveryAddress",
+        as:"AddressInfo"
+      }
+    },{
+      $project:{
+
+        _id:1,
+        userId:1,
+        orderAmount:1,
+        addressName:{$arrayElemAt:["$AddressInfo.name",0]},
+        addressLine1:{$arrayElemAt:["$AddressInfo.addressLine1",0]},
+        addressLine2: {$arrayElemAt:["$AddressInfo.addressLine2",0]},
+        city:{$arrayElemAt:["$AddressInfo.city_dist_town",0]},
+        state:{$arrayElemAt:["$AddressInfo.state",0]},
+        mobile:{$arrayElemAt:["$AddressInfo.mobile",0]},
+        pincode:{$arrayElemAt:["$AddressInfo.pincode",0]},
+        orderNo:1,
+        orderStatus:1,
+        OrderedItems:1,
+        orderDate:1,
+
+      }
+    },{
+      $lookup:{
+        from:"product_varients",
+        foreignField:"_id",
+        localField:"OrderedItems",
+        as:"Items"
+      }
+    },
+    {
+    $project:{
+
+      _id:1,
+      userId:1,
+      orderAmount:1,
+      addressName:1,
+      addressLine1:1,
+      addressLine2: 1,
+      city:1,
+      state:1,
+      orderNo:1,
+      orderStatus:1,
+      Items:1,
+      mobile:1,
+      pincode:1,
+      orderDate:1,
+
+    }
+  },{
+    $unwind:"$Items"
+  },{
+    $project:{
+
+      _id:1,
+      userId:1,
+      orderAmount:1,
+      addressName:1,
+      addressLine1:1,
+      addressLine2: 1,
+      city:1,
+      state:1,
+      orderNo:1,
+      orderStatus:1,
+      Items:1,
+      pricePerItem:"$Items.price",
+      productId:"$Items.product",
+      mobile:1,
+      pincode:1,
+      orderDate:1,
+
+
+    }
+  },{
+    $lookup:
+      {
+        from:"product_details",
+        foreignField:"_id",
+        localField:"productId",
+        as:"productDetails"
+      }
+
+    
+  },{
+    $project:{
+      _id:1,
+      userId:1,
+      orderAmount:1,
+      addressName:1,
+      addressLine1:1,
+      addressLine2: 1,
+      city:1,
+      state:1,
+      orderNo:1,
+      orderStatus:1,
+      pricePerItem:1,
+      productDetails:1,
+      productId:1,
+      productName: {$arrayElemAt:["$productDetails.product_name",0]},
+      productAbout:{$arrayElemAt:["$productDetails.about_product",0]},
+      mobile:1,
+      pincode:1,
+      orderDate:1,
+      Items:1,
+
+    }
+  }
+  ])
+
+
+  orderData.forEach((element) => {
+    // Provided date string
+    const dateString = element.orderDate;
+
+    // Create a new Date object from the provided string
+    const dateObject = new Date(dateString);
+
+    // Get day, month, and year
+    const day = dateObject.getDate();
+    const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
+    const year = dateObject.getFullYear();
+
+    // Format the date components
+    const formattedDate = `${day}/${month}/${year}`;
+
+    element.datejoined = formattedDate;
+
+
+  });
+
+
+  let mergedOrders = orderData.map(order => ({
+    ...order,
+    productData: {
+        ...order.Items,
+        ...order.productDetails[0], // Assuming there's only one productDetails per order, adjust as needed
+    },
+    // Remove the original Items and productDetails fields
+    Items: undefined,
+    productDetails: undefined,
+}));
+
+
+if (mergedOrders.length > 1) {
+  mergedOrders[0].productData = mergedOrders.map(order => order.productData);
+  mergedOrders.splice(1);  // Remove the remaining orders
+}
+
+  
+  
+  
+
+  const Data=mergedOrders[0]
+    
+    
+     res.status(200).render('user/orderInvoice',{orderData:Data})
+
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 
@@ -962,4 +1149,6 @@ module.exports = {
   editAddress,
   deleteAddress,
   viewOrder,
+  viewInvoice,
+  placeOrderRazopay
 };
