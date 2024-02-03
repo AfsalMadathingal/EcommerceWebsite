@@ -10,6 +10,7 @@ const saltRounds = 10;
 const adminHelper = require("../controller/adminHelper");
 const category_management = require("../controller/catogoryManagement")
 const productsManagement =require('../controller/productsManagement')
+const dashboarHelper = require('../controller/dashboardHelper')
 
 //middleware
 const auth = require("../middleware/adminAuth");
@@ -20,11 +21,15 @@ const upload =require('../middleware/upload')
 adminRoute.get("/",adminHelper.loadadminLogin);
 adminRoute.post("/login", adminHelper.verifyAdmin);
 adminRoute.get("/logout", adminHelper.logout);
-adminRoute.post("/dashboard", adminHelper.loadadminLogin);
 
 
 //Dashboard Related Routes
-adminRoute.get("/dashboard",auth.checkSession, adminHelper.loadAdminHome);
+adminRoute.get("/dashboard",auth.checkSession, dashboarHelper.loadDahboard);
+adminRoute.post('/chartdata',dashboarHelper.chartData)
+adminRoute.get('/salesreport/:range',dashboarHelper.salesreport)
+
+
+
 
 
 //user Management Related Routes

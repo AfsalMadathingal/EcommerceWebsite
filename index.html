@@ -1,89 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-}
-
-#spacing-example-1 {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-    </style>
+    <title>Dynamic Timeline Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-    <div id="spacing-example-1">
-        <table class="charts-css column show-labels hide-data data-spacing-5">
-            <caption> Spacing Example #1 </caption>
-            <thead>
-                <tr>
-                    <th scope="col"> Month </th>
-                    <th scope="col"> Progress </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row"> Jan </th>
-                    <td style="--size: 0.3;"><span class="data"> 30 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Feb </th>
-                    <td style="--size: 0.5;"><span class="data"> 50 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Mar </th>
-                    <td style="--size: 0.8;"><span class="data"> 80 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Apr </th>
-                    <td style="--size: 1;"><span class="data"> 100 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> May </th>
-                    <td style="--size: 0.65;"><span class="data"> 65 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Jun </th>
-                    <td style="--size: 0.45;"><span class="data"> 45 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Jul </th>
-                    <td style="--size: 0.15;"><span class="data"> 15 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Aug </th>
-                    <td style="--size: 0.32;"><span class="data"> 32 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Sep </th>
-                    <td style="--size: 0.6;"><span class="data"> 60 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Oct </th>
-                    <td style="--size: 0.9;"><span class="data"> 90 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Nov </th>
-                    <td style="--size: 0.55;"><span class="data"> 55 </span></td>
-                </tr>
-                <tr>
-                    <th scope="row"> Dec </th>
-                    <td style="--size: 0.4;"><span class="data"> 40 </span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</body>
+    <canvas id="timelineChart" width="800" height="400"></canvas>
 
+    <script>
+        // Sample data
+        var data = {
+            labels: ['2024-01-01', '2024-01-02', '2024-01-03', '2024-01-04', '2024-01-05', '2024-01-06', '2024-01-07',
+                     '2024-01-08', '2024-01-09', '2024-01-10', '2024-01-11', '2024-01-12', '2024-01-13', '2024-01-14',
+                     '2024-01-15', '2024-01-16', '2024-01-17', '2024-01-18', '2024-01-19', '2024-01-20', '2024-01-21',
+                     '2024-01-22', '2024-01-23', '2024-01-24', '2024-01-25', '2024-01-26', '2024-01-27', '2024-01-28',
+                     '2024-01-29', '2024-01-30', '2024-01-31'],
+            oneWeekRevenue: [100, 120, 150, 130, 160, 200, 180, 220, 250, 230, 210, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620, 640, 660],
+            twoWeekRevenue: [120, 150, 130, 160, 200, 180, 220, 250, 230, 210, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420, 440, 460, 480, 500, 520, 540, 560, 580, 600, 620, 640, 660, 680]
+        };
+
+        // Create the chart
+        var ctx = document.getElementById('timelineChart').getContext('2d');
+        var timelineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'One Week Revenue',
+                        data: data.oneWeekRevenue,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Two Week Revenue',
+                        data: data.twoWeekRevenue,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM DD'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
 </html>

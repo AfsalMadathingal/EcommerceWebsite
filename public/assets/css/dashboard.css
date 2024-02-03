@@ -68,3 +68,17 @@ body{
         background-color: #d9534f !important;
     }
     
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    #spacing-example-1 {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }

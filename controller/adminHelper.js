@@ -25,6 +25,7 @@ const verifyAdmin = async function (req, res) {
         req.session.admin_id = adminData.admin_id;
 
         res.redirect("/admin/dashboard");
+        
       } else {
         req.session.wrongAdmin = true;
         res.redirect("/admin");
@@ -66,13 +67,7 @@ const logout = function (req, res) {
   }
 };
 
-const loadAdminHome = (req, res) => {
-  res.render("admin/adminDashboard", {
-    adminlogin: true,
-    pageTitle: "Dashboard",
-    layout: Adminlayout,
-  });
-};
+
 
 const loadUserManagement = async (req, res) => {
   try {
@@ -149,7 +144,6 @@ module.exports = {
   verifyAdmin,
   loadadminLogin,
   logout,
-  loadAdminHome,
   loadUserManagement,
   blockUser,
   unblockUser,
