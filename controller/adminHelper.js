@@ -41,6 +41,9 @@ const verifyAdmin = async function (req, res) {
 };
 
 const loadadminLogin = (req, res) => {
+
+
+  
   if (req.session.admin_id) {
     res.render("admin/adminDashboard", {
       adminlogin: true,

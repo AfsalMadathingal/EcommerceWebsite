@@ -240,8 +240,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var newValue = parseInt(inputElement.value) + 1;
         inputElement.value = newValue;
 
-        // Assuming you have a reference to the table row element, for example:
-        const tableRow = clickedButton.closest('.data-row');
+       
+        const tableRow = clickedButton.closest('.data-row'); 
         const cartIdForUpdate = tableRow.getAttribute('data-user-id');
         const pricePerItem= document.getElementById(`totalPerItem-${cartIdForUpdate}`)
         const Subtotal= document.getElementById('Subtotal')
@@ -282,8 +282,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function decrementQuantity(clickedButton) {
-
-        
 
         var inputElement = clickedButton.parentNode.querySelector('.num-product');
         var newValue = parseInt(inputElement.value) - 1;

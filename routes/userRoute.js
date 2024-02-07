@@ -25,48 +25,46 @@ userRoute.use(express.urlencoded({ extended: true }))
 //Landing Page For non regster User
 userRoute.get('/', auth.isLogin)
 
+//routing to product related request
+userRoute.use('/products',productRoute)
+//routing to profile related requests
+userRoute.use('/profile',auth.blockChecker,auth.redirectToLogin,profileRoute)
+
+
+
+//forgot Password realated routes
+userRoute.get('/forgotPassword',auth.isLogout,userHelper.loadForgotPassword)
+userRoute.post('/forgotpasswordotp',userHelper.forgotPasswordRest)
+userRoute.get('/forgotpassewordreset/:id',auth.checkLoginUser,auth.checkForgotPassword,userHelper.loadForgotRest)
+userRoute.post('/update_password',userHelper.updatePassword)
+
 //checking user blocked or not 
 userRoute.post('/blockChecker',auth.blockChecker)
-
 //input checking while typing
 userRoute.post('/inputcheck',auth.liveChecker)
 
-//routing to product related request
-userRoute.use('/products',productRoute)
 
-//routing to profile related requests
-userRoute.use('/profile',auth.checkSession,profileRoute)
-
-//Landing Page For unregistred User
+//Landing Page For  User
 userRoute.get('/home',auth.checkLoginUser,Products.loadHomeUser)
-
-
-//Landing Page For registred User
 userRoute.get('/user_home',auth.checkSession, Products.loadHomeUser)
 
 
-
- 
-//User Login Page
+//User Login and sigunp related routes
 userRoute.get('/user_login_form',auth.checkLoginUser,userHelper.loadLogin)
-
-//User Signup Page
 userRoute.get('/user_signup',auth.isLogout,userHelper.loadsignup)
+userRoute.post('/user_register',userHelper.registerUser,userHelper.sendOTP)
+userRoute.post('/user_login',userHelper.verifyUser)
+userRoute.get('/user_logout',userHelper.logout)
 
-//user register OTP send
-userRoute.post('/user_register',userHelper.registerUser,userHelper.LoadOtpPage,userHelper.sendOTP)
 
-//OTP verification
+
+//opt Related Routes
+userRoute.get('/otpsubmit',auth.checkLoginUser,userHelper.LoadOtpPage)
+userRoute.post('/resndotp',userHelper.resendOTP)
 userRoute.post('/otp_verify',userHelper.otpVerify)
-
-//OTP resend
 userRoute.get('/otp_resend',userHelper.sendOTP,userHelper.LoadOtpRetryPage)
 
-//user validation and login
-userRoute.post('/user_login',userHelper.verifyUser)
 
-//user validation and login
-userRoute.get('/user_logout',userHelper.logout)
 
 
 module.exports = userRoute;    

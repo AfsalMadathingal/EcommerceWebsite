@@ -3,9 +3,9 @@ const express=require('express')
 const profileRoute=express();
 const profile= require ('../controller/userProfile.js');
 const productRoute = require('./productsRoute.js');
+const paymentRouter = require('../routes/payment')
 const Razorpay = require('razorpay');
-
-
+const auth = require('../middleware/auth')
 
 
 
@@ -37,7 +37,9 @@ profileRoute.get('/mycart/checkout',profile.loadChekOut)
 
 
 //Order Related Routes
-profileRoute.get('/mycart/checkout/placeOrder',profile.placeOrder)
+profileRoute.use('/payment',paymentRouter)
+profileRoute.get('/myorders/success',profile.orderSuccess)
+profileRoute.post('/mycart/createorder',profile.placeOrder)
 profileRoute.get('/myorders/:id',profile.loadOrders)
 profileRoute.patch('/cancelOrder',profile.cancelOrder)
 profileRoute.get('/myorders/view/:id',profile.viewOrder)

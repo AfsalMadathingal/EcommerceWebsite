@@ -31,7 +31,7 @@
 </form>
 
             <p class="resend text-muted mb-0">
-              Didn't receive code? <a href="">Request again</a>
+              Didn't receive code? <span id="timer"></span> <a href="" style="pointer-events: none;" id="resend-link" >Resend OTP </a>
             </p>
           </div>
         </div>
@@ -42,3 +42,90 @@
       <script src="js/otp.js"></script>
       <!--$%analytics%$-->
 
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  function otpResend(){
+
+  const timer = document.getElementById('timer');
+  let time = 30;
+
+  const intervalId = setInterval(function() {
+    timer.innerHTML = `0:${time}`;
+    time--;
+
+    if (time < 0) {
+      clearInterval(intervalId);
+      timer.style.pointerEvents = 'auto';
+    }
+
+  }, 1000);
+
+
+  }
+
+
+  otpResend();
+
+
+  const resendLink = document.getElementById('resend-link')
+
+  resendLink.addEventListener('click',(e)=>{
+    e.preventDefault()
+console.log("rensend cliked")
+    
+fetch('/resndotp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data) {
+           
+            if (true) {
+
+                swal({
+                    icon: 'success',
+                    title: 'OTP has been sent!',
+                    text: 'Please check your text inbox',
+                    
+                });
+                
+                
+            }else
+            {
+              swal({
+                    icon: 'warning',
+                    title: 'Some error!',
+                    text: 'Please check internet',
+                    
+                });
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+
+
+
+
+
+  })
+
+
+
+
+
+  
+});
+
+
+
+
+</script>

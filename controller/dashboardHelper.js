@@ -104,40 +104,51 @@ const salesreport = async (req, res) => {
 
     const {range}=req.params
     let data;
+    let daily
+    let weekly
+    let yearly
 
 
     if (range=="r1")
     {
       const dailyReport = await order.aggregate([
         {
-          $lookup: {
-            from: "user_details",
-            foreignField: "_id",
-            localField: "userId",
-            as: "userDetails",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            orderAmount: 1,
-            orderDate: {
-              $dateToString: {
-                format: "%d-%m-%Y",
-                date: "$orderDate",
-              },
+            $lookup: {
+                from: "user_details",
+                foreignField: "_id",
+                localField: "userId",
+                as: "userDetails",
             },
-            userName: { $arrayElemAt: ["$userDetails.name", 0] },
-            orderNo: 1,
-          },
         },
         {
-          $sort: {
-            orderDate: 1,
-          },
+            $project: {
+                _id: 1,
+                orderAmount: 1,
+                orderDate: {
+                    $dateToString: {
+                        format: "%d-%m-%Y",
+                        date: "$orderDate",
+                    },
+                },
+                userName: { $arrayElemAt: ["$userDetails.name", 0] },
+                orderNo: 1,
+            },
         },
-      ]);
+        {
+            $group: {
+                _id: "$orderDate",
+                totalOrders: { $sum: 1 },
+                totalAmount: { $sum: "$orderAmount" },
+            },
+        },
+        {
+            $sort: {
+                _id: 1,
+            },
+        },
+    ]);
 
+      daily=true;
       data= dailyReport;
 
     }else if (range=="r7")
@@ -205,6 +216,7 @@ const salesreport = async (req, res) => {
       ])
   
       data= weeklyReport;
+      weekly=true
   
     }else if (range=="r365")
     {
@@ -269,6 +281,7 @@ const salesreport = async (req, res) => {
       ]);
 
       data= monthlyReport;
+      yearly=true
 
     }
     
@@ -276,14 +289,17 @@ const salesreport = async (req, res) => {
 
 
       
-    
-
+  
+console.log(data);
     res.render('admin/salesReport',{
 
       adminlogin: true,
       layout: Adminlayout,
       reportData:data,
       pageTitle: "Reports",
+      daily:daily,
+      weekly:weekly,
+      yearly:yearly,
     })
 
     
@@ -292,10 +308,70 @@ const salesreport = async (req, res) => {
   }
 };
 
+const salesReportFilter = async (req, res) => {
+
+  const { fromDate, toDate } = req.body;
+
+  try {
+
+    console.log(fromDate, toDate);
+const userStartDateString = fromDate; // Example start date string provided by the user
+const userEndDateString = toDate; // Example end date string provided by the user
+
+let [startMonth, startDay, startYear] = userStartDateString.split('/');
+let [endMonth, endDay, endYear] = userEndDateString.split('/');
+
+// Creating Date objects for the start and end dates provided by the user
+const userStartDate = new Date(`${startYear}-${startMonth}-${startDay}`);
+const userEndDate = new Date(`${endYear}-${endMonth}-${endDay}`);
+
+console.log("User Start Date:", userStartDate);
+console.log("User End Date:", userEndDate);
+// Adding another $match stage to filter documents based on the orderDate within the specified range
+const pipeline = [
+  {
+    $match: {
+      orderDate: {
+        $gte: userStartDate,
+        $lte: userEndDate,
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 1,
+      orderAmount: 1,
+      orderDate: {
+        $dateToString: {
+          format: "%d-%m-%Y",
+          date: "$orderDate",
+        },
+      },
+      orderStatus: 1,
+    }
+  }
+ 
+];
+
+const data = await order.aggregate(pipeline)
+
+// const data = await order.aggregate(pipeline);
+res.json(data)
+// console.log(data);
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while generating the report');
+  }
+}
+
+
+
 module.exports = {
   loadDahboard,
   chartData,
   salesreport,
+  salesReportFilter
 };
 
 

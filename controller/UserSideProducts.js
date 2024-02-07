@@ -14,7 +14,6 @@ const { default: mongoose } = require("mongoose");
 //requiring cart model
 const cart = require("../model/cart.js");
 
-
 const loadHomeUser = async (req, res) => {
   try {
     //connecting Product collections with lookup
@@ -243,7 +242,12 @@ const loadProduct = async (req, res) => {
       data[0].image2 = `/uploads/${images[1]}`;
       data[0].image3 = `/uploads/${images[2]}`;
 
-      res.render("user/productsView", { user:true,data: data, colors: colors , userId:req.session.user_id });
+      res.render("user/productsView", {
+        user: true,
+        data: data,
+        colors: colors,
+        userId: req.session.user_id,
+      });
     } catch (error) {
       res.render("errorpage");
       console.log(error);
@@ -252,16 +256,8 @@ const loadProduct = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
-
-  
   if (req.session.user_id) {
     try {
-
-
-
-
-
-
       const data = req.body;
 
       const cartData = new cart({
@@ -270,24 +266,23 @@ const addToCart = async (req, res) => {
         quantity: data.quantity,
       });
 
-      const checkCart = await cart.findOne({product_varient_id:data.productId,userId:req.session.user_id})
+      const checkCart = await cart.findOne({
+        product_varient_id: data.productId,
+        userId: req.session.user_id,
+      });
 
       console.log(checkCart);
 
-      if (checkCart)
-      {
+      if (checkCart) {
         res.setHeader("Content-Type", "application/json");
-      res.status(200).json({
-      success: false,
-      message: "Item Already In your Cart.",
-    });
-      }else
-      {
-
+        res.status(200).json({
+          success: false,
+          message: "Item Already In your Cart.",
+        });
+      } else {
         //calculating and updating the cart items value in database
-        
-        quantity = cartData.quantity;
 
+        quantity = cartData.quantity;
 
         const productVarient = await productVariants.findOne({
           _id: data.productId,
@@ -295,33 +290,24 @@ const addToCart = async (req, res) => {
         const userData = await user.findOne({ _id: req.session.user_id });
         let cartValue = userData.cartValue;
         const price = productVarient.price;
-        cartData.price=price
-        cartData.value=quantity*price
+        cartData.price = price;
+        cartData.value = quantity * price;
         await cartData.save();
         cartValue += quantity * price;
         await user.updateOne(
           { _id: req.session.user_id },
           { $set: { cartValue: cartValue } }
         );
-  
+
         res.setHeader("Content-Type", "application/json");
         res.status(200).json({
           success: true,
           message: "Product added to cart successfully.",
         });
-      
       }
-    
-    
     } catch (error) {
-
-
-        console.log(error);
-      }
-
-     
-      
-
+      console.log(error);
+    }
   } else {
     res.setHeader("Content-Type", "application/json");
     res.status(200).json({
@@ -331,10 +317,90 @@ const addToCart = async (req, res) => {
   }
 };
 
+const loadAllproduct = async (req, res) => {
+  try {
+    //connecting Product collections with lookup
+    const product_data = await productVariants.aggregate([
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "product",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $project: {
+          _id: 1,
+          product: 1,
+          product_id: "$product.product_id",
+          product_name: "$product.product_name",
+          category: "$product.category_id",
+          about_product: "$product.about_product",
+          is_listed: 1,
+          price: 1,
+          stock: 1,
+          images: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "categorydetails",
+          foreignField: "_id",
+          localField: "category",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $project: {
+          _id: 1,
+          product_id: 1,
+          product: 1,
+          product_name: 1,
+          about_product: 1,
+          price: 1,
+          stock: 1,
+          category: "$category.category",
+          images: 1,
+        },
+      },
+    ]);
 
+    // getting the first image path form the array to display in product page
+
+    product_data.forEach((element) => {
+      if (element.images) {
+        let images = element.images;
+        element.images = images[0];
+      }
+    });
+
+    console.log(product_data);
+
+    if (req.session.user_id) {
+      res.render("user/allproducts", {
+        user: true,
+        userId: req.session.user_id,
+        data: product_data,
+      });
+    } else {
+      res.render("user/allproducts", {
+
+        data: product_data,
+      });
+    }
+  } catch (error) {}
+};
 
 module.exports = {
   loadHomeUser,
   loadProduct,
   addToCart,
+  loadAllproduct,
 };

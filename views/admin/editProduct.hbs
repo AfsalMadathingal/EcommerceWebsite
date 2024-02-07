@@ -1,7 +1,9 @@
 <link rel="stylesheet" href="/css/table-user.css">
 <link rel="stylesheet" href="/css/addproducts.css">
 
-<script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script>
+{{!--
+<script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script> --}}
+<script defer src="https://cdn.crop.guide/loader/l.js?c=TJCFHV"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
   crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
@@ -66,60 +68,60 @@
               <div class="form-element    ">
                 <input type="file" id="file-1" name="images" accept="image/*">
                 <label for="file-1" id="file-1-preview">
-                {{#if data.0.image1}}
+                  {{#if data.0.image1}}
                   <img src="/uploads/{{data.0.image1}}" alt="">
                   {{else}}
                   <img src="https://bit.ly/3ubuq5o" alt="">
                   {{/if}}
                   <div>
-                   <span >Change</span>
+                    <span>Change</span>
                   </div>
                 </label>
                 <div class="p-4 bg-transparent ">
                   <button data-inputid="file-1" data-imageName="{{data.0.image1}}"
-                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                    data-variantId="{{data.0.productVariant}}" data-Vid="{{data.0._id}}" class="btn btn-success mt-3 upload-button"><i
                       class="fa-solid fa-upload"></i>Upload</button>
                 </div>
               </div>
               <div class="form-element">
-                <input type="file" id="file-2" name="images" accept="image/*" >
+                <input type="file" id="file-2" name="images" accept="image/*">
                 <label for="file-2" id="file-2-preview">
-                 {{#if data.0.image2}}
+                  {{#if data.0.image2}}
                   <img src="/uploads/{{data.0.image2}}" alt="">
-                  
+
                   {{else}}
                   <img src="https://bit.ly/3ubuq5o" alt="">
-                 
+
                   {{/if}}
                   <div>
-                    <span >Change</span>
+                    <span>Change</span>
                   </div>
                 </label>
                 <div class="p-4 bg-transparent ">
                   <button data-inputid="file-2" data-imageName="{{data.0.image2}}"
-                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                    data-variantId="{{data.0.productVariant}}" data-Vid="{{data.0._id}}" class="btn btn-success mt-3 upload-button"><i
                       class="fa-solid fa-upload"></i>Upload</button>
                 </div>
               </div>
               <div class="form-element">
-                
-                  <input  type="file" id="file-3" name="images" accept="image/*" >
-                  
-  
+
+                <input type="file" id="file-3" name="images" accept="image/*">
+
+
                 <label for="file-3" id="file-3-preview">
                   {{#if data.0.image3}}
                   <img src="/uploads/{{data.0.image3}}" alt="">
                   {{else}}
                   <img src="https://bit.ly/3ubuq5o" alt="">
                   {{/if}}
-                  <div >
-                   <span >Change</span>
+                  <div>
+                    <span>Change</span>
                   </div>
                 </label>
                 <div class="p-4 bg-transparent ">
 
                   <button data-imageName="{{data.0.image3}}" data-inputid="file-3"
-                    data-variantId="{{data.0.productVariant}}" class="btn btn-success mt-3 upload-button"><i
+                    data-variantId="{{data.0.productVariant}}" data-Vid="{{data.0._id}}" class="btn btn-success mt-3 upload-button"><i
                       class="fa-solid fa-upload"></i>Upload</button>
                 </div>
 
@@ -154,8 +156,8 @@
           <a class="btn btn-danger" href="/admin/products-management">Cancel</a>
         </div>
       </div>
-  <input type="text" value="{{data.0.productVariant}}" id="imagename" name="ProductvariantId"  hidden>
-  <input type="text" value="{{data.0._id}}" name="variantId"  hidden>
+      <input type="text" value="{{data.0.productVariant}}" id="imagename" name="ProductvariantId" hidden>
+      <input type="text" value="{{data.0._id}}" name="variantId" hidden>
     </form>
   </div>
 
@@ -180,13 +182,13 @@
 
         event.preventDefault()
 
-        
-        const imageName= document.getElementById('imagename')
+
+        const imageName = document.getElementById('imagename')
         const id = upload.getAttribute('data-imageName')
         const inputId = upload.getAttribute('data-inputid')
-        const varintid = upload.getAttribute('data-variantId')
-        imageName.value=id
-  
+        const varintid = upload.getAttribute('data-Vid')
+        imageName.value = id
+
 
 
         function uploadFile() {
@@ -217,14 +219,33 @@
             .then(response => response.json())
             .then(data => {
 
-              swal({
-                icon: 'success',
-                title: 'Upload Successful',
-                text: 'The image has been uploaded successfully!',
-              }).then(()=>{
-                location.reload()
-              })
-              
+              if (data) {
+                fetch('/admin/deleteoldimage', {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ imageName: id, variantId: varintid }),
+                }).then(response => response.json()).then(data => {
+
+                  if (data) {
+                    swal({
+                      icon: 'success',
+                      title: 'Upload Successful',
+                      text: 'The image has been uploaded successfully!',
+                    }).then(() => {
+                      location.reload()
+                    })
+
+                  }
+
+                })
+
+
+              }
+
+
+
             })
             .catch(error => {
               console.error('Error uploading file:', error);
@@ -415,7 +436,7 @@
   .form .grid .form-element input {
 
     display: none;
-    
+
   }
 
   .form .grid .form-element img {

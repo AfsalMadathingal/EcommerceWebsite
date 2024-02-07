@@ -302,6 +302,7 @@ const editImage = async (req, res) => {
 
   try {
     console.log("editimage");
+
     if (req.files) {
       const { filename } = req.files[0];
       req.session.filename = filename;
@@ -335,13 +336,38 @@ const editImage = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+
+const deleteImage = async (req, res) => {
+
   try {
-    const productId = req.body.productId;
+    console.log("inside delteimnage");
+    const { variantId, imageName } = req.body;
+    console.log(req.body);
+    const response = await productVariants.updateOne(
+      { _id: variantId },
+      {
+        $pull: { images: imageName },
+      }
+    );
+    console.log(response);
+    res.json(true);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const deleteProduct = async (req, res) => {
+
+  try {
+    
+    console.log("delete");
+    const { productVarId, productId } = req.body;
     console.log(productId);
     await productsDB.deleteOne({ product_id: productId });
+    await productVariants.deleteOne({ _id: productVarId });
 
-    res.end();
+    res.json(true);
+    
   } catch (error) {
     res.send("some error please go to home http://localhost:3000/admin ");
     console.log(error);
@@ -436,4 +462,5 @@ module.exports = {
   changeOrderStatus,
   updateProduct,
   editImage,
+  deleteImage,
 };

@@ -2,20 +2,14 @@
 {{>profileLayout}}
 
 {{!-- ordeer details starts here --}}
-<div class="info-section text-dark w-auto shadow scrollable-div ">
-
-
-
-
+<div class="info-section text-dark w-auto shadow scrollable-div">
   {{!-- new starts --}}
-
   <div class="container">
     <div style="padding-top: 30px;" class="customer_details orderList">
       <div class="orderTop ">
         <h2 class="hidden-xs pb-3">My Orders</h2>
         <input class="form-control mb-3" type="text" placeholder="Search Orders" aria-label="default input example">
         <button class="btn btn-dark ">Search</button>
-
         <h4 id="alert" class="text-center p-3 text-success"></h4>
       </div>
       <div class="order_tab">
@@ -35,11 +29,10 @@
           </select>
         </div>
       </div>
-
       {{#each orderData}}
-      <div id="order_tab" class="orderCardWrap tab-content1 current mt-2 order_tab">
-        <div class="orderCard">
-          <div class="orderHead">
+      <div id="order_tab" class="orderCardWrap tab-content1 current mt-2 order_tab ">
+        <div class="orderCard rounded-4">
+          <div class="orderHead rounded-4    ">
             <ul class="orderLeft">
               <li>
                 <p>ORDER PLACED <span>{{this.orderDate}}</span></p>
@@ -53,24 +46,19 @@
                     <strong> {{this.addressName}}</strong> {{this.addressLine1}} {{this.addressLine2}}
                   </span>
                 </p>
-
               </li>
             </ul>
-            <div class="invoiceDetails">
-              <p>ORDER # {{this.orderNo}} 
+            <div class="invoiceDetails text-black ">
+              <p>ORDER # {{this.orderNo}}
               </p>
               <a href="/profile/myorders/view/{{this._id}}">Order Details</a>
-                
               <span class="showInvoice">
-
-               
-             
-              <div class="invioceModel">
-                <ul>
-                  <li><a href="#">Invoice 1</a></li>
-                </ul>
-                <span class="modelClose"><i class="fa fa-times" aria-hidden="true"></i></span>
-              </div>
+                <div class="invioceModel">
+                  <ul>
+                    <li><a href="#">Invoice 1</a></li>
+                  </ul>
+                  <span class="modelClose"><i class="fa fa-times" aria-hidden="true"></i></span>
+                </div>
             </div>
           </div>
           <div class="itemDetails">
@@ -79,14 +67,15 @@
             <p>Signed by: Afsal.</p>
             {{#each this.OrderedItems}}
             <div class="itemInfo">
-              <div class="itemImg">
+              <div class="itemImg p-3 ">
                 <img src="/uploads/{{this.image}}" alt="">
               </div>
               <div class="itemDesc">
                 <h4>{{this.productname}}</h4>
                 <p>Sold by: <span>Our Shop</span></p>
+                <P>Quantity: <span>{{this.variantId.quantity}}</span></P>
                 {{!-- <span class="itemPrice">Rs {{this.orderAmount}}</span> --}}
-                <a href="/products/{{this.variantId}}">
+                <a href="/products/{{this.variantId.product_varient_id}}">
                   <button class="buy_again">Buy it again</button>
                 </a>
 
@@ -101,7 +90,8 @@
               <button disabled="true" id="cancel-order-{{this._id}}" class=" btn-danger btn "
                 data-id="{{this._id}}">Cancel Order</button>
               {{else}}
-              <button id="cancel-order-{{this._id}}" class=" btn-danger btn " data-id="{{this._id}}">Cancel Order</button>
+              <button id="cancel-order-{{this._id}}" class=" btn-danger btn " data-id="{{this._id}}">Cancel
+                Order</button>
               {{/if}}
             </div>
           </div>
@@ -577,13 +567,13 @@
     parentContainers.forEach(function (parentContainer) {
       parentContainer.addEventListener('click', function (event) {
 
-   
 
-         console.log(event)
+
+        console.log(event)
 
         if (event.target.classList.contains('btn-danger')) {
-          
-         
+
+
 
           let id = event.target.getAttribute('data-id');
 

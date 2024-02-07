@@ -1,113 +1,112 @@
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
 
-  <div class="logo-image">
+<div class="logo-image">
 
-                                <a  href="/">
-                                <img class="logo-signup" src="images/icons/logoourshop.png" alt="IMG-LOGO">
-                                </a>
+    <a href="/">
+        <img class="logo-signup" src="images/icons/logoourshop.png" alt="IMG-LOGO">
+    </a>
 
-        </div>
+</div>
 <div class="user-login-main">
 
-            <h3 class="user_login_title">Login</h3>
-            <h5 class="subtitle-loginpage">Enter Login details to get access</h5>
-<div class="login-form-for-user">
-    {{#if wrongCredentials}}
-    <div class="alert alert-danger" role="alert">
-        Enter Valid Mobile Number and Password
-    </div>
-    {{/if}}
-    {{#if blocked}}
-    <div class="alert alert-danger" role="alert">
-        You are blocked
-    </div>
-    {{/if}}
+    <h3 class="user_login_title">Login</h3>
+    <h5 class="subtitle-loginpage">Enter Login details to get access</h5>
+    <div class="login-form-for-user">
+        {{#if wrongCredentials}}
+        <div class="alert alert-danger" role="alert">
+            Enter Valid Mobile Number and Password
+        </div>
+        {{/if}}
+        {{#if blocked}}
+        <div class="alert alert-danger" role="alert">
+            You are blocked
+        </div>
+        {{/if}}
 
-            <form autocomplete="off" method="post"  action="/user_login">
+        <form autocomplete="off" method="post" action="/user_login">
 
-                            <div class="input-for-login">
-                                <label for="">Enter Your Mobile</label>
-                                <input autocomplete="off" name="phone" type="text" id="input-email-user" class="input-email-user" placeholder="Enter your Email or Mobile " >
-                            </div>
-                            <div class="input-for-login">
-                                <label for="">Enter Your Password</label>
-                                <input autocomplete="off" name="password" type="password" class="input-email-user" placeholder="Enter Your Password" >
-                            </div>
+            <div class="input-for-login">
+                <label for="">Enter Your Mobile</label>
+                <input autocomplete="off" name="phone" type="text" id="input-email-user" class="input-email-user"
+                    placeholder="Enter your Email or Mobile ">
+            </div>
+            <div class="input-for-login">
+                <label for="">Enter Your Password</label>
+                <input autocomplete="off" name="password" type="password" class="input-email-user"
+                    placeholder="Enter Your Password">
+            </div>
 
-                            <div class="forgot_password">
-                                <a id="forgot-password-link" href="
-                                "><h6>Forgot Password ?</h6>
-                                </a>
-                            </div>
-                            <div class="login-button">
-                                <button type="
+            <div class="forgot_password">
+                <a id="forgot-password-link" href="/forgotPassword">
+                    <h6>Forgot Password ?</h6>
+                </a>
+            </div>
+            <div class="login-button">
+                <button type="
                                 submit" class="user-login-btn">Login</button>
-                            </div>       
-            </form>
+            </div>
+        </form>
 
-                <h6>Don’t have an account? <a class="click-to-signup" href="/user_signup">Click Here</a> to Signup</h6>
+        <h6>Don’t have an account? <a class="click-to-signup" href="/user_signup">Click Here</a> to Signup</h6>
+
+    </div>
 
 </div>
-      
-</div>
-                <h6 id="bottom-text">©Copyright Our Shop E-Commerce Project  by Afsal </h6>   
+<h6 id="bottom-text">©Copyright Our Shop E-Commerce Project by Afsal </h6>
 
 
 
 <script>
-document.addEventListener('DOMContentLoaded',function(){
+    document.addEventListener('DOMContentLoaded', function () {
 
 
 
 
-const inputField = document.getElementById('input-email-user');
+        const inputField = document.getElementById('input-email-user');
 
-    // Add an input event listener
-    inputField.addEventListener('input', function() {
-        // Get the current value of the input field
-        const inputString = inputField.value;
-        const alert = document.getElementById('alertLive')
+        // Add an input event listener
+        inputField.addEventListener('input', function () {
+            // Get the current value of the input field
+            const inputString = inputField.value;
+            const alert = document.getElementById('alertLive')
 
-       
 
-        // Use fetch to send the input value to a server for checking
-        fetch('/inputcheck', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({inputString}),
-        })
-        .then(response => response.json())
-        .then(data => {
-            
-            if(data)
-            {
-                 inputField.style.border = '5px solid green';
-                 inputField.style.boxShadow = '0 0 5px 2px green';
 
-            }else
-            {
-                 inputField.style.border = '5px solid red';
-                 inputField.style.boxShadow = '0 0 5px 2px red';
-            }
-           
-            // Handle the response from the server
-            console.log('Server response:', data);
-        })
-        .catch(error => {
+            // Use fetch to send the input value to a server for checking
+            fetch('/inputcheck', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inputString }),
+            })
+                .then(response => response.json())
+                .then(data => {
 
-             console.log('Server response:', error);
-            
+                    if (data) {
+                        inputField.style.border = '1px solid green';
+                        inputField.style.boxShadow = '0 0 5px 2px green';
+
+                    } else {
+                        inputField.style.border = '1px solid red';
+                        inputField.style.boxShadow = '0 0 5px 2px red';
+                    }
+
+                    // Handle the response from the server
+                    console.log('Server response:', data);
+                })
+                .catch(error => {
+
+                    console.log('Server response:', error);
+
+                });
         });
-    });
 
 
 
 
-})             
+    })
 
 
 
-                </script>
-      
+</script>

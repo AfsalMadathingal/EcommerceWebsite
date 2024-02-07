@@ -1,0 +1,96 @@
+[
+    {
+        "_id": "65c2234fa5c347b48162245c",
+        "userId": "65b26c959d939a14fedd17b8",
+        "orderAmount": 3499,
+        "orderDate": "2024-02-06T12:17:19.672Z",
+        "orderStatus": "Pending",
+        "orderNo": 843125,
+        "addressName": "afsal m",
+        "addressLine1": "ponnani nagaram po malappuram ",
+        "addressLine2": "kerala",
+        "city": "malappuram",
+        "state": "Kerala",
+        "mobile": 81570354328,
+        "pincode": 679583,
+        "Items": {
+            "_id": "65be3d080651437987c57be8",
+            "product": "65be3d080651437987c57be6",
+            "color_id": "65ad0c1aab83dc9ef87e9c1a",
+            "size_id": "65aa10fd280978b72cb74192",
+            "images": [
+                "af31a11e-77ef-4030-890a-6aeac3ed08ba.jpg",
+                "4b3d80c3-ff9b-445f-808c-b94c5e5b91de.jpg",
+                "8cd01a6b-a9df-4183-9e93-390b063f0c73.jpg"
+            ],
+            "stock": 100,
+            "price": 750,
+            "cost": 400,
+            "barcode": 85464,
+            "__v": 0
+        },
+        "pricePerItem": 750,
+        "productId": "65be3d080651437987c57be6",
+        "quantity": 2,
+        "productDetails": [
+            {
+                "_id": "65be3d080651437987c57be6",
+                "product_id": 6,
+                "product_name": "Symbol Premium Men's ",
+                "category_id": "65acc794a87e01cc7946bf63",
+                "about_product": "Oxford cloth button down shirt – that timeless product\r\nAnti-odor finish for all day freshness\r\nTemperature control finish (Cool IT TM ) to keep you cool\r\nPeached finish for a super soft touch\r\nPair up with a chino or a jeans for that smart casual look",
+                "is_listed": true,
+                "__v": 0
+            }
+        ],
+        "productName": "Symbol Premium Men's ",
+        "productAbout": "Oxford cloth button down shirt – that timeless product\r\nAnti-odor finish for all day freshness\r\nTemperature control finish (Cool IT TM ) to keep you cool\r\nPeached finish for a super soft touch\r\nPair up with a chino or a jeans for that smart casual look"
+    },
+    {
+        "_id": "65c2234fa5c347b48162245c",
+        "userId": "65b26c959d939a14fedd17b8",
+        "orderAmount": 3499,
+        "orderDate": "2024-02-06T12:17:19.672Z",
+        "orderStatus": "Pending",
+        "orderNo": 843125,
+        "addressName": "afsal m",
+        "addressLine1": "ponnani nagaram po malappuram ",
+        "addressLine2": "kerala",
+        "city": "malappuram",
+        "state": "Kerala",
+        "mobile": 81570354328,
+        "pincode": 679583,
+        "Items": {
+            "_id": "65be31fd0651437987c57bb4",
+            "product": "65be31fd0651437987c57bb2",
+            "color_id": "65acb86664b6bb730acfcc41",
+            "size_id": "65aa10fd280978b72cb74192",
+            "images": [
+                "125e664b-a6d5-40f9-9817-b32ad6a67bf0.jpeg",
+                "36a45fd1-6f2a-481a-b2ab-2a2905938740.jpeg",
+                "e19143ce-3418-4361-a2a0-07cd339f2620.jpg"
+            ],
+            "stock": 50,
+            "price": 1999,
+            "cost": 500,
+            "barcode": 321346,
+            "__v": 0
+        },
+        "pricePerItem": 1999,
+        "productId": "65be31fd0651437987c57bb2",
+        "quantity": 1,
+        "productDetails": [
+            {
+                "_id": "65be31fd0651437987c57bb2",
+                "product_id": 3,
+                "product_name": "TURMS Men's Juniper Green Cotton Blend Collared Neck Shirt",
+                "category_id": "65acc794a87e01cc7946bf63",
+                "about_product": "TURMS Men's Juniper Green Cotton Blend Collared Neck Shirt, Anti Stain & Anti Odor, Comfortable, Water Repellent, Stylish, Casual, Business Work, Party",
+                "is_listed": true,
+                "__v": 0
+            }
+        ],
+        "productName": "TURMS Men's Juniper Green Cotton Blend Collared Neck Shirt",
+        "productAbout": "TURMS Men's Juniper Green Cotton Blend Collared Neck Shirt, Anti Stain & Anti Odor, Comfortable, Water Repellent, Stylish, Casual, Business Work, Party"
+    }
+]

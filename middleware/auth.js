@@ -68,7 +68,7 @@ const checkLoginUser = function (req,res,next){
 }
 
 
-const blockChecker = async (req, res) => {
+const blockChecker = async (req, res,next) => {
     try {
         if (req.session.user_id) 
         {
@@ -76,13 +76,19 @@ const blockChecker = async (req, res) => {
 
             if (userData.is_Blocked) {
                 req.session.user_id = null;
-                res.json({ isBlocked: true });
+                req.session.blocked=true
+                res.redirect('/user_login_form');
             } else {
-                res.json({ isBlocked: false });
+                next();
             }
+        }else
+        {
+            res.redirect('/user_login_form');
         }
     } catch (error) {
-        res.json({ isBlocked: false });
+       
+        console.error("Error in blockChecker function:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
@@ -127,8 +133,36 @@ const liveChecker = async (req, res) => {
     }
 };
 
+const checkForgotPassword = (req,res,next)=>{
 
+    try {
+        
+        if (req.session.forgotRequested)
+        {
+            next()
+        }else
+        {
+            res.redirect('/')
+            
+        }
 
+    } catch (error) {
+        
+    }
+}
+
+const redirectToLogin = (req,res,next)=>{
+
+    if(req.session.user_id)
+    {
+        next()
+       
+    }
+    else
+    {
+        res.redirect('/user_login_form')
+    }
+}
 
 module.exports = {
     isLogin,
@@ -137,5 +171,7 @@ module.exports = {
     checkLoginUser,
     blockChecker,
     liveChecker,
+    checkForgotPassword,
+    redirectToLogin
    
 }

@@ -3,7 +3,8 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
   crossorigin="anonymous"></script>
   
-  <script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script>
+  {{!-- <script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script> --}}
+  <script defer src="https://cdn.crop.guide/loader/l.js?c=TJCFHV"></script>
 
 
 <div class="details-section p-3 ">
@@ -61,7 +62,7 @@
           <div class="form">
             <div class="grid">
               <div class="form-element">
-                <input type="file" id="file-1" name="images" accept="image/*" required>
+                <input type="file" id="file-1" name="images" accept="image/*" >
                 <label for="file-1" id="file-1-preview">
                   <img src="https://bit.ly/3ubuq5o" alt="">
                   <div>
@@ -70,7 +71,7 @@
                 </label>
               </div>
               <div class="form-element">
-                <input type="file" id="file-2" name="images"  accept="image/*" required>
+                <input type="file" id="file-2" name="images"  accept="image/*" >
                 <label for="file-2" id="file-2-preview">
                   <img src="https://bit.ly/3ubuq5o" alt="">
                   <div>
@@ -79,7 +80,7 @@
                 </label>
               </div>
               <div class="form-element">
-                <input type="file" id="file-3" name="images" accept="image/*" required>
+                <input type="file" id="file-3" name="images" accept="image/*" >
                 <label for="file-3" id="file-3-preview">
                   <img src="https://bit.ly/3ubuq5o" alt="">
                   <div>
@@ -89,7 +90,7 @@
               </div>
             </div>
           </div>
-
+            <h6 id="imgAlert"></h6>
             <label class="form-label" for="aboutProduct">About Product</label>
           <textarea class="form-control" placeholder="Enter a detailed description..." name="aboutProduct"
             id="longdescription" rows="4"></textarea>
@@ -136,6 +137,9 @@
 
   function Validation() {
 
+    var fileInput = document.getElementById('file-1');
+    var previewImage = document.getElementById('file-1-preview').querySelector('img');
+
     let productName = document.getElementById("productName").value;
 
     let longdescription = document.getElementById("longdescription").value;
@@ -157,6 +161,7 @@
     let BarcodeAlert = document.getElementById("BarcodeAlert");
     let ProductIdAlert = document.getElementById("ProductIdAlert");
     let longAlert = document.getElementById("longAlert");
+    let imgAlert = document.getElementById('imgAlert')
 
     if (!productName.match(productNameRegex)) {
       productNameAlert.innerHTML = "Name Not Valid";
@@ -179,6 +184,10 @@
     }
     else if (!longdescription.match(descriptionRegex)) {
       longAlert.innerHTML = "Please Check about Again";
+      return false;
+    }else if (fileInput.files.length < 0)
+    {
+      imgAlert.innerHTML="Please chose image"
       return false;
     }
 

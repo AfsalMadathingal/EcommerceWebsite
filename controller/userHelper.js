@@ -1,11 +1,12 @@
 // requiring user model file
 const user = require("../model/userModel");
-
 // requiring otp model file
 const userOtp = require("../model/OTPModel");
-
 // for otp
 var springedge = require("springedge");
+// for encrypt for password
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // OTP API
 const sendOTP = async function (req, res, next) {
@@ -21,16 +22,163 @@ const sendOTP = async function (req, res, next) {
           otpData.deleteOne({ user_id: req.session.currentUserId });
         }, 30000);
 
-        next();
+        res.redirect('/otpsubmit')
       }
       console.log(response);
     }
   );
 };
 
-// for encrypt for password
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const loadForgotRest = async(req,res)=>{
+
+  try {
+
+    req.session.idForReset=req.params;
+    
+    res.render('user/ForgotPasswordForm')
+
+
+    
+  } catch (error) {
+    
+  }
+
+}
+
+
+const resendOTP = async function (req, res, next) {
+
+
+  
+
+  await springedge.messages.send(
+    req.session.params,
+    5000,
+    function (err, response) {
+      if (err) {
+        res.send("something error");
+        res.json(false)
+        return console.log(err);
+
+      } else {
+        setTimeout(() => {
+          otpData.deleteOne({ user_id: req.session.currentUserId });
+        }, 30000);
+
+        res.json(true)
+      }
+      console.log(response);
+    }
+  );
+};
+
+const updatePassword = async function (req, res, next) {
+
+  try {
+    
+
+    const {password} = req.body
+
+  req.session.password = await bcrypt.hash(password, saltRounds);
+
+  await user.updateOne(
+    { _id: req.session.currentUserId },{
+      $set: {
+        password_encrypted: req.session.password,
+      },
+    }
+  )
+
+  req.session.forgotRequested=false
+
+  res.json({success:true})
+
+  } catch (error) {
+
+    res.json(false)
+  }
+  
+
+}
+const forgotPasswordRest = async function (req,res,next){
+
+try {
+  
+  
+  const {input}=req.body
+  console.log("from forgot password otp:",input);
+  const allNumbersRegex = /^[0-9]+$/;
+  const mixedRegex = /[a-zA-Z0-9]/;
+  let userData;
+
+    if (allNumbersRegex.test(input)) {
+      userData = await user.findOne({ phone: input });
+
+      userData = await user.findOne({phone: req.body.input});
+
+    } else if (mixedRegex.test(input)) {
+
+      userData = await user.findOne({ email: input });
+    }
+
+  
+
+
+  req.session.otp = Math.floor(100000 + Math.random() * 900000);
+  otpData = new userOtp({
+  user_id: userData._id.toString(),
+  otp: req.session.otp,
+});
+
+console.log(req.session.otpData);
+
+await otpData.save();
+
+req.session.currentUserId = userData._id.toString();
+req.session.mobileNumber = `91${userData.phone}`;
+req.session.otpSms = `Mobile Number verification code is ${req.session.otp} Do not share it`;
+
+req.session.params = {
+  sender: "SEDEMO",
+  apikey: process.env.SPRING_EDGE_API_KEY,
+  to: [req.session.mobileNumber],
+  message: req.session.otpSms,
+  format: "json",
+};
+
+
+await springedge.messages.send(
+  req.session.params,
+  5000,
+  function (err, response) {
+    if (err) {
+      res.send("something error");
+      return console.log(err);
+    } else {
+      setTimeout(() => {
+        otpData.deleteOne({ user_id: req.session.currentUserId });
+      }, 30000);
+
+     res.json(true)
+     
+    }
+    console.log(response);
+  }
+);
+
+
+} catch (error) {
+
+  console.log("error form forgot password",error);
+}
+
+}
+
+const loadForgotPassword = async function (req, res) {
+  
+  res.render('user/forgotPassword')
+
+}
 
 //render login page
 const loadLogin = function (req, res) {
@@ -98,7 +246,7 @@ const registerUser = async function (req, res, next) {
     res.redirect("/user_signup");
   } else {
     req.session.otp = Math.floor(100000 + Math.random() * 900000);
-    otpData = new userOtp({
+      otpData = new userOtp({
       user_id: userData._id.toString(),
       otp: req.session.otp,
     });
@@ -118,7 +266,8 @@ const registerUser = async function (req, res, next) {
       format: "json",
     };
 
-    next();
+    next()
+  
   }
 };
 
@@ -126,37 +275,75 @@ const registerUser = async function (req, res, next) {
 const LoadOtpPage = function (req, res, next) {
   res.render("user/otp", { mobileNumber: req.session.mobileNumber });
 
-  next();
 };
 
 //retry otp
 const LoadOtpRetryPage = function (req, res, next) {
+
   res.render("user/otp", { mobileNumber: req.session.mobileNumber });
+
 };
 
 //otp verification
 const otpVerify = async function (req, res) {
-  let userEnteredOtp = Object.values(req.body).join("");
-  let userOtpDetails = await userOtp.findOne({
+
+  
+  const {otp,forgot}=req.body
+  console.log(otp,forgot,"otp verify")
+
+  //for forgot password users
+  if (otp&&forgot)
+
+  {
+    req.session.forgotRequested=true;
+
+     let userOtpDetails = await userOtp.findOne({
     user_id: req.session.currentUserId,
   });
 
-  console.log(userEnteredOtp);
+  console.log(otp);
   console.log(userOtpDetails);
 
-  if (userOtpDetails.otp == userEnteredOtp) {
-    req.session.user_id = req.session.currentUserId;
-    res.redirect("/");
+  if (userOtpDetails.otp == otp) {
+    
     console.log("verified");
     await userOtp.deleteOne({ user_id: req.session.currentUserId });
-    await user.insertMany(req.session.userData);
+    
+    res.json({success:true,userId:req.session.currentUserId});
+
   } else {
-    res.render("user/otp", {
-      mobileNumber: req.session.mobileNumber,
-      alert: "OTP Wrong",
-    });
+   
     console.log("wrong");
   }
+
+
+  }
+  //for normal users
+  else
+  {
+    let userEnteredOtp = Object.values(req.body).join("");
+    let userOtpDetails = await userOtp.findOne({
+      user_id: req.session.currentUserId,
+    });
+  
+    console.log(userEnteredOtp);
+    console.log(userOtpDetails);
+  
+    if (userOtpDetails.otp == userEnteredOtp) {
+      req.session.user_id = req.session.currentUserId;
+      res.redirect("/");
+      console.log("verified");
+      await userOtp.deleteOne({ user_id: req.session.currentUserId });
+      await user.insertMany(req.session.userData);
+    } else {
+      res.render("user/otp", {
+        mobileNumber: req.session.mobileNumber,
+        alert: "OTP Wrong",
+      });
+      console.log("wrong");
+    }
+  }
+  
 };
 
 //verify user and creating session
@@ -249,4 +436,9 @@ module.exports = {
   LoadOtpPage,
   LoadOtpRetryPage,
   checkBlocked,
+  resendOTP,
+  loadForgotPassword,
+  forgotPasswordRest,
+  updatePassword,
+  loadForgotRest
 };

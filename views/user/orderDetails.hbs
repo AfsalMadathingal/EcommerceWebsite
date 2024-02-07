@@ -20,9 +20,10 @@
                         <div class="mb-3 d-flex justify-content-between">
                             <div>
                                 <span class="me-3">Date: {{orderData.orderDate}}</span>
-                                <span class="me-3">#Trasaction No:</span>
-                                <span class="me-3">Payment method</span>
-                                <span class="badge rounded-pill bg-info">{{orderData.orderStatus}}</span>
+                                <br>
+                                <span class="me-3">#Trasaction No:{{orderData.transactionId}}</span>
+                                <span class="me-3">Payment method: {{orderData.paymentMethod}}</span>
+                                <span class="badge rounded-pill bg-info">Staus: {{orderData.orderStatus}}</span>
                             </div>
                             <div class="d-flex">
                                 <a href="/profile/myorders/invoice/{{orderData._id}}">
@@ -60,7 +61,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>1</td>
+                                    <td>{{this.variantId.quantity}}</td>
                                     <td class="text-end">{{orderData.orderAmount}}</td>
                                 </tr>
                                 {{/each}}

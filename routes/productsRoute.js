@@ -7,14 +7,11 @@ const productsController= require ('../controller/UserSideProducts')
 
 
 
-
-
+productRoute.get('/allproducts',productsController.loadAllproduct)
+productRoute.post('/addtocart/:id',productsController.addToCart)
 productRoute.get('/:id',productsController.loadProduct);
 
 
-
-
-productRoute.post('/addtocart/:id',productsController.addToCart)
 
 
 

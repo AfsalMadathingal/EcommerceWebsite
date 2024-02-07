@@ -26,8 +26,8 @@ adminRoute.get("/logout", adminHelper.logout);
 //Dashboard Related Routes
 adminRoute.get("/dashboard",auth.checkSession, dashboarHelper.loadDahboard);
 adminRoute.post('/chartdata',dashboarHelper.chartData)
-adminRoute.get('/salesreport/:range',dashboarHelper.salesreport)
-
+adminRoute.get('/salesreport/:range',auth.checkSession,dashboarHelper.salesreport)
+adminRoute.post('/salesReport/filterReport', auth.checkSession, dashboarHelper.salesReportFilter);
 
 
 
@@ -51,6 +51,7 @@ adminRoute.post('/create_products',upload,productsManagement.addNewProduct,produ
 adminRoute.post('/editProducts',productsManagement.updateProduct,productsManagement.loadProducts)
 adminRoute.post('/delete_product',auth.checkSession,productsManagement.deleteProduct)
 adminRoute.post('/uploadimage',upload,productsManagement.editImage)
+adminRoute.delete('/deleteoldimage',productsManagement.deleteImage)
 
 //manage orders Related Routes
 adminRoute.get('/ordersManagement',auth.checkSession,productsManagement.loadOrders)

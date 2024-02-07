@@ -92,9 +92,8 @@ const editProfile = async (req, res) => {
 };
 
 const loadProfile = async (req, res) => {
-  console.log(req.params.id);
-  console.log(req.session.user_id);
 
+console.log("hello from load profile");
   if (req.session.user_id == req.params.id) {
     const personalInfo = await user.findOne({ _id: req.params.id });
 
@@ -106,7 +105,7 @@ const loadProfile = async (req, res) => {
       userId: req.session.user_id,
     });
   } else {
-    res.redirect("/");
+    res.redirect("'/user_login_form'");
   }
 };
 
@@ -117,11 +116,9 @@ const loadOrders = async (req, res) => {
     const userId = req.params.id;
 
     if (userId == req.session.user_id) {
+      
       const cartData = await order.find({ userId: userId });
 
-      // const orderData = await order.aggregate([
-      //   { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-      // ]);
 
       const orderData = await order.aggregate([
         {
@@ -159,7 +156,7 @@ const loadOrders = async (req, res) => {
           $lookup: {
             from: "product_varients",
             foreignField: "_id",
-            localField: "OrderedItems",
+            localField: "OrderedItems.product_varient_id",
             as: "items",
           },
         },
@@ -178,6 +175,8 @@ const loadOrders = async (req, res) => {
             orderStatus: 1,
             itemId: { $arrayElemAt: ["$items.product", 0] },
             image: { $arrayElemAt: ["$items.images", 0] },
+            quantity:{$arrayElemAt:["$items.quantity",0]},
+            price: { $arrayElemAt: ["$items.price", 0] },
             orderDate: 1,
           },
         },
@@ -251,29 +250,29 @@ const loadOrders = async (req, res) => {
             OrderedItems: 1,
           },
         },
+        {
+          $sort:{
+            orderDate:-1
+          }
+        }
       ]);
 
+      console.log(JSON.stringify(orderData[0]));
+      //date formating
       orderData.forEach(async (element1) => {
-        // Provided date string
+
         const dateString = element1.orderDate;
-
-        // element1.OrderedItems = JSON.stringify(element1.OrderedItems);
-        // Create a new Date object from the provided string
         const dateObject = new Date(dateString);
-
         // Get day, month, and year
         const day = dateObject.getDate();
         const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
         const year = dateObject.getFullYear();
-
         // Format the date components
         const formattedDate = `${day}/${month}/${year}`;
-
         element1.orderDate = formattedDate;
 
         if (element1.orderStatus == "Cancelled") {
           element1.cancel = true;
-          console.log("if working");
         }
       });
 
@@ -317,31 +316,49 @@ const loadChekOut = async (req, res) => {
   }
 };
 
-const placeOrder = async (req, res) => {
-  console.log(req.query);
 
-  const { addressId, userId } = req.query;
+const placeOrder = async (req, res) => {
+  
+  console.log(req.body);
+
+  const {  userId,selectedAddress } = req.body;
 
   try {
-    const addressData = await address.find({ _id: addressId });
+
+    const addressData = await address.find({ _id: selectedAddress });
     const userData = await user.find({ _id: userId });
     const cartData = await cart.find({ userId: userId });
     const orderNo = Math.floor(100000 + Math.random() * 900000);
     const totalAmount = userData[0].cartValue;
     let products = [];
+    const date= new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
 
     //geting productVariant Id to a array
     cartData.forEach((element) => {
-      products.push(element.product_varient_id);
+      products.push({ product_varient_id: element.product_varient_id, quantity: element.quantity });
     });
 
+    console.log("order body", req.session.order );
+
+    if ( req.session.order )
+    {
+
+      transactionId =  req.session.order.razorpay_payment_id
+      paymentMethod="Online"
+    }else
+    {
+      transactionId = "COD"
+      paymentMethod="cod"
+    }
     const orderData = new order({
       userId: userId,
       orderAmount: totalAmount,
-      deliveryAddress: addressId,
-      orderDate: new Date(),
+      deliveryAddress: selectedAddress,
+      orderDate: date,
       OrderedItems: products,
       orderNo: orderNo,
+      paymentMethod: paymentMethod,
+      transactionId:transactionId
     });
 
     const paymentData = new payment({
@@ -349,8 +366,8 @@ const placeOrder = async (req, res) => {
       orderId: orderData._id,
       amount: totalAmount,
       status: "completed",
-      paymentMethod: "cod",
-      transactionid: orderNo,
+      paymentMethod: paymentMethod,
+      transactionid: transactionId,
       paymentDate: new Date(),
     });
 
@@ -360,18 +377,46 @@ const placeOrder = async (req, res) => {
     await cart.deleteMany({ userId: userId });
     await user.updateOne({ _id: userId }, { $set: { cartValue: 0 } });
 
-    res.render("user/orderPlaced", {
+    
+    
+    
+    req.session.dataForOrder = {
       user: true,
       addressData: addressData,
       totalAmount: totalAmount,
       orderId: orderNo,
       userId: req.session.user_id,
-    });
+    };
+
+    res.json(true);
+
+
   } catch (error) {
-    res.send("something error please close the tab and open again");
+
+    res.json("something error please close the tab and open again");
+
     console.log(error);
   }
 };
+
+
+const orderSuccess = async (req, res) => {
+  
+  try {
+    
+
+
+    res.render("user/orderPlaced", req.session.dataForOrder);
+
+    
+
+
+  } catch (error) {
+
+    console.log(error);
+    
+  }
+}
 
 const placeOrderRazopay = async (req,res)=>{
 
@@ -433,6 +478,8 @@ const viewOrder = async (req,res)=>{
             OrderedItems: 1,
             orderStatus: 1,
             orderDate: 1,
+            paymentMethod:1,
+            transactionId:1
           },
         },
         {
@@ -442,7 +489,7 @@ const viewOrder = async (req,res)=>{
           $lookup: {
             from: "product_varients",
             foreignField: "_id",
-            localField: "OrderedItems",
+            localField: "OrderedItems.product_varient_id",
             as: "items",
           },
         },
@@ -456,12 +503,15 @@ const viewOrder = async (req,res)=>{
             addressPincode: 1,
             addressMobile: 1,
             orderAmount: 1,
+            paymentMethod:1,
             orderNo: 1,
             OrderedItems: 1,
             orderStatus: 1,
             itemId: { $arrayElemAt: ["$items.product", 0] },
             image: { $arrayElemAt: ["$items.images", 0] },
+            quantity:{$arrayElemAt:["$items.quantity",0]},
             orderDate: 1,
+            transactionId:1
           },
         },
         {
@@ -485,10 +535,12 @@ const viewOrder = async (req,res)=>{
             orderNo: 1,
             OrderedItems: 1,
             orderStatus: 1,
+            paymentMethod:1,
             itemId: 1,
             productname: { $arrayElemAt: ["$product.product_name", 0] },
             orderDate: 1,
             image: { $arrayElemAt: ["$image", 0] },
+            transactionId:1
           },
         },
         {
@@ -505,6 +557,8 @@ const viewOrder = async (req,res)=>{
               addressPincode: "$addressPincode",
               addressMobile: "$addressMobile",
               cancel: "$cancel",
+              paymentMethod:"$paymentMethod",
+              transactionId:"$transactionId"
             },
             OrderedItems: {
               $push: {
@@ -532,9 +586,12 @@ const viewOrder = async (req,res)=>{
             addressMobile: "$_id.addressMobile",
             cancel: "$_id.cancel",
             OrderedItems: 1,
+            paymentMethod:"$_id.paymentMethod",
+            transactionId:"$_id.transactionId"
           },
         }
       ]);
+
 
       orderData.forEach(async (element1) => {
         // Provided date string
@@ -556,7 +613,7 @@ const viewOrder = async (req,res)=>{
 
       });
 
-  
+      console.log("oderdate",orderData);
       res.render('user/orderDetails',{
 
         user:true,
@@ -583,7 +640,6 @@ const viewOrder = async (req,res)=>{
 const viewInvoice = async (req,res)=>{
 
   try {
-
     const {id}= req.params;
     
     const orderData = await order.aggregate([{
@@ -623,7 +679,7 @@ const viewInvoice = async (req,res)=>{
       $lookup:{
         from:"product_varients",
         foreignField:"_id",
-        localField:"OrderedItems",
+        localField:"OrderedItems.product_varient_id",
         as:"Items"
       }
     },
@@ -644,7 +700,7 @@ const viewInvoice = async (req,res)=>{
       mobile:1,
       pincode:1,
       orderDate:1,
-
+      OrderedItems:1,
     }
   },{
     $unwind:"$Items"
@@ -664,6 +720,7 @@ const viewInvoice = async (req,res)=>{
       Items:1,
       pricePerItem:"$Items.price",
       productId:"$Items.product",
+      quantity:"$OrderedItems.quantity",
       mobile:1,
       pincode:1,
       orderDate:1,
@@ -701,12 +758,14 @@ const viewInvoice = async (req,res)=>{
       pincode:1,
       orderDate:1,
       Items:1,
+      quantity:1,
+      test:1,
 
     }
   }
   ])
 
-
+console.log(JSON.stringify(orderData));
   orderData.forEach((element) => {
     // Provided date string
     const dateString = element.orderDate;
@@ -732,14 +791,17 @@ const viewInvoice = async (req,res)=>{
     ...order,
     productData: {
         ...order.Items,
-        ...order.productDetails[0], // Assuming there's only one productDetails per order, adjust as needed
+        ...order.productDetails[0],
+        quantity:order.quantity,
+         // Assuming there's only one productDetails per order, adjust as needed
     },
+    
     // Remove the original Items and productDetails fields
     Items: undefined,
     productDetails: undefined,
 }));
 
-
+console.log("mergeredOrders",mergedOrders);
 if (mergedOrders.length > 1) {
   mergedOrders[0].productData = mergedOrders.map(order => order.productData);
   mergedOrders.splice(1);  // Remove the remaining orders
@@ -750,9 +812,22 @@ if (mergedOrders.length > 1) {
   
 
   const Data=mergedOrders[0]
+  let productData
+  console.log(Data);
+
+  if (typeof Data.productData === 'object' && !Array.isArray(Data.productData)) {
+    productData = [Data.productData];
+   
+  } else {
+    productData = Data.productData;
+    console.log("else", productData);
     
+  }
+ 
+
+  console.log(productData);
     
-     res.status(200).render('user/orderInvoice',{orderData:Data})
+     res.status(200).render('user/orderInvoice',{orderData:Data,productData:productData ,user:true,userId:req.session.user_id});
 
   } catch (error) {
     console.log(error);
@@ -1150,5 +1225,6 @@ module.exports = {
   deleteAddress,
   viewOrder,
   viewInvoice,
-  placeOrderRazopay
+  placeOrderRazopay,
+  orderSuccess
 };

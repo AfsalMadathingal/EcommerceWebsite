@@ -49,12 +49,14 @@
                     <td>{{this.datejoined}}</td>
                         <td>
                         <button class="btn btn-info  edit-button" data-bs-toggle="modal"
-            data-bs-target="#EditModal">Edit</button>
+            data-bs-target="#EditModal"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
                         {{#if this.is_Blocked}}
 
-                        <button type="button" class="unblock-button btn  btn-dark ">UnBlock</button>
+                        <button type="button" class="unblock-button btn  btn-dark ">
+                            <i class="fa-solid fa-ban"></i>
+                            UnBlock</button>
                         {{else}}
-                        <button type="button" class="block-button btn  btn-success">Block</button>
+                        <button type="button" class="block-button btn  btn-success"><i class="fa-solid fa-ban"></i> Block</button>
                         {{/if}}
                     </td>
                     </tr>

@@ -118,26 +118,26 @@
                             <div class="btn-group">
                                 <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                    Change Order Status
+                                   <i class="fa-solid fa-truck-fast"></i> Change Order Status
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="#" data-status="Shipped"
-                                            data-id="{{this._id}}">Shipped</a></li>
+                                            data-id="{{this._id}}"><i class="fa-solid fa-truck"></i> Shipped</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="#" data-status="Pending"
-                                            data-id="{{this._id}}">Pending</a></li>
+                                            data-id="{{this._id}}"><i class="fa-solid fa-clock"></i> Pending</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="#" data-status="Delivered"
-                                            data-id="{{this._id}}">Delivered</a></li>
+                                            data-id="{{this._id}}"><i class="fa-solid fa-truck-ramp-box"></i> Delivered</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="#" data-status="Cancelled"
-                                            data-id="{{this._id}}">Cancelled</a></li>
+                                            data-id="{{this._id}}"><i class="fa-solid fa-ban"></i> Cancelled</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -188,14 +188,11 @@
     }
 }
 
-.dropdown-menu {
-    position: absolute;
-    z-index: 1000;
-}
+
 
 .restable-user {
     height: 600px!important; /* Adjust the maximum height as needed */
-    overflow: auto;
+    
 }
 
 .tbody:hover

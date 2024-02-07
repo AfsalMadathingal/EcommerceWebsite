@@ -16,7 +16,7 @@ const Razorpay = require('razorpay')
 mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
 
 // Logger
-// app.use(logger('dev'))
+app.use(logger('dev'))
 
 
 
@@ -33,6 +33,9 @@ app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials', function (err) {});
 hbs.registerHelper('inc', function(value) {
     return value + 1;
+});
+hbs.registerHelper('multiply', function(value1, value2) {
+    return value1 * value2;
 });
 
 
@@ -53,6 +56,7 @@ app.use("/", user_route);
 //for admin route
 const adminRoute = require("./routes/adminRoute");
 app.use("/admin", adminRoute);
+
 
 
 

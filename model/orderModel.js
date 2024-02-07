@@ -41,13 +41,17 @@ const orderDetails = mongoose.Schema({
   offer: {
     type: mongoose.Schema.Types.ObjectId,
   },
-  payment: {
-    type: mongoose.Schema.Types.ObjectId,
+  paymentMethod: {
+    type: String,
+    require:true
   },
   orderNo:{
     type:Number,
     require:true
 
+  },
+  transactionId:{
+    type:String
   }
 });
 
