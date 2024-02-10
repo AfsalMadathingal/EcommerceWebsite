@@ -96,9 +96,7 @@ const loadProfile = async (req, res) => {
 console.log("hello from load profile");
   if (req.session.user_id == req.params.id) {
     const personalInfo = await user.findOne({ _id: req.params.id });
-
-    console.log(personalInfo);
-
+   
     res.render("user/personalinformation", {
       personalInfo: personalInfo,
       user: true,
@@ -982,11 +980,16 @@ const loadCart = async (req, res) => {
   sessionId = req.session.user_id;
   try {
     if (paramsId == sessionId) {
-      cartData = await cart.find({ userId: sessionId });
 
-      productData = await productVariants.findOne({
-        _id: cartData[0].product_varient_id,
-      });
+      const cartData = await cart.find({ userId: sessionId });
+      console.log(cartData);
+      if(cartData[0])
+      {
+        productData = await productVariants.findOne({
+          _id: cartData[0].product_varient_id,
+        });
+      }
+     
 
       const items = await cart.aggregate([
         {
@@ -1034,6 +1037,7 @@ const loadCart = async (req, res) => {
         },
       ]);
 
+
       for (i = 0; i < items.length; i++) {
         items[i].image = `/uploads/${items[i].productImage[0]}`;
         items[i].totalAmount = items[i].quantity * items[i].price;
@@ -1041,15 +1045,31 @@ const loadCart = async (req, res) => {
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
 
-      res.render("user/cart", {
-        items: items,
+      if (personalInfo.cartValue == 0) {
+       
+        res.render("user/emptyCart", {
+          items: items,
         user: true,
         personalInfo: personalInfo,
         userId: req.session.user_id,
-      });
+        })
+      }else
+      {
+        res.render("user/cart", {
+          items: items,
+          user: true,
+          personalInfo: personalInfo,
+          userId: req.session.user_id,
+        });
+      }
+      
     }
-  } catch {
-    res.render("user/cart", { user: true, userId: req.session.user_id });
+
+    
+
+  } catch (err) {
+    res.send(err)
+    console.log(err);
   }
 };
 

@@ -62,6 +62,7 @@ userRoute.get('/user_logout',userHelper.logout)
 userRoute.get('/otpsubmit',auth.checkLoginUser,userHelper.LoadOtpPage)
 userRoute.post('/resndotp',userHelper.resendOTP)
 userRoute.post('/otp_verify',userHelper.otpVerify)
+
 userRoute.get('/otp_resend',userHelper.sendOTP,userHelper.LoadOtpRetryPage)
 
 

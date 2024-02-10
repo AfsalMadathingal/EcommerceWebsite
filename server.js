@@ -16,7 +16,7 @@ const Razorpay = require('razorpay')
 mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
 
 // Logger
-app.use(logger('dev'))
+// app.use(logger('dev'))
 
 
 

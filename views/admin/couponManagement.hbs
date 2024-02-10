@@ -1,0 +1,243 @@
+<link rel="stylesheet" href="/css/table-user.css">
+<link rel="stylesheet" href="/css/responsiveTable.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="details-section">
+    <div class="top-options">
+
+        <div class="user1-count m-auto mt-2">
+            <h3>Active Coupons</h3>
+            <h2>{{count}}</h2>
+        </div>
+
+    </div>
+
+    <div class="ms-auto me-auto mt-1">
+
+        <main class="table" id="customers_table">
+            <section class="table__header">
+                <h1>Coupons Details</h1>
+
+                <div class="input-group1">
+                    <input type="search" placeholder="Search Data...">
+                    <i class="fa-solid fa-magnifying-glass bg-transparent "></i>
+                </div>
+                <div class="export__file" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <label for="export-file" class="export__file-btn" title="Create Coupons"></label>
+                    <input type="checkbox" id="export-file">
+                </div>
+
+            </section>
+            <section class="table__body1">
+                <table>
+                    <thead>
+                        <tr>
+                            <th> SL <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Coupons ID/Name <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Discount Type <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Discount Value <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Limit <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Expire Date [YYYY-MM-DD] <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Discription <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Change <span class="icon-arrow">&UpArrow;</span></th>
+                        </tr>
+                    </thead>
+                    {{#each couponData}}
+                    <tbody>
+                        <tr data-category-id={{this._id}}>
+                            <td>{{inc @index}} </td>
+                            <td id="coupon">{{this.code}}</td>
+                            {{#if this.discountType}}
+
+                            <td id="discount">Amount</td>
+                            {{else}}
+                            <td id="discount">Percentage</td>
+                            {{/if}}
+                            <td id="discountValue">{{this.discount}}</td>
+                            <td id="userLimit"> {{this.userLimit}}</td>
+                            <td id="expire"> {{this.expireDate}}</td>
+                            <td id="discription"> {{this.discription}}</td>
+
+                            <td>
+                                <button class="btn btn-danger  delete-button" data-id="{{this._id}}"> <i
+                                        class="fa-solid fa-trash "> </i>
+                                    Remove</button>
+                                <button class="btn btn-info  edit-button pe-5  " data-bs-toggle="modal"
+                                    data-bs-target="#EditModal" data-coupon="{{this.code}}" data-nameId="{{this.code}}"
+                                    data-discription="{{this.discription}}" data-expire="{{this.expireDate}}"
+                                    data-discountValue=" {{this.discount}}" data-userlimit="{{this.userLimit}}"
+                                    data-id="{{this._id}}">
+
+                                    <i class="fa-solid fa-pen-to-square"></i>Edit</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    {{/each}}
+                </table>
+            </section>
+        </main>
+
+
+    </div>
+
+
+    {{!-- modal for create coupon starts --}}
+
+
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark bg-opacity-50  ">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Coupons</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="return Validation()" action="/admin/createCoupon" method="post">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Coupons Number/ID</label>
+                            <input type="text" name="Couponid" placeholder="Enter Coupon ID/NUMBER" class="form-control"
+                                id="coupon-id">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Coupons Discription</label>
+                            <input type="text" name="discription" placeholder="Enter discription" class="form-control"
+                                id="couponDiscription">
+                            <p class="alert-for-error"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">User Limit</label>
+                            <input type="text" name="userlimit" placeholder="Max user Allowed" class="form-control"
+                                id="user-limit">
+                            <p class="alert-for-error"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Expire Date</label>
+                            <input type="date" name="expireDate" placeholder="Max user Allowed" class="form-control"
+                                id="expire-date">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                        <label class="form-label">Discount Type</label>
+                        <div class="form-check">
+
+                            <input class="form-check-input" type="radio" name="discountType" id="discountPercentage"
+                                value="percentage" checked>
+                            <label class="form-check-label" for="discountPercentage">
+                                Discount Percentage
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="discountType" id="discountAmount"
+                                value="amount">
+                            <label class="form-check-label" for="discountAmount">
+                                Discount Amount
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Discount Value In Number</label>
+                            <input type="text" name="Discount" placeholder="Enter discription" class="form-control"
+                                id="discount-value">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+
+                </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+    {{!-- modal for create category end --}}
+
+    {{!-- modal for edit coupon --}}
+    <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning ">
+                    <h1 class="modal-title fs-5" id="editModalLabel"></h1>
+                </div>
+                <div class="modal-body">
+                    <form action="/admin/editcoupon" method="post">
+                        <div class="mb-3">
+                            <input type="hidden" name="id" placeholder="enter category name" class="form-control"
+                                id="editcategory-id">
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Coupons Number/ID</label>
+                            <input type="text" name="Couponid" placeholder="Enter Coupon ID/NUMBER" class="form-control"
+                                id="editcoupon-id">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Coupons Discription</label>
+                            <input type="text" name="discription" placeholder="Enter discription" class="form-control"
+                                id="editcouponDiscription">
+                            <p class="alert-for-error"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">User Limit</label>
+                            <input type="text" name="userlimit" placeholder="Max user Allowed" class="form-control"
+                                id="edituser-limit">
+                            <p class="alert-for-error"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Expire Date</label>
+                            <input type="date" name="expireDate" placeholder="Max user Allowed" class="form-control"
+                                id="editexpire-date">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                        <label class="form-label">Discount Type</label>
+                        <div class="form-check">
+
+                            <input class="form-check-input" type="radio" name="discountType" id="editdiscountPercentage"
+                                value="percentage" checked>
+                            <label class="form-check-label" for="discountPercentage">
+                                Discount Percentage
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="discountType" id="editdiscountAmount"
+                                value="amount">
+                            <label class="form-check-label" for="discountAmount">
+                                Discount Amount
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Discount Value In Number</label>
+                            <input type="text" name="Discount" placeholder="Enter discription" class="form-control"
+                                id="editdiscount-value">
+                            <p class="alert-for-error"></p>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal for edit category --}}
+</div>
+
+
+</div>
+</div>
+<script src="/js/couponsManagement.js"></script>
