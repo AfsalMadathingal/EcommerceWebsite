@@ -1,0 +1,21 @@
+{{>userNav}}
+<div>
+    <div class="h-100 mt-5 p-4 d-flex flex-column   align-content-center    ">
+
+        <h1 class="text-center text-dark bg-light p-3  mt-2 mb-2"> <i class="fa-solid fa-gift"></i> Deals and Offers
+        </h1>
+        <div class="container-fluid d-flex flex-column  border border-1 ">
+            {{#each dealsAndOffers}}
+            <div class="d-flex justify-content-center   align-content-center ">
+                <img class="img-fluid w-50 h-50" src="/uploads/{{this.offer_banner}}" alt="">
+            </div>
+            <div class="text-center text-success pb-2 m-2   ">
+                <h3> {{this.offer_title}} </h3>
+                <p>Terms and Conditions:{{this.offer_details}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+</div>
+{{>userFooter}}

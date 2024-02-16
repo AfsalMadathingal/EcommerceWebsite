@@ -1,11 +1,7 @@
-//requiring express
+//Requiring Nessesery Modules
 const express = require("express");
 const adminRoute = express();
-// for encrypt and decrypt password
 const bcrypt = require("bcrypt");
-//number of salt rounds for bcrypt
-const saltRounds = 10;
-
 //controller
 const adminHelper = require("../controller/adminHelper");
 const category_management = require("../controller/catogoryManagement")
@@ -16,8 +12,13 @@ const coupons = require('../controller/couponsHelper')
 //middleware
 const auth = require("../middleware/adminAuth");
 const upload =require('../middleware/upload')
+const saltRounds = 10;
 
-//Logout and Login Route
+
+
+
+
+//Admin Login Related Routes
 adminRoute.get("/",adminHelper.loadadminLogin);
 adminRoute.post("/login", adminHelper.verifyAdmin);
 adminRoute.get("/logout", adminHelper.logout);
@@ -65,6 +66,7 @@ adminRoute.get('/coupons',auth.checkSession,coupons.loadCoupons)
 adminRoute.post('/createCoupon',auth.checkSession,coupons.addCoupons)
 adminRoute.post('/editcoupon',auth.checkSession,coupons.editCoupon)
 adminRoute.post('/deletecoupon',auth.checkSession,coupons.deleteCoupon)
+adminRoute.post('/validation',offer.validation)
 
 
 

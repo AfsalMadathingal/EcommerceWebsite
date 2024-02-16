@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const categorydetails= require('./categoryModel')
 
 
 const offer = mongoose.Schema({
@@ -31,8 +32,9 @@ const offer = mongoose.Schema({
         type: Date,
         require: true
     },offer_category:{
-        type: String,
-        require: true
+        type: mongoose.Schema.Types.ObjectId,
+        require: true,
+        ref: categorydetails
     }
 })
 

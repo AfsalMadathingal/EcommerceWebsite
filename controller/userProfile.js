@@ -9,6 +9,9 @@ const address = require("../model/userAddress.js");
 const cart = require("../model/cart.js");
 const order = require("../model/orderModel.js");
 const payment = require("../model/payment.js");
+const couponsDB = require("../model/couponsModel.js");
+const walletDB = require('../model/walletModel.js');
+const whishlistDB = require('../model/whishlist.js');
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { text } = require("express");
@@ -294,20 +297,51 @@ const loadOrders = async (req, res) => {
 const loadChekOut = async (req, res) => {
   try {
     const userId = req.session.user_id;
-
+    
     const addressData = await address.find({ userId: userId });
     const userData = await user.find({ _id: userId });
-    const cartValue = userData[0].cartValue;
+    let cartValue = userData[0].cartValue;
+
+    if (req.session.appliedCoupon)
+    {
+      if (req.session.discountPercentage)
+      {
+        value = (req.session.discountPercentage/ 100) * cartValue
+        cartValue -= value
+        req.session.discount = value
+  
+      }else if(req.session.discountAmount)
+      {
+  
+        cartValue-=req.session.discountAmount
+        req.session.discount = req.session.discountAmount
+      }
+      
+
+    }else
+    {
+      req.session.discount = 0
+    }
+    
+
+    if(cartValue == 0){
+
+      res.redirect(`/profile/mycart/load/${userId}`);
+
+    }
 
     console.log(addressData);
     console.log(cartValue);
 
-    res.render("user/checkoutnew", {
+    res.status(200).render("user/checkoutnew", 
+    {
+
+      discount:req.session.discount,
       user: true,
       address: addressData,
       cartValue: cartValue,
-      discount: 0,
       userId: userId,
+
     });
   } catch (error) {
     console.log(error);
@@ -317,17 +351,16 @@ const loadChekOut = async (req, res) => {
 
 const placeOrder = async (req, res) => {
   
-  console.log(req.body);
-
-  const {  userId,selectedAddress } = req.body;
-
+  const {  userId,selectedAddress ,walletPayment} = req.body;
+ 
   try {
 
     const addressData = await address.find({ _id: selectedAddress });
     const userData = await user.find({ _id: userId });
     const cartData = await cart.find({ userId: userId });
     const orderNo = Math.floor(100000 + Math.random() * 900000);
-    const totalAmount = userData[0].cartValue;
+    let totalAmount ;
+    const subTotal  = userData[0].cartValue
     let products = [];
     const date= new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
 
@@ -343,11 +376,27 @@ const placeOrder = async (req, res) => {
 
       transactionId =  req.session.order.razorpay_payment_id
       paymentMethod="Online"
-    }else
+
+    }else if(walletPayment)
+    {
+
+      transactionId = "WalletTransaction"
+      paymentMethod="Wallet"
+    }
+    else
     {
       transactionId = "COD"
       paymentMethod="cod"
     }
+
+    if (req.session.discount)
+    {
+      totalAmount = userData[0].cartValue- req.session.discount;
+    }else
+    {
+      totalAmount = userData[0].cartValue
+    }
+   
     const orderData = new order({
       userId: userId,
       orderAmount: totalAmount,
@@ -356,7 +405,10 @@ const placeOrder = async (req, res) => {
       OrderedItems: products,
       orderNo: orderNo,
       paymentMethod: paymentMethod,
-      transactionId:transactionId
+      transactionId:transactionId,
+      coupon : req.session.coupon ? req.session.coupon.code : null,
+      subTotal,
+      discount:req.session.discount,
     });
 
     const paymentData = new payment({
@@ -371,23 +423,24 @@ const placeOrder = async (req, res) => {
 
     await orderData.save();
     await paymentData.save();
-
     await cart.deleteMany({ userId: userId });
     await user.updateOne({ _id: userId }, { $set: { cartValue: 0 } });
 
-    
-    
-    
+    console.log("coupon from order creation",req.session.coupon);
+
     req.session.dataForOrder = {
+      discount: req.session.discount ? req.session.discount : null,
       user: true,
       addressData: addressData,
       totalAmount: totalAmount,
       orderId: orderNo,
       userId: req.session.user_id,
+      subTotal:subTotal
     };
 
-    res.json(true);
+    req.session.appliedCoupon = false
 
+    res.json(true);
 
   } catch (error) {
 
@@ -403,6 +456,7 @@ const orderSuccess = async (req, res) => {
   try {
     
 
+    console.log("ordersuccess ",req.session.dataForOrder);
 
     res.render("user/orderPlaced", req.session.dataForOrder);
 
@@ -449,169 +503,163 @@ const viewOrder = async (req,res)=>{
     const {id}= req.params
     
     const orderData = await order.aggregate([
-      
-        {
-          $match: { _id: new mongoose.Types.ObjectId(id) },
-        },
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+      },
 
-        {
-          $lookup: {
-            from: "addresses",
-            foreignField: "_id",
-            localField: "deliveryAddress",
-            as: "address",
+      {
+        $lookup: {
+          from: "addresses",
+          foreignField: "_id",
+          localField: "deliveryAddress",
+          as: "address",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          addressName: { $arrayElemAt: ["$address.name", 0] },
+          addressLine1: { $arrayElemAt: ["$address.addressLine1", 0] },
+          addressLine2: { $arrayElemAt: ["$address.addressLine2", 0] },
+          addressPincode: { $arrayElemAt: ["$address.pincode", 0] },
+          addressMobile: { $arrayElemAt: ["$address.mobile", 0] },
+          orderAmount: 1,
+          orderNo: 1,
+          OrderedItems: 1,
+          orderStatus: 1,
+          orderDate: 1,
+          paymentMethod: 1,
+          transactionId: 1,
+          coupon:1,
+          subTotal:1,
+        },
+      },
+      {
+        $unwind: "$OrderedItems",
+      },
+      {
+        $lookup: {
+          from: "product_varients",
+          foreignField: "_id",
+          localField: "OrderedItems.product_varient_id",
+          as: "items",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          subTotal:1,
+          userId: 1,
+          addressName: 1,
+          addressLine1: 1,
+          addressLine2: 1,
+          addressPincode: 1,
+          addressMobile: 1,
+          orderAmount: 1,
+          paymentMethod: 1,
+          orderNo: 1,
+          OrderedItems: 1,
+          orderStatus: 1,
+          coupon:1,
+          itemId: { $arrayElemAt: ["$items.product", 0] },
+          image: { $arrayElemAt: ["$items.images", 0] },
+          quantity: { $arrayElemAt: ["$items.quantity", 0] },
+          orderDate: 1,
+          transactionId: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "itemId",
+          as: "product",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          coupon:1,
+          subTotal:1,
+          addressName: 1,
+          addressLine1: 1,
+          addressLine2: 1,
+          addressPincode: 1,
+          addressMobile: 1,
+          orderAmount: 1,
+          orderNo: 1,
+          OrderedItems: 1,
+          orderStatus: 1,
+          paymentMethod: 1,
+          itemId: 1,
+          productname: { $arrayElemAt: ["$product.product_name", 0] },
+          orderDate: 1,
+          image: { $arrayElemAt: ["$image", 0] },
+          transactionId: 1,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            _id: "$_id",
+            userId: "$userId",
+            orderNo: "$orderNo",
+            orderDate: "$orderDate",
+            orderStatus: "$orderStatus",
+            addressName: "$addressName",
+            addressLine1: "$addressLine1",
+            addressLine2: "$addressLine2",
+            addressPincode: "$addressPincode",
+            addressMobile: "$addressMobile",
+            cancel: "$cancel",
+            paymentMethod: "$paymentMethod",
+            transactionId: "$transactionId",
+            coupon:"$coupon",
+            subTotal:"$subTotal",
           },
-        },
-        {
-          $project: {
-            _id: 1,
-            userId: 1,
-            addressName: { $arrayElemAt: ["$address.name", 0] },
-            addressLine1: { $arrayElemAt: ["$address.addressLine1", 0] },
-            addressLine2: { $arrayElemAt: ["$address.addressLine2", 0] },
-            addressPincode: { $arrayElemAt: ["$address.pincode", 0] },
-            addressMobile: { $arrayElemAt: ["$address.mobile", 0] },
-            orderAmount: 1,
-            orderNo: 1,
-            OrderedItems: 1,
-            orderStatus: 1,
-            orderDate: 1,
-            paymentMethod:1,
-            transactionId:1
-          },
-        },
-        {
-          $unwind: "$OrderedItems",
-        },
-        {
-          $lookup: {
-            from: "product_varients",
-            foreignField: "_id",
-            localField: "OrderedItems.product_varient_id",
-            as: "items",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            userId: 1,
-            addressName: 1,
-            addressLine1: 1,
-            addressLine2: 1,
-            addressPincode: 1,
-            addressMobile: 1,
-            orderAmount: 1,
-            paymentMethod:1,
-            orderNo: 1,
-            OrderedItems: 1,
-            orderStatus: 1,
-            itemId: { $arrayElemAt: ["$items.product", 0] },
-            image: { $arrayElemAt: ["$items.images", 0] },
-            quantity:{$arrayElemAt:["$items.quantity",0]},
-            orderDate: 1,
-            transactionId:1
-          },
-        },
-        {
-          $lookup: {
-            from: "product_details",
-            foreignField: "_id",
-            localField: "itemId",
-            as: "product",
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            userId: 1,
-            addressName: 1,
-            addressLine1: 1,
-            addressLine2: 1,
-            addressPincode: 1,
-            addressMobile: 1,
-            orderAmount: 1,
-            orderNo: 1,
-            OrderedItems: 1,
-            orderStatus: 1,
-            paymentMethod:1,
-            itemId: 1,
-            productname: { $arrayElemAt: ["$product.product_name", 0] },
-            orderDate: 1,
-            image: { $arrayElemAt: ["$image", 0] },
-            transactionId:1
-          },
-        },
-        {
-          $group: {
-            _id: {
-              _id: "$_id",
-              userId: "$userId",
-              orderNo: "$orderNo",
-              orderDate: "$orderDate",
-              orderStatus: "$orderStatus",
-              addressName: "$addressName",
-              addressLine1: "$addressLine1",
-              addressLine2: "$addressLine2",
-              addressPincode: "$addressPincode",
-              addressMobile: "$addressMobile",
-              cancel: "$cancel",
-              paymentMethod:"$paymentMethod",
-              transactionId:"$transactionId"
+          OrderedItems: {
+            $push: {
+              variantId: "$OrderedItems",
+              itemId: "$itemId",
+              productname: "$productname",
+              image: "$image",
             },
-            OrderedItems: {
-              $push: {
-                variantId: "$OrderedItems",
-                itemId: "$itemId",
-                productname: "$productname",
-                image: "$image",
-              },
-            },
-            orderAmount: { $first: "$orderAmount" },
           },
+          orderAmount: { $first: "$orderAmount" },
         },
-        {
-          $project: {
-            _id: "$_id._id",
-            userId: "$_id.userId",
-            orderNo: "$_id.orderNo",
-            orderAmount: "$orderAmount",
-            orderDate: "$_id.orderDate",
-            orderStatus: "$_id.orderStatus",
-            addressName: "$_id.addressName",
-            addressLine1: "$_id.addressLine1",
-            addressLine2: "$_id.addressLine2",
-            addressPincode: "$_id.addressPincode",
-            addressMobile: "$_id.addressMobile",
-            cancel: "$_id.cancel",
-            OrderedItems: 1,
-            paymentMethod:"$_id.paymentMethod",
-            transactionId:"$_id.transactionId"
+      },
+      {
+        $project: {
+          _id: "$_id._id",
+          userId: "$_id.userId",
+          orderNo: "$_id.orderNo",
+          orderAmount: "$orderAmount",
+          orderDate: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$_id.orderDate",
+            },
           },
-        }
-      ]);
+          orderStatus: "$_id.orderStatus",
+          addressName: "$_id.addressName",
+          addressLine1: "$_id.addressLine1",
+          addressLine2: "$_id.addressLine2",
+          addressPincode: "$_id.addressPincode",
+          addressMobile: "$_id.addressMobile",
+          cancel: "$_id.cancel",
+          OrderedItems: 1,
+          paymentMethod: "$_id.paymentMethod",
+          transactionId: "$_id.transactionId",
+          coupon:"$_id.coupon",
+          subTotal:"$_id.subTotal"
+        },
+      },
+    ]);
 
 
-      orderData.forEach(async (element1) => {
-        // Provided date string
-        const dateString = element1.orderDate;
-
-        // element1.OrderedItems = JSON.stringify(element1.OrderedItems);
-        // Create a new Date object from the provided string
-        const dateObject = new Date(dateString);
-
-        // Get day, month, and year
-        const day = dateObject.getDate();
-        const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
-        const year = dateObject.getFullYear();
-
-        // Format the date components
-        const formattedDate = `${day}/${month}/${year}`;
-
-        element1.orderDate = formattedDate;
-
-      });
-
-      console.log("oderdate",orderData);
+console.log("order Data",orderData[0]);
       res.render('user/orderDetails',{
 
         user:true,
@@ -621,8 +669,6 @@ const viewOrder = async (req,res)=>{
       } )
 
 
-      // console.log(JSON.stringify(orderData));
-      
 
 
   } catch (error) {
@@ -976,9 +1022,21 @@ const deleteAddress = async (req, res) => {
 
 //Cart Related Middlewares
 const loadCart = async (req, res) => {
-  paramsId = req.params.id;
-  sessionId = req.session.user_id;
+  
+  
+
+  console.log("session",req.session);
+
   try {
+
+    paramsId = req.params.id;
+    sessionId = req.session.user_id;
+
+    ['coupon','couponId', 'discountAmount', 'discountPercentage', 'discount'].forEach(variable => {
+      delete req.session[variable];
+    });
+
+
     if (paramsId == sessionId) {
 
       const cartData = await cart.find({ userId: sessionId });
@@ -1044,11 +1102,13 @@ const loadCart = async (req, res) => {
       }
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
-
+      const coupon = await couponsDB.find({});
+      console.log(coupon);
       if (personalInfo.cartValue == 0) {
        
         res.render("user/emptyCart", {
-          items: items,
+        
+        items: items,
         user: true,
         personalInfo: personalInfo,
         userId: req.session.user_id,
@@ -1056,6 +1116,7 @@ const loadCart = async (req, res) => {
       }else
       {
         res.render("user/cart", {
+          coupon : coupon,
           items: items,
           user: true,
           personalInfo: personalInfo,
@@ -1221,7 +1282,224 @@ const updateCart = async (req, res) => {
   }
 };
 
+const addBalance = async (req,res)=>{
 
+
+  try 
+  {
+
+    let {amount}= req.body;
+    const userId = req.session.user_id
+    const addingAmount = Number(amount)
+    // Check if the user exists, if not, insert a new user with the given balance
+    const existingUser = await walletDB.findOne({ userId: userId });
+
+    if (!existingUser) {
+      await walletDB.insertMany([{ userId: userId, balance: amount }]);
+    } else {
+      const oldAmount= existingUser.balance
+      amount= Number(amount)
+      amount +=oldAmount
+
+      await walletDB.updateOne({ userId: userId }, { $set: { balance: amount} });
+
+      await walletDB.updateOne(
+        { userId: userId },
+        {
+          $push: {
+            transaction: { amount: addingAmount, type: "credit", date: new Date() },
+          },
+        }
+      );
+      }
+
+    const walletData = await walletDB.findOne({userId:req.session.user_id})
+
+    console.log(walletData);
+
+    res.json({walletData})
+    
+  } 
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+}
+
+const loadWallet = async (req,res)=>{
+
+  try {
+
+    const walletData = await walletDB.find({userId:req.session.user_id})
+
+    walletData.forEach((data) => {
+  data.transaction.forEach((txn) => {
+    txn.amount = (txn.type === "credit" ? "+" : "-") + txn.amount;
+  });
+});
+
+    console.log("data wlaler",walletData);
+
+    res.render('user/myWallet' , {
+      user:true,
+      userId:req.session.user_id,
+      walletData:walletData[0]
+
+    })
+
+    
+  } catch (error) {
+    
+    console.log(error);
+  }
+}
+
+const addToWishList = async (req,res)=>{
+  
+  try {
+    
+    const {id} = req.body
+    const userId = req.session.user_id
+
+
+    const data = await productVariants.findOne({_id:id}).populate("product")
+
+
+    const response = await whishlistDB.updateOne({user:userId},{
+      $push:{
+        productVarientId:new mongoose.Types.ObjectId(id)
+      }
+    })
+    if(response.matchedCount===0){
+
+      await whishlistDB.insertMany([{user:userId,productVarientId:new mongoose.Types.ObjectId(id)}])
+    }
+   
+
+    res.json({success:true,data})
+
+
+  } catch (error) {
+    
+    console.log(error);
+  }
+}
+
+const loadWishList = async (req,res)=>{
+  
+  try {
+    
+    
+
+    const whishlistData = await whishlistDB.aggregate([
+      {
+          $match: {
+              user:  new mongoose.Types.ObjectId(req.session.user_id),
+          }
+      },
+      {
+          $unwind: "$productVarientId"
+      },
+      {
+        $lookup: {
+          from: "product_varients",
+          localField: "productVarientId",
+          foreignField: "_id",
+          as: "product",
+        },
+
+      },
+      {
+        $project: {
+          _id: 1,
+          productVarientId: 1,
+          productid: { $arrayElemAt: ["$product.product", 0] },
+          productName: { $arrayElemAt: ["$product.product_name", 0] },
+          productImage: { $arrayElemAt: ["$product.images", 0] },
+          price: { $arrayElemAt: ["$product.price", 0] },
+          stock: { $arrayElemAt: ["$product.stock", 0] },
+        },
+      },
+      {
+        $lookup: {
+          from: "product_details",
+          localField: "productid",
+          foreignField: "_id",
+          as: "product",
+        },
+
+      },
+      {
+        $addFields: {
+          productName: "$product.product_name",
+        }
+      }
+      
+    ])
+
+    whishlistData.forEach((data)=>{
+      
+      data.productImage = data.productImage[0]
+    })
+   
+  
+console.log(whishlistData);
+   
+
+    res.render(
+      "user/myWishlist",
+      {
+        user:true,
+        userId:req.session.user_id,
+        whishlistData:whishlistData
+      }
+    )
+  } 
+  catch (error) 
+  {
+
+    console.log(error);
+  }
+}
+
+
+const removeFromWishList = async (req,res)=>{
+  
+  try 
+  {
+
+    const {whishlistId,productid}= req.body
+    console.log("this is product id",productid);
+    const query = {_id:whishlistId}
+
+    const response = await whishlistDB.updateOne(
+      query,
+      { $pull: { productVarientId: new mongoose.Types.ObjectId(productid) } },
+      { new: true },
+    );
+
+    console.log(response);
+    
+    if (response.modifiedCount > 0) {
+
+      res.json({success:true})
+
+    }else
+    {
+
+      res.json({success:false})
+    }
+
+
+
+  } catch (err) {
+
+    console.log(err);
+    
+  }
+}
 
 //exporting every middlewares
 
@@ -1246,5 +1524,10 @@ module.exports = {
   viewOrder,
   viewInvoice,
   placeOrderRazopay,
-  orderSuccess
+  orderSuccess,
+  addBalance,
+  loadWallet,
+  addToWishList,
+  loadWishList,
+  removeFromWishList
 };

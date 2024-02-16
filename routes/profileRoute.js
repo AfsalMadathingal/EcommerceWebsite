@@ -35,7 +35,6 @@ profileRoute.post('/mycart/update',profile.updateCart)
 profileRoute.get('/mycart/checkout',profile.loadChekOut)
 
 
-
 //Order Related Routes
 profileRoute.use('/payment',paymentRouter)
 profileRoute.get('/myorders/success',profile.orderSuccess)
@@ -46,6 +45,10 @@ profileRoute.get('/myorders/view/:id',profile.viewOrder)
 profileRoute.get('/myorders/invoice/:id',profile.viewInvoice)
 
 
+//wallet Related Routes 
+profileRoute.get('/mywallet/:id',profile.loadWallet)
+profileRoute.post('/addbalance',profile.addBalance)
+
 
 
 profileRoute.get('/returnproducts/:id',(req,res)=>{
@@ -53,15 +56,16 @@ profileRoute.get('/returnproducts/:id',(req,res)=>{
     res.render('user/returnedProducts',)
 })
 
-profileRoute.get('/mywhishlist/:id',(req,res)=>{
 
-    res.render('user/myWishlist')
-})
 
-profileRoute.get('/mywallet/:id',(req,res)=>{
+profileRoute.get('/mywhishlist',profile.loadWishList)
 
-    res.render('user/myWallet')
-})
+profileRoute.post('/addtowishlist',profile.addToWishList)
+
+profileRoute.post('/removefromwishlist',profile.removeFromWishList)
+
+
+
 
 
 

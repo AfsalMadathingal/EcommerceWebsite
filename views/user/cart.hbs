@@ -14,7 +14,7 @@
                                 <th class="column-4">Quantity</th>
                                 <th class="column-5">Total</th>
                             </tr>
-                           {{#each items}}
+                            {{#each items}}
                             <tr class="table_row data-row" data-user-id="{{this._id}}">
                                 <td class="column-1">
                                     <div class="how-itemcart1">
@@ -30,16 +30,19 @@
                                         </div>
 
                                         <input disabled class=" mtext-104 cl3 txt-center num-product" type="number"
-                                            name="num-product{{this._id}}" id="quantityInput_{{this._id}}" value="{{this.quantity}}">
+                                            name="num-product{{this._id}}" id="quantityInput_{{this._id}}"
+                                            value="{{this.quantity}}">
 
                                         <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                             <i class="fs-16 zmdi zmdi-plus"></i>
                                         </div>
                                     </div>
                                 </td>
-                                <td id="totalPerItem-{{this._id}}" class="column-5 product-price">₹ {{this.totalAmount}}</td>
+                                <td id="totalPerItem-{{this._id}}" class="column-5 product-price">₹ {{this.totalAmount}}
+                                </td>
                                 <td>
-                                    <button class="btn btn-danger me-3 cart-item-remove-button"><i class="fa-solid fa-xmark"></i> Remove</button>
+                                    <button class="btn btn-danger me-3 cart-item-remove-button"><i
+                                            class="fa-solid fa-xmark"></i> Remove</button>
                                 </td>
 
                             </tr>
@@ -52,13 +55,21 @@
 
                     <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
                         <div class="flex-w flex-m m-r-20 m-tb-5">
-                            <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text"
-                                name="coupon" placeholder="Coupon Code">
+                            <input id="coupon-box" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
+                                type="text" name="coupon" placeholder="Coupon Code">
 
-                            <div
+                            <div id="apply-button"
                                 class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
                                 Apply coupon
                             </div>
+                            <div id="show-coupon-button" type="button" data-bs-toggle="modal" data-bs-target="#modalId"
+                                class=" flex-c-m stext-101 ms-2  cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+                                Show Coupons
+                            </div>
+                            <div class=" text-center p-4  ">
+                                <h6 class="text-success" id="coupon-msg"></h6>
+                            </div>
+
                         </div>
 
                     </div>
@@ -80,6 +91,19 @@
 
                         <div class="size-209">
                             <span class="mtext-110 cl2 " id="Subtotal">
+
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex-w flex-t p-t-27 p-b-33">
+                        <div class="size-208">
+                            <span class="mtext-101 cl2">
+                                Discount:
+                            </span>
+                        </div>
+
+                        <div class="size-209 p-t-1">
+                            <span class="mtext-110 cl2 " id="discount">
 
                             </span>
                         </div>
@@ -113,13 +137,149 @@
     </div>
 </form>
 
+{{!-- modal --}}
+<!-- Modal trigger button -->
+
+
+<!-- Modal Body -->
+<!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+<div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+    aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    Availble Copons
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                {{#each coupon}}
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.code}}</h5>
+                        <p class="card-text">{{this.discription}}.</p>
+                        <div  id="copy-button" data-code="{{this.code}}"
+                            class="copy-button flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+                           <span> <i class="fa-regular fa-copy"></i>  Copy to Clipboard</span> 
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 {{>userFooter}}
 
 <script>
 
+const copyButton = document.querySelectorAll('.copy-button')
 
-    
-// Get all elements with the class 'product-price'
+copyButton.forEach((btn)=>{
+
+btn.addEventListener('click',(e)=>{
+
+console.log('clicked')
+const code = btn.getAttribute('data-code')
+
+function copytoClipboard() {
+  // Get the text field
+  
+  // Select the text field
+  //code.select();
+  //code.setSelectionRange(0, 99999); // For mobile devices
+
+  // Copy the text inside the text field
+  navigator.clipboard.writeText(code);
+  
+  // Alert the copied text
+  swal("Copied!", "Copied the coupon: " + code, "success");
+}
+
+copytoClipboard()
+
+})
+
+})
+
+
+
+
+
+
+
+
+    const applyCoupon = document.getElementById('apply-button').addEventListener('click', (e) => {
+
+        e.preventDefault()
+
+        const enteredCoupon = document.getElementById('coupon-box')
+        const couponAlert = document.getElementById('coupon-msg')
+        let total = document.getElementById('total').innerText
+        const discount = document.getElementById('discount')
+        total = total.split('₹')
+        total = Number(total[1])
+        console.log('clicked', enteredCoupon.value, total)
+
+        fetch('/coupon/applycoupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ couponCode: enteredCoupon.value }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+
+
+
+                    console.log("data form apply ",data)
+
+                    if (data.discountAmount) {
+                        total -= data.discountAmount;
+                        document.getElementById('total').textContent = `₹${total}`
+                        couponAlert.textContent = `Coupon applied successfully! Discounted amount ${data.discountAmount}`
+                        discount.innerText = `₹ ${data.discountAmount}`
+            
+
+                    } else if (data.discountPercentage) {
+                        value = (data.discountPercentage / 100) * total
+                        total -= value
+                        document.getElementById('total').textContent = `₹${total}`;
+                        couponAlert.textContent = `Coupon applied successfully! Discounted amount ${value}`
+                        discount.innerText = `₹ ${value}`
+                    }
+                    // Update the total price on the page
+
+                    swal("Success", "Coupon applied successfully!", "success");
+
+                } else {
+                    swal("Error", data.message, "error");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                swal("Failed", "Could not apply the coupon. Please try again.", "error");
+            });
+
+
+    })
+
+
+    // Get all elements with the class 'product-price'
     const priceElements = document.querySelectorAll('.product-price');
 
     // Initialize total price variable
@@ -140,73 +300,44 @@
     const totalPriceElement = document.getElementById('Subtotal');
     const total = document.getElementById('total')
     totalPriceElement.textContent = `₹ ${totalPrice}`;
-    total.textContent = `₹ ${totalPrice}`; 
+    total.textContent = `₹ ${totalPrice}`;
 
 
-    /*$(document).ready(function () {
+
+
+    document.addEventListener('DOMContentLoaded', function () {
         // Use event delegation on a static parent element (replace "table" with the appropriate parent)
-        $('table').on('click', '.cart-item-remove-button', function (event) {
-            const cartId = $(this).closest('tr').data('user-id');
-            const removeButton = $(this);
-            const tr = $(this).closest('tr')
-            event.preventDefault()
+        document.querySelector('table').addEventListener('click', function (event) {
+            if (event.target.classList.contains('cart-item-remove-button')) {
+                event.preventDefault();
 
-            $.ajax({
-                url: '/profile/mycart/remove',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ cartId }),
-                success: function (response) {
+                const cartId = event.target.closest('tr').dataset.userId;
+                const tr = event.target.closest('tr');
+                const Subtotal = document.getElementById('Subtotal')
+                const total = document.getElementById('total')
 
-                    
-                
-                            tr[0].parentNode.removeChild(tr[0]);
-                            console.log(response)
-                   
+                fetch('/profile/mycart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cartId }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Manually remove the <tr> element
+                        tr.parentNode.removeChild(tr);
+                        Subtotal.textContent = data
+                        total.textContent = data
 
-                    console.log('Server response:', response);
-                },
-                error: function (error) {
-                    console.error('Error:', error);
-                }
-            });
+                        console.log('Server respons  sdfse:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
         });
-    }); */
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Use event delegation on a static parent element (replace "table" with the appropriate parent)
-    document.querySelector('table').addEventListener('click', function (event) {
-        if (event.target.classList.contains('cart-item-remove-button')) {
-            event.preventDefault();
-
-            const cartId = event.target.closest('tr').dataset.userId;
-            const tr = event.target.closest('tr');
-            const Subtotal= document.getElementById('Subtotal')
-            const total= document.getElementById('total')
-
-            fetch('/profile/mycart/remove', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cartId }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Manually remove the <tr> element
-                tr.parentNode.removeChild(tr);
-                Subtotal.textContent=data
-                total.textContent=data
-
-                console.log('Server respons  sdfse:', data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
     });
-});
 
 
 
@@ -240,12 +371,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var newValue = parseInt(inputElement.value) + 1;
         inputElement.value = newValue;
 
-       
-        const tableRow = clickedButton.closest('.data-row'); 
+
+        const tableRow = clickedButton.closest('.data-row');
         const cartIdForUpdate = tableRow.getAttribute('data-user-id');
-        const pricePerItem= document.getElementById(`totalPerItem-${cartIdForUpdate}`)
-        const Subtotal= document.getElementById('Subtotal')
-        const total= document.getElementById('total')
+        const pricePerItem = document.getElementById(`totalPerItem-${cartIdForUpdate}`)
+        const Subtotal = document.getElementById('Subtotal')
+        const total = document.getElementById('total')
 
         console.log(cartIdForUpdate);
 
@@ -264,16 +395,15 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
 
-        
-                 data.items.forEach((element)=>{
 
-                            if(element._id==cartIdForUpdate)
-                            {
-                                    pricePerItem.textContent=element.totalAmount
-                                    Subtotal.textContent=data.cartValue
-                                    total.textContent=data.cartValue
-                            }
-                        })
+                data.items.forEach((element) => {
+
+                    if (element._id == cartIdForUpdate) {
+                        pricePerItem.textContent = element.totalAmount
+                        Subtotal.textContent = data.cartValue
+                        total.textContent = data.cartValue
+                    }
+                })
                 console.log('Server response:', data);
             })
             .catch(error => {
@@ -292,9 +422,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // Assuming you have a reference to the table row element, for example:
             const tableRow = clickedButton.closest('.data-row');
             const cartIdForUpdate = tableRow.getAttribute('data-user-id');
-            const pricePerItem= document.getElementById(`totalPerItem-${cartIdForUpdate}`)
-            const Subtotal= document.getElementById('Subtotal')
-            const total= document.getElementById('total')
+            const pricePerItem = document.getElementById(`totalPerItem-${cartIdForUpdate}`)
+            const Subtotal = document.getElementById('Subtotal')
+            const total = document.getElementById('total')
 
             console.log(cartIdForUpdate);
 
@@ -313,19 +443,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(data => {
 
-                   
 
 
-                        data.items.forEach((element)=>{
 
-                            if(element._id==cartIdForUpdate)
-                            {
-                                    pricePerItem.textContent=element.totalAmount
-                                    Subtotal.textContent=data.cartValue
-                                    total.textContent=data.cartValue
-                            }
-                        })
-                  
+                    data.items.forEach((element) => {
+
+                        if (element._id == cartIdForUpdate) {
+                            pricePerItem.textContent = element.totalAmount
+                            Subtotal.textContent = data.cartValue
+                            total.textContent = data.cartValue
+                        }
+                    })
+
                     console.log('Server response:', data);
 
                 })

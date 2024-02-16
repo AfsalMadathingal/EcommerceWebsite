@@ -9,17 +9,14 @@ const app=express()
 var router=express.Router()
 require('dotenv').config()
 const Razorpay = require('razorpay')
-
+const hbsHelper = require('./controller/hbsHelper.js')
 
 
 //Establish a connection to data base
 mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
 
 // Logger
-// app.use(logger('dev'))
-
-
-
+app.use(logger('dev'))
 
 //using nocache
 app.use(nocache())
@@ -31,16 +28,11 @@ app.use(express.json())
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials', function (err) {});
-hbs.registerHelper('inc', function(value) {
-    return value + 1;
-});
-hbs.registerHelper('multiply', function(value1, value2) {
-    return value1 * value2;
-});
-
+hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
 
 //static assets
 app.use(express.static('public/assets'));
+
 //listening port 3000
 app.listen(3000,()=>{
     console.log("connected to http://localhost:3000/");

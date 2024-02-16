@@ -3,8 +3,9 @@ const mongoose= require('mongoose')
 const whishlists= mongoose.Schema({
 
     productVarientId:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true
+        type:Array,
+        required:true,
+        ref:"product_varients"
 
     },
     user:
@@ -13,3 +14,5 @@ const whishlists= mongoose.Schema({
         required:true
     }
 })
+
+module.exports = mongoose.model('whishlists',whishlists)

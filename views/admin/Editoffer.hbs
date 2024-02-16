@@ -1,11 +1,11 @@
 <link rel="stylesheet" href="/css/table-user.css">
 <link rel="stylesheet" href="/css/addproducts.css">
+<link rel="stylesheet" href="/css/editoffer.css">
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
-
-{{!--
-<script defer src="https://cdn.crop.guide/loader/l.js?c=JVJTZH"></script> --}}
-<script defer src="https://cdn.crop.guide/loader/l.js?c=TJCFHV"></script>
+<link rel="stylesheet" href="/cropper/cropper.css">
+<script src="/cropper/cropper.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
 <div class="details-section p-3 ">
@@ -13,8 +13,7 @@
     <div class=" shadow rounded-5  input-add-pro p-5 bg-white  bg-opacity-75">
 
 
-        <form method="post" class="form-add-product" action="/admin/editoffer" enctype="multipart/form-data"
-            >
+        <form method="post" class="form-add-product" action="/admin/editoffer" enctype="multipart/form-data">
 
             <div class="row g-3 p-3 ">
                 <div class="col-md-6">
@@ -27,14 +26,14 @@
                     <label class="form-label" for="category">Category</label>
                     <select name="category" id="category" class="form-select">
                         {{#each category}}
-                        <option value="{{this.category}}">{{this.category}}</option>
+                        <option value="{{this._id}}">{{this.category}}</option>
                         {{/each}}
                     </select>
 
                     <label for="recipient-name" class="col-form-label">Start Date</label>
                     <input type="date" name="startDate" placeholder="enter Expire Date" class="form-control"
                         id="recipient-name" value="{{offerData.offer_start_date}}">
-                         <label for="recipient-name" class="col-form-label">End Date</label>
+                    <label for="recipient-name" class="col-form-label">End Date</label>
                     <input type="date" name="endDate" placeholder="enter Expire Date" class="form-control"
                         id="recipient-name" value="{{offerData.offer_end_date}}">
 
@@ -58,32 +57,38 @@
                     </div>
                     <h6 class="alertAddProduct" id="qtyAlert"></h6>
 
-                     <label for="recipient-name" class="col-form-label">Discount Value</label>
-                            <input type="text" name="discountValue" placeholder="enter Discount Value" class="form-control"
-                                id="recipient-name" value="{{offerData.discount_value}}">
+                    <label for="recipient-name" class="col-form-label">Discount Value</label>
+                    <input type="text" name="discountValue" placeholder="enter Discount Value" class="form-control"
+                        id="recipient-name" value="{{offerData.discount_value}}">
 
-                    
+
                 </div>
 
                 <div class="col-md-6">
                     <h5>Chose image for poster</h5>
-                    <div class="form">
-                        <div class="grid">
-                            <div class="form-element">
-                                <input type="file" id="file-1" name="images" accept="image/*">
-                                <label for="file-1" id="file-1-preview">
-                                    <img  src="/uploads/{{offerData.offer_banner}}" alt="">
-                                    <div>
-                                        <span>+</span>
-                                    </div>
-                                </label>
+                    <div class="card text-bg-dark">
+                        <img id="image-preview" src="/uploads/{{offerData.offer_banner}}" class="card-img" alt="...">
+
+                    </div>
+
+
+                    {{!-- Upload image with preview --}}
+
+
+                    <div class="row">
+                        <div class="card-body col-sm-3">
+                            <div class="input-upload">
+                                <img id="image-preview1" src="" alt="" />
+                                <input data-id="1" class="form-control inputImage" name="images" type="file"
+                                    id="image-input-1" accept="image/*" />
                             </div>
                         </div>
                     </div>
+
                     <h6 id="imgAlert"></h6>
                     <label class="form-label" for="aboutProduct"> Offers details</label>
                     <textarea class="form-control" placeholder="Enter a detailed description..." name="offerDetails"
-                        id="longdescription" rows="4"></textarea>
+                        id="longdescription" rows="4">{{offerData.offer_details}}</textarea>
                     <h6 class="alertAddProduct" id="longAlert"></h6>
                 </div>
 
@@ -99,181 +104,132 @@
         </form>
     </div>
 
+
+    {{!-- modal 4 --}}
+    <div class="modal fade " id="imageModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="imagecrop4 width-100">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </div>
+
 
 <script>
 
-    function Validation() {
+    document.addEventListener('DOMContentLoaded', function () {
 
-        var fileInput = document.getElementById('file-1');
-        var previewImage = document.getElementById('file-1-preview').querySelector('img');
+        let cropper;
 
-        let productName = document.getElementById("productName").value;
+        const input = document.getElementById('image-input-1')
 
-        let longdescription = document.getElementById("longdescription").value;
-        let Qty = document.getElementById("Qty").value;
-        let price = document.getElementById("price").value;
-        let cost = document.getElementById("cost").value;
-        let Barcode = document.getElementById("Barcode").value;
-        let ProductId = document.getElementById("ProductId").value;
+        input.addEventListener('change', (e) => {
+            previewImage(e)
 
-        let productNameRegex = /^\s*.*\S.*\s*$/;
-        let number = /^[1-9]\d*$/;
-        let descriptionRegex = /^(?!\s*$)[\s\S]{1,}$/
+        })
 
 
-        let productNameAlert = document.getElementById("productNameAlert");
-        let qtyAlert = document.getElementById("qtyAlert");
-        let priceAlert = document.getElementById("priceAlert");
-        let costAlert = document.getElementById("costAlert");
-        let BarcodeAlert = document.getElementById("BarcodeAlert");
-        let ProductIdAlert = document.getElementById("ProductIdAlert");
-        let longAlert = document.getElementById("longAlert");
-        let imgAlert = document.getElementById('imgAlert')
+        function previewImage(event) {
 
-        if (!productName.match(productNameRegex)) {
-            productNameAlert.innerHTML = "Name Not Valid";
-            return false;
-        } else if (!Qty.match(number)) {
-            qtyAlert.innerHTML = "Please Check Qty Again";
-            return false;
-        } else if (!price.match(number)) {
-            priceAlert.innerHTML = "Please Check Price Again";
-            return false;
-        } else if (!cost.match(number)) {
-            costAlert.innerHTML = "Please Check Cost Again";
-            return false;
-        } else if (!Barcode.match(number)) {
-            BarcodeAlert.innerHTML = "Please Check Barcode Again";
-            return false;
-        } else if (!ProductId.match(number)) {
-            ProductIdAlert.innerHTML = "Please Check Id Again";
-            return false;
-        }
-        else if (!longdescription.match(descriptionRegex)) {
-            longAlert.innerHTML = "Please Check about Again";
-            return false;
-        } else if (fileInput.files.length < 0) {
-            imgAlert.innerHTML = "Please chose image"
-            return false;
-        }
+            const input = event.target;
+            let number = input.getAttribute("data-id");
+            let productId = input.getAttribute("data-prod");
+            const preview = document.getElementById(`image-preview`);
+            const imageElement = document.querySelector(`.imagecrop4`);
 
-        else {
-            return true;
-        }
 
-    }
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
 
-    function previewBeforeUpload(id) {
-        document.querySelector("#" + id).addEventListener("change", function (e) {
-            if (e.target.files.length == 0) {
-                return;
+                reader.onload = function (e) {
+
+
+
+                    $(document).ready(function () {
+                        $(`#imageModal4`).modal('show');
+                    });
+
+
+                    let img = document.createElement("img");
+                    img.id = 'image';
+                    img.src = e.target.result;
+
+
+                    //append this img tag to a modal
+                    imageElement.appendChild(img);
+                    
+                    //crop image
+                    cropper = new Cropper(img, 
+                    {
+                        aspectRatio: 720 / 360, 
+                        viewMode: 1,
+                        dragMode: "move",
+                        minContainerWidth: 720, 
+                        minContainerHeight: 360, 
+                        minCropBoxWidth: 720, 
+                        minCropBoxHeight: 360,
+                        minCanvasWidth: 720, 
+                        minCanvasHeight: 360, 
+                    });
+
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+                const cropButton = document.getElementById(`cropButton`);
+                cropButton.addEventListener("click", () => {
+                    const fileInputsrc = document.getElementById('image-input-1');
+
+                    console.log("Entered crop button")
+
+                    let imgsrc = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+
+
+                    preview.src = imgsrc;
+
+                    const byteCharacters = atob(imgsrc.split(',')[1]);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                    const croppedFile = new File([blob], 'cropped_image.jpg', { type: 'image/jpeg' });
+                    const fileInput = document.getElementById('image-input-1');
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    fileInput.files = dataTransfer.files;
+
+
+                    //close modal
+                    var modal = document.getElementById(`imageModal4`);
+                    var bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+                });
             }
-            let file = e.target.files[0];
-            let url = URL.createObjectURL(file);
-            document.querySelector("#" + id + "-preview div").innerText = file.name;
-            document.querySelector("#" + id + "-preview img").src = url;
-        });
-    }
-
-    previewBeforeUpload("file-1");
-    previewBeforeUpload("file-2");
-    previewBeforeUpload("file-3");
+        }
 
 
 
 
-
-
-
-
-
+    })
 
 </script>
-
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: "Raleway", sans-serif;
-        background: #f8f8f8;
-    }
-
-    .form {
-        margin: 40px 0 20px;
-        /* Reduced top margin */
-        padding: 20px;
-        /* Reduced padding */
-        display: flex;
-        /* Added flex property */
-        justify-content: center;
-        /* Center content horizontally */
-        align-items: center;
-        /* Center content vertically */
-        flex-direction: column;
-        /* Stack children vertically */
-        width: 500px;
-    }
-
-    .form h5 {
-        text-align: center;
-        color: #acacac;
-        font-size: 24px;
-        font-weight: 400;
-    }
-
-    .form .grid {
-        margin-top: 20px;
-        /* Reduced top margin */
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        /* Reduced gap */
-        height: auto;
-        /* Allow the container to adjust its height based on content */
-    }
-
-    .form .grid .form-element {
-        width: 160px;
-        /* Reduced width */
-        height: 160px;
-        /* Reduced height */
-        box-shadow: 0 0 15px 3px rgba(100, 100, 100, 0.1);
-    }
-
-    .form .grid .form-element input {
-        display: none;
-    }
-
-    .form .grid .form-element img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .form .grid .form-element div {
-        position: relative;
-        height: 30px;
-        /* Reduced height */
-        margin-top: -30px;
-        /* Adjusted margin */
-        background: rgba(0, 0, 0, 0.5);
-        text-align: center;
-        line-height: 30px;
-        /* Reduced line-height */
-        font-size: 12px;
-        /* Reduced font-size */
-        color: #f5f5f5;
-        font-weight: 600;
-    }
-
-    .form .grid .form-element div span {
-        font-size: 24px;
-        /* Reduced font-size */
-    }
-</style>

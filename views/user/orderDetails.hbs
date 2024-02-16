@@ -69,15 +69,19 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="2">Subtotal</td>
-                                    <td class="text-end">₹ {{orderData.orderAmount}}</td>
+                                    <td class="text-end">₹ {{orderData.subTotal}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">Shipping</td>
                                     <td class="text-end">0.00</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">Discount (Code: 0000)</td>
-                                    <td class="text-danger text-end">-0.00</td>
+                                    <td colspan="2">Discount Code:{{orderData.coupon}}</td>
+                                    {{#if orderData.coupon}}
+                                    <td class="text-danger text-end">-₹{{subtract orderData.subTotal orderData.orderAmount}}</td>
+                                    {{else}}
+                                    <td class="text-danger text-end">-₹0.00</td>
+                                    {{/if}}
                                 </tr>
                                 <tr class="fw-bold">
                                     <td colspan="2">TOTAL</td>
@@ -93,7 +97,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <h3 class="h6">Payment Method</h3>
-                                <p>Visa -1234 <br>
+                                <p>{{orderData.paymentMethod}} <br>
                                     Total: ₹{{orderData.orderAmount}} <span class="badge bg-success rounded-pill">PAID</span></p>
                             </div>
                             <div class="col-lg-6">

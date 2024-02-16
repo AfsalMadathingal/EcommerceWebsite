@@ -89,6 +89,9 @@ const editCoupon = async(req,res)=>{
   try {
 
     const {Couponid,discription,userlimit,expireDate,discountType,Discount,id} =req.body
+
+
+
     req.session.discount=0
     if (discountType=="amount")
     {
@@ -105,6 +108,8 @@ const editCoupon = async(req,res)=>{
         discountType:req.session.discount,
       }
     })
+
+    
     console.log(respons);
     res.redirect('/admin/coupons')
 

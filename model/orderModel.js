@@ -10,7 +10,11 @@ const orderDetails = mongoose.Schema({
     type: Number,
     require: true,
   },
-
+  subTotal:{
+    type:Number,
+    require:true
+  
+  },
   deliveryAddress: {
     type: mongoose.Schema.Types.ObjectId,
     require: true,
@@ -36,10 +40,12 @@ const orderDetails = mongoose.Schema({
   },
 
   coupon: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Object,
+    default: null,
   },
   offer: {
     type: mongoose.Schema.Types.ObjectId,
+    default: null,
   },
   paymentMethod: {
     type: String,

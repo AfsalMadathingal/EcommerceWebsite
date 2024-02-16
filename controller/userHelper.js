@@ -363,38 +363,54 @@ const verifyUser = async function (req, res) {
       userData = await user.findOne({ email: phone });
 
       verification();
+
     }
 
-    // const userData = await user.findOne({ phone: phone })
+    
 
     async function verification() {
-      if (!userData.is_Blocked) {
-        let cryptResult = await bcrypt.compare(
-          password,
-          userData.password_encrypted
-        );
+      try {
 
-        if (userData) {
-          if (cryptResult) {
-            req.session.user_id = userData._id;
-
-            res.redirect("/home");
+        if (!userData.is_Blocked) {
+          let cryptResult = await bcrypt.compare(
+            password,
+            userData.password_encrypted
+          );
+  
+          if (userData) {
+            if (cryptResult) {
+              req.session.user_id = userData._id;
+  
+              res.redirect("/home");
+            } else {
+              req.session.wrongCredentials = true;
+              res.redirect("/user_login_form");
+            }
           } else {
-            req.session.wrongCredentials = true;
-            res.redirect("/user_login_form");
+            res.send("wrong password");
           }
         } else {
-          res.send("wrong password");
+          req.session.blocked = true;
+          res.redirect("/user_login_form");
         }
-      } else {
-        req.session.blocked = true;
+        
+      } catch (error) 
+      {
+        console.log(error);
+        req.session.wrongCredentials = true;
         res.redirect("/user_login_form");
       }
+     
     }
+
+
+
   } catch (err) {
+
     console.log(err);
     req.session.wrongCredentials = true;
     res.redirect("/user_login_form");
+
   }
 };
 

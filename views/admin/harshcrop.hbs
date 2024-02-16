@@ -1,0 +1,273 @@
+<head>
+    <link  href="/dist/cropper.css" rel="stylesheet">
+    <script src="/dist/cropper.js"></script>
+</head>
+
+<main class="main-wrap"> 
+    <section id="productVarientForm" class="content-main" >
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Edit Product varient</h2>                            
+                </div>
+            </div>
+            <div id="target" class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between">
+                        <h4>Basic</h4>
+                    </div>
+                    <form method="post" action="/api/v1/admin/products/editproductvarient" >
+                        <div class="card-body">                           
+                            <div class="row">
+                                <input  value="{{productVarient._id}}" type="text" name="prodId" hidden />
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Color</label>
+                                    <select id="color" class="form-select" name="color">
+                                        <option selected>{{productVarient.color.color}}</option>
+                                        {{#each color}}
+                                        <option>{{this.color}}</option>
+                                        {{/each}}                                                
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Size</label>
+                                    <select id="size" class="form-select" name="size">
+                                        <option selected>{{productVarient.size.size}}</option>
+                                        {{#each size}}
+                                        <option>{{this.size}}</option>
+                                        {{/each}}                                                
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 mb-3">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="number" value="{{productVarient.price}}" class="form-control" id="price" name="price" required />
+                                </div>
+                                <div class="col-sm-4 mb-3">
+                                    <label for="cost" class="form-label">Cost</label>
+                                    <input type="number" value="{{productVarient.cost}}" class="form-control" id="cost" name="cost" required />
+                                </div>
+                                <div class="col-sm-4 mb-3">
+                                    <label for="stock" class="form-label">Stock</label>
+                                    <input type="number" value="{{productVarient.stock}}" class="form-control" id="stock" name="stock" required />
+                                </div>                                        
+                            </div>
+                                {{!-- Upload image with preview --}}
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="card-body col-sm-3">
+                                        <div class="input-upload">
+                                            <img id="image-preview1" src=" {{getImageSrc productVarient.images 0}} " alt="" />
+                                            <input data-id="1" data-prod="{{productVarient._id}}" class="form-control inputImage" name="images0" type="file" id="image-input-1" accept="image/*" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" id="productVarientButton" class="btn btn-md rounded font-sm hover-up">Edit product-Varient</button>
+                            </div>
+                            <h3 id="varientAlert" class="text-center text-success"></h3>
+                        </div>
+                    </form>
+                </div>
+                <!-- card end// -->
+            </div>                    
+        </div>
+    </section>
+
+    {{!-- modal --}}
+    <div class="modal fade" id="imageModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="imagecrop1 width-100">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton1" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal 2 --}}
+    <div class="modal fade" id="imageModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid ">
+                        <div class="imagecrop2">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton2" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal 3 --}}
+    <div class="modal fade" id="imageModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="imagecrop3 width-100">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton3" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- modal 4 --}}
+    <div class="modal fade" id="imageModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="imagecrop4 width-100">
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton4" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+
+    function sendImage(cropedImage, id, productId){
+        const formdata = new FormData();
+        formdata.append("cropedImage",cropedImage);
+        formdata.append("index",id);
+        formdata.append("productId",productId);
+        console.log("proid",productId);
+        console.log("index",id);
+        console.log("formdata",formdata);
+
+        fetch("/api/v1/admin/updatephoto", {
+            method: "POST",                
+            body: formdata
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+    }
+
+    let cropper;
+    const inputElem = document.querySelectorAll(".inputImage");
+    inputElem.forEach((element)=>{
+        element.addEventListener("change",(event)=>{
+            //event.preventDefault();
+            previewImage(event);
+        })            
+    })        
+
+    function previewImage(event) {
+        const input = event.target;
+        console.log( "Entered preview image" ,input)
+        let number = input.getAttribute("data-id");
+        let productId = input.getAttribute("data-prod");
+        
+        console.log(image-preview${number});
+        const preview = document.getElementById(image-preview${number});  
+        const imageElement = document.querySelector(.imagecrop${number});    
+    
+        console.log("This is input.files",input.files);
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                //preview.src = e.target.result;                    
+                
+                $(document).ready(function(){
+                    $(#imageModal${number}).modal('show');
+                });                
+                
+
+                let img = document.createElement("img");
+                img.id = image; 
+                img.src = e.target.result;
+
+                //append this img tag to a modal
+                imageElement.appendChild(img);
+                //crop image
+                cropper = new Cropper(img, {
+                    aspectRatio: 0,
+                    viewMode: 1,
+                    dragMode: "move",
+                    minContainerWidth: 450,
+                    minContainerHeight: 500,
+                    minCropBoxWidth: 400,
+                    minCropBoxHeight: 400,
+                    minCanvasHeight: 500,
+                    minCanvasWidth: 500,
+                });
+
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        
+            const cropButton = document.getElementById(cropButton${number});
+            cropButton.addEventListener("click",()=>{
+                console.log("Entered crop button")
+                let imgsrc = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+                            
+                preview.src = imgsrc;
+                
+                //sending data to server
+                sendImage(imgsrc, number-1, productId)            
+                
+                //close modal
+                var modal = document.getElementById(imageModal);
+                var bootstrapModal = bootstrap.Modal.getInstance(modal);
+                bootstrapModal.hide();
+            });
+        }
+    }
+
+
+
+</script>

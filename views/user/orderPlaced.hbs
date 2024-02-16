@@ -57,16 +57,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹
-                                            {{totalAmount}}</span> </div>
+                                             {{subTotal}}</span> </div>
                                 </div>
                             </div>
                             <div class="row g-0 border-bottom">
                                 <div class="col-md-6">
-                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>Processing
-                                            fees</span> </div>
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>Delivery
+                                            Charge</span> </div>
+                                              <div class="p-3 d-flex justify-content-center align-items-center"> <span>Coupon 
+                                            Discount</span> </div>
                                 </div>
+                                
                                 <div class="col-md-6">
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹ 0</span>
+                                    </div>
+                                    <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹
+                                        {{#if discount}}
+                                        {{discount}}
+                                        {{else}}
+                                        0
+                                        {{/if}}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

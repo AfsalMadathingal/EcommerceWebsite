@@ -1,34 +1,223 @@
-{{>navTwoUser}}
-
+{{>userNav}}
 {{>profileLayout}}
 
 <div class="info-section text-dark 
-            w-75 h-100 p-3">
-
-    <h2 class=" pb-5 ">Wallet Information</h2>
-
-
-        <h4>Balance</h4>
-        <h4 class="pt-2 pb-2 text-success ">RS 5000</h4>
-        <input type="text" class="input-personal input-full-name" placeholder="Enter Amount">
-        
+            w-75 h-100 p-3 mt-5">
+    <h2 class=" pb-3 ">Wallet Information</h2>
+    <div class="d-flex">
 
 
-        <button class="btn btn-danger mt-5 me-4 ">Add Balance</button>
-        
- 
 
+        <div class=" p-sm-1 p-lg-5    rounded-4  m-2 d-inline-block   shadow ">
+            <h4>Balance</h4>
+            <h4 class="pt-2 pb-2 text-success " id="balance">₹ {{walletData.balance}}</h4>
+
+        </div>
+        <div class="mt-auto mb-auto  ">
+            <input type="text" id="amount" class="amount-input form-control" placeholder="Enter Amount">
+            <p class="text-danger" id="error"></p>
+            <button id="addButton" class="btn btn-success me-5   mt-1    "><i class="fa-solid fa-plus"></i> Add
+                Balance</button>
+            <div class="spinner-border text-success mt-1 " style="display:none;" id="spinner" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="accordion mt-4 " id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseOne">
+                    Recent Transaction
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" style="">
+                <div class="accordion-body">
+                    <table class="table">
+                        <tbody>
+                            {{#each walletData.transaction}}
+                            <tr>
+                                <th>{{this.type}} to wallet</th>
+                                <td>{{this.date}}</td>
+                                <td>{{this.amount}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-
-
 </div>
-
 </div>
-
-
-
-
-
 {{>userFooter}}
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/js/razorpay.js"></script>
+<script type="module">
+
+    const rzpKey = 'rzp_test_hZPyhffeqYGexk';
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const addBtn = document.getElementById('addButton')
+
+        addBtn.addEventListener('click', function () {
+
+            const amount = document.getElementById('amount').value
+            const balance = document.getElementById('balance')
+            const error = document.getElementById('error')
+            const regex = /^[0-9]+$/;
+            error.innerHTML = "";
+            const spinner = document.getElementById('spinner')
+            spinner.style.display = "block"
+
+            if (amount <= 0) {
+                error.innerHTML = "Please enter a valid amount";
+                spinner.style.display = "none"
+                return;
+            } else if (!regex.test(amount)) {
+
+                error.innerHTML = "Please enter a valid amount";
+                spinner.style.display = "none"
+                return;
+            }
+
+
+
+            handlePayment(amount)
+
+
+
+        })
+
+        function addBalance(amount) {
+
+            fetch('/profile/addbalance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: amount })
+            })
+                .then(response => {
+
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Failed to add balance');
+                    }
+                })
+                .then(data => {
+                    console.log('Balance added:', data);
+
+                    swal("Success", "Balance has been added successfully!", "success").then(() => {
+
+                        spinner.style.display = "none"
+                        balance.innerHTML = `₹ ${data.walletData.balance}`
+                        // Reload the page to update the balance displayed to the user
+                    });
+                    // Update the UI to show new balance or success message
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    swal("Failed", "An error occurred while adding balance. Please try again.", "error");
+                    // Display error message to the user
+                });
+        }
+
+
+
+
+
+        ////////////payment functions
+
+
+        function handlePayment(amount) {
+
+
+            try {
+                const orderurl = '/profile/payment/walletReacharge';
+
+                const response = fetch(orderurl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ amount: amount, }),
+                });
+                response.then(async response => {
+
+                    const data = await response.json();
+
+                    console.log("data", data.data);
+
+                    initializePayment(data.data);
+
+                }).catch(err => {
+
+                    console.log(err);
+
+                });
+            } catch (err) {
+                console.log('Error:', err);
+
+            }
+        }
+
+        const initializePayment = (paymentData) => {
+
+            console.log("paymentData", paymentData);
+
+            const paymentOptions = {
+                key: rzpKey,
+                currency: paymentData.currency,
+                amount: paymentData.amount,
+                name: "OurShop",
+                description: "Test Transaction",
+                image: "https://i.ibb.co/VM5qVp7/164822577-us-initial-logo-company-name-colored-blue-and-magenta-swoosh-design-isolated-on-white-back.jpg",
+                order_id: paymentData.id,
+                handler: async (response) => {
+                    try {
+                        const verifyUrl = '/profile/payment/verify';
+                        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+                        const body = JSON.stringify({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
+                        const verifyResponse = await fetch(verifyUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body
+                        });
+                        const verifyData = await verifyResponse.json();
+
+
+                        if (verifyData.success) {
+
+                            addBalance(paymentData.amount / 100)
+
+
+
+
+                        }
+
+                    } catch (error) {
+                        console.log(error);
+                    }
+                },
+                theme: {
+                    color: "blue"
+                }
+            };
+            const paymentObject = new window.Razorpay(paymentOptions);
+            paymentObject.open();
+        }
+
+        ///closing domloaded////
+    })
+</script>

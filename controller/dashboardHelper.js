@@ -12,6 +12,8 @@ const payment = require("../model/payment.js");
 const mongoose = require("mongoose");
 const Adminlayout = "newSidebar";
 
+
+
 const loadDahboard = async (req, res) => {
   try {
     const userCount = await user.find({}).count();
@@ -44,7 +46,8 @@ const loadDahboard = async (req, res) => {
   }
 };
 
-const chartData = async (req, res) => {
+const chartData = async (req, res) => 
+{
   try {
     let { filter } = req.body;
 

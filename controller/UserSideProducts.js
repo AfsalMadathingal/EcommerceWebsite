@@ -1,18 +1,13 @@
-//require products
+//Requiring Nessesery Modules
 const products = require("../model/productsModel.js");
-//requiring size model
 const size = require("../model/sizeModel.js");
-//requiring color model
 const color = require("../model/colorModel.js");
-//requiring category model
 const category = require("../model/categoryModel.js");
-//requiring variant model
 const productVariants = require("../model/productVariants.js");
-//requiring user model
 const user = require("../model/userModel.js");
 const { default: mongoose } = require("mongoose");
-//requiring cart model
 const cart = require("../model/cart.js");
+const offerDB = require("../model/offerModel.js");
 
 const loadHomeUser = async (req, res) => {
   try {
@@ -96,6 +91,7 @@ const loadHomeUser = async (req, res) => {
 };
 
 const loadProduct = async (req, res) => {
+
   if (req.session.user_id) {
     try {
       const id = req.params.id;
@@ -174,6 +170,7 @@ const loadProduct = async (req, res) => {
       res.render("errorpage");
       console.log(error);
     }
+    
   } else {
     try {
       const id = req.params.id;
@@ -243,10 +240,8 @@ const loadProduct = async (req, res) => {
       data[0].image3 = `/uploads/${images[2]}`;
 
       res.render("user/productsView", {
-        user: true,
         data: data,
         colors: colors,
-        userId: req.session.user_id,
       });
     } catch (error) {
       res.render("errorpage");
@@ -317,7 +312,8 @@ const addToCart = async (req, res) => {
   }
 };
 
-const loadAllproduct = async (req, res) => {
+const loadAllproduct = async (req, res) => 
+{
   try {
     //connecting Product collections with lookup
     const product_data = await productVariants.aggregate([
@@ -344,6 +340,7 @@ const loadAllproduct = async (req, res) => {
           price: 1,
           stock: 1,
           images: 1,
+          offer:1,
         },
       },
       {
@@ -368,6 +365,7 @@ const loadAllproduct = async (req, res) => {
           stock: 1,
           category: "$category.category",
           images: 1,
+          offer:1,
         },
       },
     ]);
@@ -398,9 +396,31 @@ const loadAllproduct = async (req, res) => {
   } catch (error) {}
 };
 
+
+const loadDealsAndOffers = async (req, res) => {
+
+  console.log("hiii");
+  try {
+
+    console.log("hello load offeres");
+    const dealsAndOffers = await offerDB.find({});
+    console.log(dealsAndOffers);
+    if (req.session.user_id) {
+      res.render('user/dealsAndOffers', {dealsAndOffers:dealsAndOffers,user:true,userId:req.session.user_id})
+    }else
+    {
+      res.render('user/dealsAndOffers', {dealsAndOffers:dealsAndOffers})
+    }
+    
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
 module.exports = {
   loadHomeUser,
   loadProduct,
   addToCart,
   loadAllproduct,
+  loadDealsAndOffers
 };

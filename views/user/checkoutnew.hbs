@@ -33,7 +33,8 @@
                                                         <input
                                                             class="form-check-input border border-dark border-1 card-radio-input"
                                                             type="radio" name="flexRadioDefault" value="{{this._id}}"
-                                                            id="flexRadioDefault{{this._id}}" data-id="{{this.id}}"checked>
+                                                            id="flexRadioDefault{{this._id}}" data-id="{{this.id}}"
+                                                            checked>
                                                         <div class="card-radio text-truncate p-3">
                                                             <span class="fs-14 mb-4 d-block">{{this.name}}</span>
                                                             <span
@@ -88,8 +89,8 @@
                                         <div class="col-lg-3 col-sm-6">
                                             <div data-bs-toggle="collapse">
                                                 <label class="card-radio-label payment-method">
-                                                    <input type="radio" name="pay-method" value="online" id="pay-razorpay"
-                                                        class="card-radio-input">
+                                                    <input type="radio" name="pay-method" value="online"
+                                                        id="pay-razorpay" class="card-radio-input">
                                                     <span class="card-radio py-3 text-center text-truncate">
                                                         <i class="bx bx-credit-card d-block h2 mb-3"></i>
                                                         Online
@@ -103,8 +104,10 @@
                                                     <input type="radio" name="pay-method" value="paypal" id="pay-paypal"
                                                         class="card-radio-input">
                                                     <span class="card-radio py-3 text-center text-truncate">
-                                                        <i class="bx bxl-paypal d-block h2 mb-3"></i>
-                                                        Paypal
+                                                        <i class=" d-block h2 mb-3">
+                                                           <i class="fa-solid fa-wallet"></i>
+                                                        </i>
+                                                        Wallet
                                                     </span>
                                                 </label>
                                             </div>
@@ -146,8 +149,11 @@
                     <div class="table-responsive">
                         <div class="bg-white">
                             <h3 class="p-3"> Order Summary</h3>
-
-                            <h5 class="ps-3 text-dark">Subtotal : ₹{{cartValue}}</h5>
+                            {{#if discount}}
+                            <h5 class="ps-3 text-dark">Subtotal : ₹{{add cartValue discount}}</h5>
+                            {{else}}
+                            <h5 class="ps-3 text-dark">Subtotal : ₹{{ cartValue }}</h5>
+                            {{/if}}
                             <hr class="bg-dark">
                             <h5 class="ps-3 text-dark">Coupon Discount : {{discount}}</h5>
                             <hr class="bg-dark">
@@ -186,111 +192,146 @@
 
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script src="/js/razorpay.js"></script>
-<script  type="module">
+<script type="module">
 
-const rzpKey = 'rzp_test_hZPyhffeqYGexk';
-let selectedAddress;
-document.getElementById('rzp-button').onclick = function(e){
+    const rzpKey = 'rzp_test_hZPyhffeqYGexk';
+    let selectedAddress;
+    document.getElementById('rzp-button').onclick = function (e) {
 
-    e.preventDefault();
-    var radioButtons = document.getElementsByName('flexRadioDefault');
-    var paymentButton = document.getElementsByName('pay-method')
-    var addressDiv = document.getElementsByClassName('address-label');
-    const userId = document.getElementById('rzp-button').getAttribute('data-id')
-    const placeOrderButton = document.getElementById('place-order-link')
-    const addressLabels = document.querySelectorAll('.address-label');
-    const paymentMethod = document.querySelectorAll('payment-method');
-
-
-
-    selectedAddress = Array.from(radioButtons).find(radio => radio.checked).value
-    var selectedPayment = Array.from(paymentButton).find(radio => radio.checked).value
-
-    console.log("selecte",selectedAddress)
-    console.log("selected patmetn",selectedPayment)
+        e.preventDefault();
+        var radioButtons = document.getElementsByName('flexRadioDefault');
+        var paymentButton = document.getElementsByName('pay-method')
+        var addressDiv = document.getElementsByClassName('address-label');
+        const userId = document.getElementById('rzp-button').getAttribute('data-id')
+        const placeOrderButton = document.getElementById('place-order-link')
+        const addressLabels = document.querySelectorAll('.address-label');
+        const paymentMethod = document.querySelectorAll('payment-method');
 
 
-    if (selectedPayment=="online") {
 
-            handlePayment(selectedAddress,userId)
+        selectedAddress = Array.from(radioButtons).find(radio => radio.checked).value
+        var selectedPayment = Array.from(paymentButton).find(radio => radio.checked).value
 
-    } else if(selectedPayment=="cash") {
-
-
-        handleCod(selectedAddress,userId)
-        
-    }else if(selectedPayment=="paypal") {
-        swal({
-            icon: 'warning',
-            title: 'Paypal not available!',
-            text: 'Please select another payment method',
-            
-        });
-    }
-    
-}
+        console.log("selecte", selectedAddress)
+        console.log("selected patmetn", selectedPayment)
 
 
-async function handleCod (selectedAddress,userId) {
+        if (selectedPayment == "online") {
 
-    const orderurl = '/profile/mycart/createorder';
+            handlePayment(selectedAddress, userId)
 
-    const response = fetch(orderurl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId:userId, selectedAddress: selectedAddress }),
-      });
+        } else if (selectedPayment == "cash") {
 
-      response.then(async response => {
 
-        const data = await response.json();
-        
-        if(data)
+            handleCod(selectedAddress, userId)
+
+        } else if (selectedPayment == "paypal") 
         {
-            window.location.href = ('/profile/myorders/success')
+
+            handleWallet(selectedAddress, userId);
+            
         }
-      }).catch(err => {
 
-      });
-
-}
-
-function handlePayment(selectedAddress) {
-
-    const userId = document.getElementById('rzp-button').getAttribute('data-id');
-
-    try {
-      const orderurl = '/profile/payment/orders';
-      const response = fetch(orderurl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId:userId, selectedAddress: selectedAddress }),
-      });
-      response.then(async response => {
-
-        const data = await response.json();
-
-        console.log("data",data.data);
-
-        initializePayment(data.data);
-
-      }).catch(err => {
-
-        console.log(err);
-
-      });
-    } catch (err) {
-      console.log('Error:', err);
-      
     }
-  }
+
+
+    function handleWallet (selectedAddress, userId) {
+
+        fetch('/profile/payment/walletPayment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            , body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress })
+        }).then(response => response.json()).then(data => {
+            
+            
+            if (data.success) {
+
+                swal("Success", "Payment Successful!", "success")
+
+                fetch('/profile/mycart/createorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress , walletPayment: true}),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            window.location.href = ('/profile/myorders/success')
+                        }
+                    });
+                
+            }else
+            {
+                swal("Failed", "Payment Failed!", "error");
+            }
+        })
+    }
+
+
+    async function handleCod(selectedAddress, userId) {
+
+        const orderurl = '/profile/mycart/createorder';
+
+        const response = fetch(orderurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
+        });
+
+        response.then(async response => {
+
+            const data = await response.json();
+
+            if (data) {
+                window.location.href = ('/profile/myorders/success')
+            }
+        }).catch(err => {
+
+        });
+
+    }
+
+    function handlePayment(selectedAddress) {
+
+        const userId = document.getElementById('rzp-button').getAttribute('data-id');
+
+        try {
+            const orderurl = '/profile/payment/orders';
+            const response = fetch(orderurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
+            });
+            response.then(async response => {
+
+                const data = await response.json();
+
+                console.log("data", data.data);
+
+                initializePayment(data.data);
+
+            }).catch(err => {
+
+                console.log(err);
+
+            });
+        } catch (err) {
+            console.log('Error:', err);
+
+        }
+    }
 
     const initializePayment = (paymentData) => {
 
@@ -316,39 +357,39 @@ function handlePayment(selectedAddress) {
                         body
                     });
                     const verifyData = await verifyResponse.json();
-                    
+
 
                     if (verifyData.success) {
 
-                       
+
 
                         fetch('/profile/mycart/createorder', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ userId:userId , selectedAddress: selectedAddress }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data) {
-                                 console.log("verify data",verifyData);
-                            if (true) {
-                                swal({
-                                    icon: 'success',
-                                    title: 'Payment Successful!',
-                                    text: 'Your order has been placed successfully',
-                                    buttons: false,
-                                    timer: 2000
-                                }).then(() => {
-                                    
-                                    window.location.href = ('/profile/myorders/success')
-                                })
-                            }
-                        }
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    console.log("verify data", verifyData);
+                                    if (true) {
+                                        swal({
+                                            icon: 'success',
+                                            title: 'Payment Successful!',
+                                            text: 'Your order has been placed successfully',
+                                            buttons: false,
+                                            timer: 2000
+                                        }).then(() => {
+
+                                            window.location.href = ('/profile/myorders/success')
+                                        })
+                                    }
+                                }
+                            });
                     }
-                    
+
                 } catch (error) {
                     console.log(error);
                 }
@@ -360,7 +401,7 @@ function handlePayment(selectedAddress) {
         const paymentObject = new window.Razorpay(paymentOptions);
         paymentObject.open();
     }
-    
+
 </script>
 
 
@@ -380,4 +421,3 @@ function handlePayment(selectedAddress) {
         /* Adjust the border style as needed */
     }
 </style>
-
