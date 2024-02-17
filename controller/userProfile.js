@@ -17,7 +17,7 @@ const bcrypt = require("bcrypt");
 const { text } = require("express");
 const saltRounds = 10;
 const Razorpay = require('razorpay');
-
+const {offerChecker} = require('../controller/UserSideProducts.js')
 
 
 
@@ -1029,8 +1029,8 @@ const loadCart = async (req, res) => {
 
   try {
 
-    paramsId = req.params.id;
-    sessionId = req.session.user_id;
+     paramsId = req.params.id;
+     sessionId = req.session.user_id;
 
     ['coupon','couponId', 'discountAmount', 'discountPercentage', 'discount'].forEach(variable => {
       delete req.session[variable];
@@ -1048,6 +1048,9 @@ const loadCart = async (req, res) => {
         });
       }
      
+     const offercheck = await offerChecker(cartData[0].product_varient_id)
+
+      console.log("offercheck",offercheck);
 
       const items = await cart.aggregate([
         {
@@ -1072,6 +1075,7 @@ const loadCart = async (req, res) => {
             productImage: { $arrayElemAt: ["$productDetails.images", 0] },
             stock: { $arrayElemAt: ["$productDetails.stock", 0] },
             price: { $arrayElemAt: ["$productDetails.price", 0] },
+            offer: { $arrayElemAt: ["$productDetails.offer", 0] },
           },
         },
         {
@@ -1091,24 +1095,64 @@ const loadCart = async (req, res) => {
             productImage: 1,
             stock: 1,
             price: 1,
+            offer:1,
           },
         },
+        {
+          $lookup: {
+            from: "offers",
+            foreignField: "_id",
+            localField: "offer",
+            as: "offer",
+          },
+
+        },
+        {
+          $unwind: "$offer",
+        }
+
       ]);
 
+      console.log("items",items);
 
-      for (i = 0; i < items.length; i++) {
-        items[i].image = `/uploads/${items[i].productImage[0]}`;
-        items[i].totalAmount = items[i].quantity * items[i].price;
+      const newData=[]
+      items.forEach((data) => {
+
+        if (data.offer.discount_type)
+      {
+        console.log("if",data);
+        console.log("offer");
+      }else
+      {
+        const toDiscount = (data.offer.discount_value/100)*data.price;
+        console.log("toDiscount",toDiscount);
+        data.offerprice = data.price - toDiscount;
+        data.offerEndDate= data.offer.offer_end_date;
+        console.log(data);
+        newData.push(data);
+
+        
       }
+
+      })
+      
+      console.log("new data",newData);
+
+      for (i = 0; i < newData.length; i++) {
+        newData[i].image = `/uploads/${newData[i].productImage[0]}`;
+        newData[i].totalAmount = newData[i].quantity * newData[i].price;
+      }
+
+      
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
       const coupon = await couponsDB.find({});
-      console.log(coupon);
+      
       if (personalInfo.cartValue == 0) {
        
         res.render("user/emptyCart", {
         
-        items: items,
+        items: newData,
         user: true,
         personalInfo: personalInfo,
         userId: req.session.user_id,
@@ -1129,7 +1173,7 @@ const loadCart = async (req, res) => {
     
 
   } catch (err) {
-    res.send(err)
+    
     console.log(err);
   }
 };

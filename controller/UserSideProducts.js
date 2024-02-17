@@ -95,7 +95,10 @@ const loadProduct = async (req, res) => {
   if (req.session.user_id) {
     try {
       const id = req.params.id;
+      
+      const offer = await offerChecker(id);
 
+      console.log(offer);
       //connecting Product collections with lookup
 
       const data = await productVariants.aggregate([
@@ -151,10 +154,45 @@ const loadProduct = async (req, res) => {
         },
       ]);
 
-      console.log(data);
-      console.log(colors);
+      const size = await productVariants.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(req.params.id),
+          },
+        },
+        {
+          $lookup: {
+            from: "sizes",
+            foreignField: "_id",
+            localField: "size_id",
+            as: "sizes",
+          },
+        },
+        {
+          $unwind: "$sizes",
+        },
+        {
+          $project: {
+            sizes: "$sizes.size",
+          },
+        }
+      ])
 
-      //setting the path with images
+      if (offer.discount_type)
+      {
+        const toDiscount = offer.discount_value
+        data[0].offerprice = data[0].price - toDiscount;
+        data[0].offerEndDate= offer.offer_end_date;
+      }else
+      {
+        const toDiscount = (offer.discount_value/100)*data[0].price;
+  
+        data[0].offerprice = data[0].price - toDiscount;
+        data[0].offerEndDate= offer.offer_end_date;
+     
+      }
+      
+      // getting the first image path form the array to display in product page
       const images = data[0].images;
       data[0].image1 = `/uploads/${images[0]}`;
       data[0].image2 = `/uploads/${images[1]}`;
@@ -165,6 +203,7 @@ const loadProduct = async (req, res) => {
         data: data,
         colors: colors,
         user: true,
+        size: size
       });
     } catch (error) {
       res.render("errorpage");
@@ -176,6 +215,11 @@ const loadProduct = async (req, res) => {
       const id = req.params.id;
 
       //connecting Product collections with lookup
+      const offer = await offerChecker(id);
+
+      console.log("oifffer",offer);
+
+      
 
       const data = await productVariants.aggregate([
         {
@@ -206,6 +250,20 @@ const loadProduct = async (req, res) => {
         },
       ]);
 
+      if (offer.discount_type)
+      {
+        console.log("if",data);
+        console.log("offer",offer);
+      }else
+      {
+        const toDiscount = (offer.discount_value/100)*data[0].price;
+        console.log("toDiscount",toDiscount);
+        data[0].offerprice = data[0].price - toDiscount;
+        data[0].offerEndDate= offer.offer_end_date;
+        console.log("else",data);
+        console.log("offer",offer);
+      }
+
       const colors = await productVariants.aggregate([
         {
           $match: {
@@ -230,6 +288,32 @@ const loadProduct = async (req, res) => {
         },
       ]);
 
+
+      const size = await productVariants.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(req.params.id),
+          },
+        },
+        {
+          $lookup: {
+            from: "sizes",
+            foreignField: "_id",
+            localField: "size_id",
+            as: "sizes",
+          },
+        },
+        {
+          $unwind: "$sizes",
+        },
+        {
+          $project: {
+            sizes: "$sizes.size",
+          },
+        }
+      ])
+
+      console.log("sixe",size);
       console.log(data);
       console.log(colors);
 
@@ -242,6 +326,7 @@ const loadProduct = async (req, res) => {
       res.render("user/productsView", {
         data: data,
         colors: colors,
+        size: size
       });
     } catch (error) {
       res.render("errorpage");
@@ -417,10 +502,27 @@ const loadDealsAndOffers = async (req, res) => {
     console.log(error);
   }
 }
+
+
+const offerChecker = async (varientId) => {
+  
+
+  const varient = await productVariants.findOne({ _id: varientId });
+
+  if (varient.offer) {
+
+    const offer = await offerDB.findOne({ _id: varient.offer });
+    return offer;
+  } else {
+    return false;
+  }
+
+}
 module.exports = {
   loadHomeUser,
   loadProduct,
   addToCart,
   loadAllproduct,
-  loadDealsAndOffers
+  loadDealsAndOffers,
+  offerChecker,
 };

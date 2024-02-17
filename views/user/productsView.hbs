@@ -66,11 +66,19 @@
                     <h4 class="mtext-105 cl2 js-name-detail p-b-14">
                         {{data.0.product_name}}
                     </h4>
-
-                    <span class="mtext-106 cl2">
+                    {{#if data.0.offerprice}}
+                    <span class="mtext-106 cl2 text-danger">
+                        <s>  ₹ {{data.0.price}}.00 </s> 
+                    </span>
+                    <span class="mtext-106 cl2 text-success ">
+                        ₹ {{data.0.offerprice}}.00
+                    </span>
+                    <h4 class="pt-2 text-danger ">Offer will End on {{formatDate data.0.offerEndDate}}</h4>
+                    {{else}}
+                     <span class="mtext-106 cl2">
                         ₹ {{data.0.price}}.00
                     </span>
-
+                    {{/if}}
                     <p class="stext-102 cl3 p-t-23">
                         {{data.0.product_about}}
                     </p>
@@ -86,10 +94,9 @@
                                 <div class="rs1-select2 bor8 bg0">
                                     <select class="form-select js-select2" name="time">
                                         <option>Choose an option</option>
-                                        <option>Size S</option>
-                                        <option>Size M</option>
-                                        <option>Size L</option>
-                                        <option>Size XL</option>
+                                        {{#each size}}
+                                        <option>{{this.sizes}}</option>
+                                        {{/each}}
                                     </select>
                                     <div class="dropDownSelect2"></div>
                                 </div>

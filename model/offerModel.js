@@ -35,6 +35,10 @@ const offer = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         require: true,
         ref: categorydetails
+    },
+    offer_price:{
+        type:Number,
+        default:0
     }
 })
 

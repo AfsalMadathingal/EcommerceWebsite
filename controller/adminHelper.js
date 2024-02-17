@@ -13,7 +13,7 @@ const verifyAdmin = async function (req, res) {
   const admin_id = req.body.admin_id;
   const password = req.body.password;
 
-  console.log(password);
+  console.log("pass",req.body);
 
   try {
     const adminData = await adminDB.findOne({ admin_id: admin_id });

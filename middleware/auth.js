@@ -33,6 +33,8 @@ const isLogout = function(req,res,next){
 const checkSession =async function (req,res,next){
 
     const userData = await user.findOne({ _id: req.session.user_id });
+
+    console.log(req.session);
     
     if(req.session.user_id)
     {

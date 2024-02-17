@@ -1,22 +1,13 @@
 //Requiring Nessesery Modules
 const express=require('express')
 const userRoute=express();
-const session = require("express-session")
 const auth=require('../middleware/auth')
 const userHelper= require('../controller/userHelper')
 const Products= require('../controller/UserSideProducts.js')
 const productRoute = require('./productsRoute.js')
 const profileRoute = require('./profileRoute.js')
 const couponRoute = require('./couponRoute.js')
-//session
-userRoute.use(session({
-    secret:'supersecret',
-    resave: false,
-    saveUninitialized: true,
-}))
-//body Parser
-userRoute.use(express.json());
-userRoute.use(express.urlencoded({ extended: true }))
+
 
 
 
