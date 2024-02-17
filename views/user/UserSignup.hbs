@@ -1,13 +1,10 @@
 {{! css for this page }}
 <link rel="stylesheet" type="text/css" href="css/userSignup.css" />
 {{! css for this page }}
-<div class="logo-image">
+{{>userNav}}
+<div class="main-div-for-signup bg-black pb-2 ">
 
-  <a href="/">
-    <img class="logo-signup" src="images/icons/logoourshop.png" alt="IMG-LOGO" />
-  </a>
 
-</div>
 <div class="user-signup-main">
 
   <h3 class="user_signup_title">Sign Up</h3>
@@ -23,12 +20,12 @@
       {{/if}}
       <div class="input-for-signup">
         <label for="">Full Name</label>
-        <input name="fullName" id="fullName" type="text" class="input--user" placeholder="Enter your Full Name" />
+        <input name="fullName" id="fullName" type="text" class="input--user form-control" placeholder="Enter your Full Name" />
       </div>
       <div class="input-for-signup">
-        <label for="gender">Gender</label>
+        <label for="gender ">Gender</label>
         <div class="gender-options">
-          <select name="gender" id="Category" class="input-field-add-product">
+          <select name="gender" id="Category" class="input-field-add-product form-select ">
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
@@ -37,26 +34,26 @@
       </div>
       <div class="input-for-signup">
         <label for="">Email Address</label>
-        <input name="email" id="email" type="Email" class="input--user" placeholder="Enter your Email" />
+        <input name="email" id="email" type="Email" class="input--user form-control" placeholder="Enter your Email" />
       </div>
       <div class="input-for-signup">
         <label for="">Mobile</label>
-        <input name="mobile" id="mobile" type="text" class="input--user" placeholder="Enter your Mobile" />
+        <input name="mobile" id="mobile" type="text" class="input--user form-control" placeholder="Enter your Mobile" />
       </div>
 
       <div class="input-for-signup">
         <label for="">Password</label>
-        <input name="password" id="password" type="password" class="input--user" placeholder="Enter Password" />
+        <input name="password" id="password" type="password" class="input--user form-control" placeholder="Enter Password" />
       </div>
       <div class="input-for-signup">
         <label for="">Confirm Password</label>
-        <input name="comfirm_password" id="comfirm_password" type="password" class="input--user"
+        <input name="comfirm_password" id="comfirm_password" type="password" class="input--user form-control"
           placeholder="Confirm Password" />
       </div>
 
       <div class="signup-button">
         <button type="
-                                        submit" class="user-signup-btn">Signup</button>
+                                        submit" class="user-signup-btn btn-dark ">Signup</button>
       </div>
     </form>
 
@@ -68,8 +65,11 @@
   </div>
 
 </div>
+</div>
 
-<h6 id="bottom-text">©Copyright Our Shop E-Commerce Project by Afsal </h6>
+
+
+{{>userFooter}}
 <script>
   function Validation() {
 

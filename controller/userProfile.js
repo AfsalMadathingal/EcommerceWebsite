@@ -1022,10 +1022,7 @@ const deleteAddress = async (req, res) => {
 
 //Cart Related Middlewares
 const loadCart = async (req, res) => {
-  
-  
 
-  console.log("session",req.session);
 
   try {
 
@@ -1048,11 +1045,9 @@ const loadCart = async (req, res) => {
         });
       }
      
-     const offercheck = await offerChecker(cartData[0].product_varient_id)
+    
 
-      console.log("offercheck",offercheck);
-
-      const items = await cart.aggregate([
+      let items = await cart.aggregate([
         {
           $match: {
             userId: new mongoose.Types.ObjectId(paramsId),
@@ -1095,54 +1090,87 @@ const loadCart = async (req, res) => {
             productImage: 1,
             stock: 1,
             price: 1,
-            offer:1,
+            offer: 1,
           },
         },
         {
           $lookup: {
             from: "offers",
-            foreignField: "_id",
             localField: "offer",
+            foreignField: "_id",
             as: "offer",
           },
-
-        },
-        {
-          $unwind: "$offer",
         }
-
       ]);
+      
+      
 
-      console.log("items",items);
+
 
       const newData=[]
+
       items.forEach((data) => {
+        if(data.offer.length>0)
+        {
+          data.offer= data.offer[0];
+        }
+      })
 
-        if (data.offer.discount_type)
-      {
-        console.log("if",data);
-        console.log("offer");
-      }else
-      {
-        const toDiscount = (data.offer.discount_value/100)*data.price;
-        console.log("toDiscount",toDiscount);
-        data.offerprice = data.price - toDiscount;
-        data.offerEndDate= data.offer.offer_end_date;
-        console.log(data);
-        newData.push(data);
+      items.forEach((data) => {
+        console.log("calculation",data);
+        if (true)
 
+        {
+          
+          
+          if (data.offer.discount_type)
+          {
+            data.offerprice = data.price - data.offer.discount_value;
+            data.offerEndDate= data.offer.offer_end_date;
+            newData.push(data);
+            console.log("newData",newData);
+    
+    
+          }else
+          {
+            const toDiscount = (data.offer.discount_value/100)*data.price;
+            data.offerprice = data.price - toDiscount;
+            data.offerEndDate= data.offer.offer_end_date;
+            newData.push(data);
+            console.log("newData",newData);
+            
+          }
+        }
         
-      }
 
       })
       
-      console.log("new data",newData);
+    
+      
 
-      for (i = 0; i < newData.length; i++) {
-        newData[i].image = `/uploads/${newData[i].productImage[0]}`;
-        newData[i].totalAmount = newData[i].quantity * newData[i].price;
+
+      if (newData.length > 0) {
+     
+        for (i = 0; i < newData.length; i++) {
+          newData[i].image = `/uploads/${newData[i].productImage[0]}`;
+          newData[i].totalAmount = newData[i].quantity * newData[i].offerprice;
+        }
+
+        items= newData;
+
+      }else
+      {
+        for (i = 0; i < items.length; i++) 
+        {
+          items[i].image = `/uploads/${items[i].productImage[0]}`;
+          items[i].totalAmount = items[i].quantity * items[i].price;
+        }
+
       }
 
+ 
+      
+      //let productData= newData.length > 0 ? newData : items;
       
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
@@ -1150,13 +1178,7 @@ const loadCart = async (req, res) => {
       
       if (personalInfo.cartValue == 0) {
        
-        res.render("user/emptyCart", {
-        
-        items: newData,
-        user: true,
-        personalInfo: personalInfo,
-        userId: req.session.user_id,
-        })
+        res.render("user/emptyCart")
       }else
       {
         res.render("user/cart", {
@@ -1205,6 +1227,7 @@ const deleteItemCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
+
     const oldCart = await cart.findOne({ _id: req.body.cartIdForUpdate });
 
     const price = oldCart.price;
@@ -1228,7 +1251,7 @@ const updateCart = async (req, res) => {
       },
       {
         $group: {
-          _id: "", // Use null if you want to group all matching documents together
+          _id: "", 
           totalValue: {
             $sum: "$value",
           },
@@ -1243,7 +1266,7 @@ const updateCart = async (req, res) => {
     ]);
 
     let updatedValue = totalCartValue[0].totalValue;
-    console.log(updatedValue);
+   
 
     await user.updateOne(
       { _id: req.session.user_id },

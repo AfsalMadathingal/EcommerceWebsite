@@ -1,8 +1,18 @@
-body
+body {
+    background-color: #ffffff !important;
+    font-family: Jost, sans-serif;
+   
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+}
+.main-div-for-signup
 {
-    background-color: rgb(255, 255, 255);
-    padding-top: 10px;
-    font-family: Jost;
+    padding: 20px;
+    background-image: url('../images/loginbg.webp') !important;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* loading fonts */
@@ -31,7 +41,7 @@ body
 }
 .user_signup_title
 {
-    color: #000000;
+    color: #ffffff;
     text-align: center;
     font-family: Jost;
     font-style: normal;
@@ -44,16 +54,26 @@ body
 {
     height: 100%;
     width: 40%;
-    margin: auto;
-    background: #FFF;
-    box-shadow: 0px 33.117px 99.35px 0px rgba(13, 12, 13, 0.20);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 80px;
+    background: #f8f8f805;
+    box-shadow: 0px 33.117px 99.35px 0px rgba(199, 63, 199, 0.2);
     border: black;
-    background-color:white;
+    background-color:rgba(68, 68, 68, 0.377);
+    overflow: auto; /* or overflow: auto; */
+    border-radius: 25px;
+    font-family: jost;
+    backdrop-filter: blur(8px);
+    color: white;
 }
+
+
+
 .subtitle-signupage
 {
     text-align: center;
-    color: #292828;
+    color: #ffffff;
 }
 
 .input--user
@@ -122,4 +142,19 @@ body
 {
     text-align: center;
     color:  red;
+}
+@media screen and (max-width: 500px) {
+    .user-signup-main
+    {
+        width: 90%;
+    }
+    
+}
+
+@media screen and (max-width: 768px) {
+    .user-signup-main
+    {
+        width: 90%;
+    }
+    
 }

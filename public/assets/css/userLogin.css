@@ -1,8 +1,12 @@
 body
 {
-    background-color: rgb(255, 255, 255);
-    padding-top: 70px;
+    background-color: rgb(0, 0, 0);
     font-family: Jost;
+    background-image: url('../images/loginbg.webp');
+    
+    background-position: center;
+    background-repeat: no-repeat;
+    
 }
 
 /* loading fonts */
@@ -31,7 +35,7 @@ body
 /* loading fonts */
 .user_login_title
 {
-    color: #000000;
+    color: #ffffff;
     text-align: center;
     font-family: Jost;
     font-style: normal;
@@ -42,18 +46,28 @@ body
 }
 .user-login-main
 {
-    height: 85%;
+    height: 75%;
     width: 40%;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    font-family: jost;
     background: #FFF;
     box-shadow: 0px 33.117px 99.35px 0px rgba(13, 12, 13, 0.20);
     border: black;
-    background-color:white;
+    border-radius: 30px;
+    background-color:rgba(68, 68, 68, 0.377);
+    overflow: auto; /* or overflow: auto; */
+    border-radius: 25px;
+    font-family: jost;
+    backdrop-filter: blur(8px);
+    color: white;
+    
 }
 .subtitle-loginpage
 {
     text-align: center;
-    color: #292828;
+    color: #ffffff;
 }
 
 .input-email-user
@@ -107,4 +121,20 @@ body
 {
     text-align: center;
     padding-top: 10px;
+}
+
+@media screen and (max-width: 500px) {
+    .user-login-main
+    {
+        width: 90%;
+    }
+    
+}
+
+@media screen and (max-width: 768px) {
+    .user-login-main
+    {
+        width: 90%;
+    }
+    
 }

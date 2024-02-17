@@ -22,7 +22,11 @@
                                     </div>
                                 </td>
                                 <td class="column-2">{{this.productName}}</td>
+                                {{#if this.offerprice}}
                                 <td class="column-3 ">₹ {{subtract this.price this.offerprice}}</td>
+                                {{else}}
+                                <td class="column-3 ">₹ {{this.price}}</td>
+                                {{/if}}
                                 <td class="column-4">
                                     <div class="wrap-num-product flex-w m-l-auto m-r-0" id="quantityContainer">
                                         <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
