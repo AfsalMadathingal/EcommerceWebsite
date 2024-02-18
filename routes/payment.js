@@ -59,6 +59,7 @@ paymentRouter.post("/verify", (req, res) => {
     } else {
       req.session.order = req.body;
     }
+    
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
     const sign = razorpay_order_id + "|" + razorpay_payment_id;

@@ -11,19 +11,20 @@ const couponRoute = require('./couponRoute.js')
 
 
 
-//Landing Page For non regster User
+//Landing 
 userRoute.get('/', auth.isLogin)
-//routing to product related request
-userRoute.use('/products',productRoute)
-//Landing Page For  User
 userRoute.get('/home',auth.checkLoginUser,Products.loadHomeUser)
 userRoute.get('/user_home',auth.checkSession, Products.loadHomeUser)
+
+//routing to product related request
+userRoute.use('/products',productRoute)
+
 //routing to profile related requests
 userRoute.use('/profile',auth.blockChecker,auth.redirectToLogin,profileRoute)
+
+
 //routing to coupon related requests
 userRoute.use('/coupon',auth.blockChecker,auth.redirectToLogin,couponRoute)
-
-
 
 
 //forgot Password realated routes

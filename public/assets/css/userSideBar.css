@@ -7,6 +7,9 @@
 body {
   background-color: #ffffff;
   /* Light grayish color */
+  background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('../images/loginbg.webp');
+background-position: center;
+background-repeat: no-repeat;
 }
 
 #logo-nav {
@@ -63,7 +66,7 @@ body {
   background-color: #080808;
   /* Change to a different color */
   width: 230px;
-  height: 85vh;
+  height: 75vh;
   border-radius: 15px;
   margin-left: 10px;
   margin-top: 42px;
@@ -109,4 +112,22 @@ body {
 
 .account-btn{
   text-align: center;
+}
+.profile-section-main
+{
+  padding: 0!important;
+}
+@media screen and (max-width: 768px) {
+  .sidebar-nav {
+    display: none;
+  }
+  .info-section
+  {
+    width: 100%;
+  }
+  .main-div
+  {
+    width: 100%;
+  }
+  
 }

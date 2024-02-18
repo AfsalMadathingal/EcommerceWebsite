@@ -10,16 +10,14 @@ const cart = require("../model/cart.js");
 const order = require("../model/orderModel.js");
 const payment = require("../model/payment.js");
 const couponsDB = require("../model/couponsModel.js");
-const walletDB = require('../model/walletModel.js');
-const whishlistDB = require('../model/whishlist.js');
+const walletDB = require("../model/walletModel.js");
+const whishlistDB = require("../model/whishlist.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { text } = require("express");
 const saltRounds = 10;
-const Razorpay = require('razorpay');
-const {offerChecker} = require('../controller/UserSideProducts.js')
-
-
+const Razorpay = require("razorpay");
+const { offerChecker } = require("../controller/UserSideProducts.js");
 
 //profile related Middlewares
 const loadChangePassword = async (req, res) => {
@@ -95,11 +93,10 @@ const editProfile = async (req, res) => {
 };
 
 const loadProfile = async (req, res) => {
-
-console.log("hello from load profile");
+  console.log("hello from load profile");
   if (req.session.user_id == req.params.id) {
     const personalInfo = await user.findOne({ _id: req.params.id });
-   
+
     res.render("user/personalinformation", {
       personalInfo: personalInfo,
       user: true,
@@ -110,16 +107,13 @@ console.log("hello from load profile");
   }
 };
 
-
 //order realted Middlewares
 const loadOrders = async (req, res) => {
   try {
     const userId = req.params.id;
 
     if (userId == req.session.user_id) {
-      
       const cartData = await order.find({ userId: userId });
-
 
       const orderData = await order.aggregate([
         {
@@ -176,7 +170,7 @@ const loadOrders = async (req, res) => {
             orderStatus: 1,
             itemId: { $arrayElemAt: ["$items.product", 0] },
             image: { $arrayElemAt: ["$items.images", 0] },
-            quantity:{$arrayElemAt:["$items.quantity",0]},
+            quantity: { $arrayElemAt: ["$items.quantity", 0] },
             price: { $arrayElemAt: ["$items.price", 0] },
             orderDate: 1,
           },
@@ -252,16 +246,15 @@ const loadOrders = async (req, res) => {
           },
         },
         {
-          $sort:{
-            orderDate:-1
-          }
-        }
+          $sort: {
+            orderDate: -1,
+          },
+        },
       ]);
 
       console.log(JSON.stringify(orderData[0]));
       //date formating
       orderData.forEach(async (element1) => {
-
         const dateString = element1.orderDate;
         const dateObject = new Date(dateString);
         // Get day, month, and year
@@ -294,54 +287,53 @@ const loadOrders = async (req, res) => {
   }
 };
 
+
+
 const loadChekOut = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    
+
     const addressData = await address.find({ userId: userId });
     const userData = await user.find({ _id: userId });
     let cartValue = userData[0].cartValue;
 
-    if (req.session.appliedCoupon)
-    {
-      if (req.session.discountPercentage)
-      {
-        value = (req.session.discountPercentage/ 100) * cartValue
-        cartValue -= value
-        req.session.discount = value
-  
-      }else if(req.session.discountAmount)
-      {
-  
-        cartValue-=req.session.discountAmount
-        req.session.discount = req.session.discountAmount
-      }
-      
+    
+    if (cartValue == 0) {
 
+      return  res.redirect(`/profile/mycart/load/${userId}`);
+ 
+    }
+
+    if (req.session.appliedCoupon) {
+      if (req.session.discountPercentage) 
+      {
+        value = (req.session.discountPercentage / 100) * cartValue;
+        cartValue -= value;
+        req.session.discount = value;
+      } else if (req.session.discountAmount) {
+        cartValue -= req.session.discountAmount;
+        req.session.discount = req.session.discountAmount;
+      }
+
+    } else if(req.session.offerTotal) {
+
+      cartValue = req.session.offerTotal;
+      req.session.discount =req.session.OfferDiscount;
+     
     }else
     {
-      req.session.discount = 0
-    }
-    
-
-    if(cartValue == 0){
-
-      res.redirect(`/profile/mycart/load/${userId}`);
-
+      req.session.discount = 0;
     }
 
-    console.log(addressData);
-    console.log(cartValue);
 
-    res.status(200).render("user/checkoutnew", 
-    {
+    console.log("offer total checkout ",req.session.offerTotal,"offer discount",req.session.OfferDiscount);
 
-      discount:req.session.discount,
+    res.status(200).render("user/checkoutnew", {
+      discount: req.session.discount,
       user: true,
       address: addressData,
       cartValue: cartValue,
       userId: userId,
-
     });
   } catch (error) {
     console.log(error);
@@ -349,54 +341,60 @@ const loadChekOut = async (req, res) => {
 };
 
 
-const placeOrder = async (req, res) => {
-  
-  const {  userId,selectedAddress ,walletPayment} = req.body;
- 
-  try {
 
+
+
+const placeOrder = async (req, res) => {
+  const { userId, selectedAddress, walletPayment } = req.body;
+
+  try {
     const addressData = await address.find({ _id: selectedAddress });
     const userData = await user.find({ _id: userId });
     const cartData = await cart.find({ userId: userId });
     const orderNo = Math.floor(100000 + Math.random() * 900000);
-    let totalAmount ;
-    const subTotal  = userData[0].cartValue
+
+    let totalAmount;
+    const subTotal = userData[0].cartValue;
     let products = [];
-    const date= new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    const date = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
 
     //geting productVariant Id to a array
     cartData.forEach((element) => {
-      products.push({ product_varient_id: element.product_varient_id, quantity: element.quantity });
+      products.push({
+        product_varient_id: element.product_varient_id,
+        quantity: element.quantity,
+      });
     });
 
-    console.log("order body", req.session.order );
+     products.forEach(async(data)=>{
 
-    if ( req.session.order )
-    {
+      await productVariants.updateMany({_id:data.product_varient_id},{$inc:{stock:-data.quantity}});
 
-      transactionId =  req.session.order.razorpay_payment_id
-      paymentMethod="Online"
+    })
 
-    }else if(walletPayment)
-    {
+    
 
-      transactionId = "WalletTransaction"
-      paymentMethod="Wallet"
+    if (req.session.order) {
+      transactionId = req.session.order.razorpay_payment_id;
+      paymentMethod = "Online";
+    } else if (walletPayment) {
+      transactionId = "WalletTransaction";
+      paymentMethod = "Wallet";
+    } else {
+      transactionId = "COD";
+      paymentMethod = "cod";
     }
-    else
-    {
-      transactionId = "COD"
-      paymentMethod="cod"
+
+    if (req.session.discount) {
+      totalAmount = userData[0].cartValue - req.session.discount;
+    } else {
+      totalAmount = userData[0].cartValue;
     }
 
-    if (req.session.discount)
-    {
-      totalAmount = userData[0].cartValue- req.session.discount;
-    }else
-    {
-      totalAmount = userData[0].cartValue
-    }
-   
     const orderData = new order({
       userId: userId,
       orderAmount: totalAmount,
@@ -405,10 +403,10 @@ const placeOrder = async (req, res) => {
       OrderedItems: products,
       orderNo: orderNo,
       paymentMethod: paymentMethod,
-      transactionId:transactionId,
-      coupon : req.session.coupon ? req.session.coupon.code : null,
+      transactionId: transactionId,
+      coupon: req.session.coupon ? req.session.coupon.code : null,
       subTotal,
-      discount:req.session.discount,
+      discount: req.session.discount,
     });
 
     const paymentData = new payment({
@@ -426,8 +424,7 @@ const placeOrder = async (req, res) => {
     await cart.deleteMany({ userId: userId });
     await user.updateOne({ _id: userId }, { $set: { cartValue: 0 } });
 
-    console.log("coupon from order creation",req.session.coupon);
-
+    
     req.session.dataForOrder = {
       discount: req.session.discount ? req.session.discount : null,
       user: true,
@@ -435,46 +432,31 @@ const placeOrder = async (req, res) => {
       totalAmount: totalAmount,
       orderId: orderNo,
       userId: req.session.user_id,
-      subTotal:subTotal
+      subTotal: subTotal,
     };
 
-    req.session.appliedCoupon = false
+    req.session.appliedCoupon = false;
 
     res.json(true);
 
   } catch (error) {
-
     res.json("something error please close the tab and open again");
 
     console.log(error);
   }
 };
 
-
 const orderSuccess = async (req, res) => {
-  
   try {
-    
-
-    console.log("ordersuccess ",req.session.dataForOrder);
+    console.log("ordersuccess ", req.session.dataForOrder);
 
     res.render("user/orderPlaced", req.session.dataForOrder);
-
-    
-
-
   } catch (error) {
-
     console.log(error);
-    
   }
-}
+};
 
-const placeOrderRazopay = async (req,res)=>{
-
-
-
-}
+const placeOrderRazopay = async (req, res) => {};
 
 const cancelOrder = async (req, res) => {
   try {
@@ -495,13 +477,10 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-const viewOrder = async (req,res)=>{
-
+const viewOrder = async (req, res) => {
   try {
-    
+    const { id } = req.params;
 
-    const {id}= req.params
-    
     const orderData = await order.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(id) },
@@ -531,8 +510,8 @@ const viewOrder = async (req,res)=>{
           orderDate: 1,
           paymentMethod: 1,
           transactionId: 1,
-          coupon:1,
-          subTotal:1,
+          coupon: 1,
+          subTotal: 1,
         },
       },
       {
@@ -549,7 +528,7 @@ const viewOrder = async (req,res)=>{
       {
         $project: {
           _id: 1,
-          subTotal:1,
+          subTotal: 1,
           userId: 1,
           addressName: 1,
           addressLine1: 1,
@@ -561,7 +540,7 @@ const viewOrder = async (req,res)=>{
           orderNo: 1,
           OrderedItems: 1,
           orderStatus: 1,
-          coupon:1,
+          coupon: 1,
           itemId: { $arrayElemAt: ["$items.product", 0] },
           image: { $arrayElemAt: ["$items.images", 0] },
           quantity: { $arrayElemAt: ["$items.quantity", 0] },
@@ -581,8 +560,8 @@ const viewOrder = async (req,res)=>{
         $project: {
           _id: 1,
           userId: 1,
-          coupon:1,
-          subTotal:1,
+          coupon: 1,
+          subTotal: 1,
           addressName: 1,
           addressLine1: 1,
           addressLine2: 1,
@@ -616,8 +595,8 @@ const viewOrder = async (req,res)=>{
             cancel: "$cancel",
             paymentMethod: "$paymentMethod",
             transactionId: "$transactionId",
-            coupon:"$coupon",
-            subTotal:"$subTotal",
+            coupon: "$coupon",
+            subTotal: "$subTotal",
           },
           OrderedItems: {
             $push: {
@@ -652,234 +631,214 @@ const viewOrder = async (req,res)=>{
           OrderedItems: 1,
           paymentMethod: "$_id.paymentMethod",
           transactionId: "$_id.transactionId",
-          coupon:"$_id.coupon",
-          subTotal:"$_id.subTotal"
+          coupon: "$_id.coupon",
+          subTotal: "$_id.subTotal",
         },
       },
     ]);
 
-
-console.log("order Data",orderData[0]);
-      res.render('user/orderDetails',{
-
-        user:true,
-        userId: req.session.user_id,
-        orderData:orderData[0]
-    
-      } )
-
-
-
-
+    console.log("order Data", orderData[0]);
+    res.render("user/orderDetails", {
+      user: true,
+      userId: req.session.user_id,
+      orderData: orderData[0],
+    });
   } catch (error) {
-
-
     console.log(error);
-    
   }
+};
 
-
-}
-
-const viewInvoice = async (req,res)=>{
-
+const viewInvoice = async (req, res) => {
   try {
-    const {id}= req.params;
-    
-    const orderData = await order.aggregate([{
-      $match: {_id: new mongoose.Types.ObjectId(id)}
-    },
+    const { id } = req.params;
 
-    {
-      $unwind:"$OrderedItems"
-    },
-    {
-      $lookup:{
-        from:"addresses",
-        foreignField:"_id",
-        localField:"deliveryAddress",
-        as:"AddressInfo"
-      }
-    },{
-      $project:{
-
-        _id:1,
-        userId:1,
-        orderAmount:1,
-        addressName:{$arrayElemAt:["$AddressInfo.name",0]},
-        addressLine1:{$arrayElemAt:["$AddressInfo.addressLine1",0]},
-        addressLine2: {$arrayElemAt:["$AddressInfo.addressLine2",0]},
-        city:{$arrayElemAt:["$AddressInfo.city_dist_town",0]},
-        state:{$arrayElemAt:["$AddressInfo.state",0]},
-        mobile:{$arrayElemAt:["$AddressInfo.mobile",0]},
-        pincode:{$arrayElemAt:["$AddressInfo.pincode",0]},
-        orderNo:1,
-        orderStatus:1,
-        OrderedItems:1,
-        orderDate:1,
-
-      }
-    },{
-      $lookup:{
-        from:"product_varients",
-        foreignField:"_id",
-        localField:"OrderedItems.product_varient_id",
-        as:"Items"
-      }
-    },
-    {
-    $project:{
-
-      _id:1,
-      userId:1,
-      orderAmount:1,
-      addressName:1,
-      addressLine1:1,
-      addressLine2: 1,
-      city:1,
-      state:1,
-      orderNo:1,
-      orderStatus:1,
-      Items:1,
-      mobile:1,
-      pincode:1,
-      orderDate:1,
-      OrderedItems:1,
-    }
-  },{
-    $unwind:"$Items"
-  },{
-    $project:{
-
-      _id:1,
-      userId:1,
-      orderAmount:1,
-      addressName:1,
-      addressLine1:1,
-      addressLine2: 1,
-      city:1,
-      state:1,
-      orderNo:1,
-      orderStatus:1,
-      Items:1,
-      pricePerItem:"$Items.price",
-      productId:"$Items.product",
-      quantity:"$OrderedItems.quantity",
-      mobile:1,
-      pincode:1,
-      orderDate:1,
-
-
-    }
-  },{
-    $lookup:
+    const orderData = await order.aggregate([
       {
-        from:"product_details",
-        foreignField:"_id",
-        localField:"productId",
-        as:"productDetails"
-      }
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+      },
 
-    
-  },{
-    $project:{
-      _id:1,
-      userId:1,
-      orderAmount:1,
-      addressName:1,
-      addressLine1:1,
-      addressLine2: 1,
-      city:1,
-      state:1,
-      orderNo:1,
-      orderStatus:1,
-      pricePerItem:1,
-      productDetails:1,
-      productId:1,
-      productName: {$arrayElemAt:["$productDetails.product_name",0]},
-      productAbout:{$arrayElemAt:["$productDetails.about_product",0]},
-      mobile:1,
-      pincode:1,
-      orderDate:1,
-      Items:1,
-      quantity:1,
-      test:1,
+      {
+        $unwind: "$OrderedItems",
+      },
+      {
+        $lookup: {
+          from: "addresses",
+          foreignField: "_id",
+          localField: "deliveryAddress",
+          as: "AddressInfo",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          orderAmount: 1,
+          addressName: { $arrayElemAt: ["$AddressInfo.name", 0] },
+          addressLine1: { $arrayElemAt: ["$AddressInfo.addressLine1", 0] },
+          addressLine2: { $arrayElemAt: ["$AddressInfo.addressLine2", 0] },
+          city: { $arrayElemAt: ["$AddressInfo.city_dist_town", 0] },
+          state: { $arrayElemAt: ["$AddressInfo.state", 0] },
+          mobile: { $arrayElemAt: ["$AddressInfo.mobile", 0] },
+          pincode: { $arrayElemAt: ["$AddressInfo.pincode", 0] },
+          orderNo: 1,
+          orderStatus: 1,
+          OrderedItems: 1,
+          orderDate: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "product_varients",
+          foreignField: "_id",
+          localField: "OrderedItems.product_varient_id",
+          as: "Items",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          orderAmount: 1,
+          addressName: 1,
+          addressLine1: 1,
+          addressLine2: 1,
+          city: 1,
+          state: 1,
+          orderNo: 1,
+          orderStatus: 1,
+          Items: 1,
+          mobile: 1,
+          pincode: 1,
+          orderDate: 1,
+          OrderedItems: 1,
+        },
+      },
+      {
+        $unwind: "$Items",
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          orderAmount: 1,
+          addressName: 1,
+          addressLine1: 1,
+          addressLine2: 1,
+          city: 1,
+          state: 1,
+          orderNo: 1,
+          orderStatus: 1,
+          Items: 1,
+          pricePerItem: "$Items.price",
+          productId: "$Items.product",
+          quantity: "$OrderedItems.quantity",
+          mobile: 1,
+          pincode: 1,
+          orderDate: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "productId",
+          as: "productDetails",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          orderAmount: 1,
+          addressName: 1,
+          addressLine1: 1,
+          addressLine2: 1,
+          city: 1,
+          state: 1,
+          orderNo: 1,
+          orderStatus: 1,
+          pricePerItem: 1,
+          productDetails: 1,
+          productId: 1,
+          productName: { $arrayElemAt: ["$productDetails.product_name", 0] },
+          productAbout: { $arrayElemAt: ["$productDetails.about_product", 0] },
+          mobile: 1,
+          pincode: 1,
+          orderDate: 1,
+          Items: 1,
+          quantity: 1,
+          test: 1,
+        },
+      },
+    ]);
 
-    }
-  }
-  ])
+    console.log(JSON.stringify(orderData));
+    orderData.forEach((element) => {
+      // Provided date string
+      const dateString = element.orderDate;
 
-console.log(JSON.stringify(orderData));
-  orderData.forEach((element) => {
-    // Provided date string
-    const dateString = element.orderDate;
+      // Create a new Date object from the provided string
+      const dateObject = new Date(dateString);
 
-    // Create a new Date object from the provided string
-    const dateObject = new Date(dateString);
+      // Get day, month, and year
+      const day = dateObject.getDate();
+      const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
+      const year = dateObject.getFullYear();
 
-    // Get day, month, and year
-    const day = dateObject.getDate();
-    const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
-    const year = dateObject.getFullYear();
+      // Format the date components
+      const formattedDate = `${day}/${month}/${year}`;
 
-    // Format the date components
-    const formattedDate = `${day}/${month}/${year}`;
+      element.datejoined = formattedDate;
+    });
 
-    element.datejoined = formattedDate;
-
-
-  });
-
-
-  let mergedOrders = orderData.map(order => ({
-    ...order,
-    productData: {
+    let mergedOrders = orderData.map((order) => ({
+      ...order,
+      productData: {
         ...order.Items,
         ...order.productDetails[0],
-        quantity:order.quantity,
-         // Assuming there's only one productDetails per order, adjust as needed
-    },
-    
-    // Remove the original Items and productDetails fields
-    Items: undefined,
-    productDetails: undefined,
-}));
+        quantity: order.quantity,
+        // Assuming there's only one productDetails per order, adjust as needed
+      },
 
-console.log("mergeredOrders",mergedOrders);
-if (mergedOrders.length > 1) {
-  mergedOrders[0].productData = mergedOrders.map(order => order.productData);
-  mergedOrders.splice(1);  // Remove the remaining orders
-}
+      // Remove the original Items and productDetails fields
+      Items: undefined,
+      productDetails: undefined,
+    }));
 
-  
-  
-  
+    console.log("mergeredOrders", mergedOrders);
+    if (mergedOrders.length > 1) {
+      mergedOrders[0].productData = mergedOrders.map(
+        (order) => order.productData
+      );
+      mergedOrders.splice(1); // Remove the remaining orders
+    }
 
-  const Data=mergedOrders[0]
-  let productData
-  console.log(Data);
+    const Data = mergedOrders[0];
+    let productData;
+    console.log(Data);
 
-  if (typeof Data.productData === 'object' && !Array.isArray(Data.productData)) {
-    productData = [Data.productData];
-   
-  } else {
-    productData = Data.productData;
-    console.log("else", productData);
-    
-  }
- 
+    if (
+      typeof Data.productData === "object" &&
+      !Array.isArray(Data.productData)
+    ) {
+      productData = [Data.productData];
+    } else {
+      productData = Data.productData;
+      console.log("else", productData);
+    }
 
-  console.log(productData);
-    
-     res.status(200).render('user/orderInvoice',{orderData:Data,productData:productData ,user:true,userId:req.session.user_id});
+    console.log(productData);
 
+    res.status(200).render("user/orderInvoice", {
+      orderData: Data,
+      productData: productData,
+      user: true,
+      userId: req.session.user_id,
+    });
   } catch (error) {
     console.log(error);
   }
-}
-
-
-
+};
 
 //address Related Middlewares
 const loadAddress = async (req, res) => {
@@ -1019,34 +978,28 @@ const deleteAddress = async (req, res) => {
   } catch (error) {}
 };
 
-
 //Cart Related Middlewares
 const loadCart = async (req, res) => {
-
-
   try {
+    paramsId = req.params.id;
+    sessionId = req.session.user_id;
 
-     paramsId = req.params.id;
-     sessionId = req.session.user_id;
-
-    ['coupon','couponId', 'discountAmount', 'discountPercentage', 'discount'].forEach(variable => {
+    [
+      "coupon",
+      "couponId",
+      "discountAmount",
+      "discountPercentage",
+      "discount","OfferDiscount","OfferDiscount"
+    
+    ].forEach((variable) => {
       delete req.session[variable];
     });
-
 
     if (paramsId == sessionId) {
 
       const cartData = await cart.find({ userId: sessionId });
-      console.log(cartData);
-      if(cartData[0])
-      {
-        productData = await productVariants.findOne({
-          _id: cartData[0].product_varient_id,
-        });
-      }
      
-    
-
+   
       let items = await cart.aggregate([
         {
           $match: {
@@ -1100,102 +1053,82 @@ const loadCart = async (req, res) => {
             foreignField: "_id",
             as: "offer",
           },
-        }
+        },
       ]);
-      
-      
 
-
-
-      const newData=[]
+      const newData = [];
 
       items.forEach((data) => {
-        if(data.offer.length>0)
-        {
-          data.offer= data.offer[0];
+        if (data.offer.length > 0) {
+          data.offer = data.offer[0];
         }
-      })
+      });
+
+
 
       items.forEach((data) => {
-        console.log("calculation",data);
-        if (true)
-
-        {
-          
-          
-          if (data.offer.discount_type)
-          {
+       
+        if (!Array.isArray(data.offer)) {
+          if (data.offer.discount_type) {
             data.offerprice = data.price - data.offer.discount_value;
-            data.offerEndDate= data.offer.offer_end_date;
+            data.offerEndDate = data.offer.offer_end_date;
             newData.push(data);
-            console.log("newData",newData);
-    
-    
-          }else
-          {
-            const toDiscount = (data.offer.discount_value/100)*data.price;
+            
+          } else {
+            const toDiscount = (data.offer.discount_value / 100) * data.price;
             data.offerprice = data.price - toDiscount;
-            data.offerEndDate= data.offer.offer_end_date;
+            data.offerEndDate = data.offer.offer_end_date;
             newData.push(data);
-            console.log("newData",newData);
             
           }
+        } else {
+          data.offer = false;
+          newData.push(data);
         }
-        
+      });
 
-      })
-      
+      let newTotal=0 ;
+      let offerDiscountAmount=0;
+      let discountForOrder=0
+      console.log("new data",newData);
+
+      for (let i = 0; i < newData.length; i++) {
+        const currentItem = newData[i];
+        const hasOffer = currentItem.offer !== undefined;
     
-      
-
-
-      if (newData.length > 0) {
-     
-        for (i = 0; i < newData.length; i++) {
-          newData[i].image = `/uploads/${newData[i].productImage[0]}`;
-          newData[i].totalAmount = newData[i].quantity * newData[i].offerprice;
+        currentItem.image = `/uploads/${currentItem.productImage[0]}`;
+        currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
+        newTotal += currentItem.totalAmount;
+    
+        if (hasOffer) {
+            const discountPrice = currentItem.price - currentItem.offerprice;
+            offerDiscountAmount += discountPrice * currentItem.quantity;
+            currentItem.discountPrice = discountPrice;
+            discountForOrder += discountPrice * currentItem.quantity;
         }
-
-        items= newData;
-
-      }else
-      {
-        for (i = 0; i < items.length; i++) 
-        {
-          items[i].image = `/uploads/${items[i].productImage[0]}`;
-          items[i].totalAmount = items[i].quantity * items[i].price;
-        }
-
-      }
-
- 
-      
-      //let productData= newData.length > 0 ? newData : items;
-      
+    }
+    
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
       const coupon = await couponsDB.find({});
-      
+
+      req.session.offerTotal = newTotal;
+      req.session.OfferDiscount = offerDiscountAmount;
+
       if (personalInfo.cartValue == 0) {
-       
-        res.render("user/emptyCart")
-      }else
-      {
+        res.render("user/emptyCart");
+      } else {
         res.render("user/cart", {
-          coupon : coupon,
-          items: items,
+          coupon: coupon,
+          items: newData,
+          discountForOrder:discountForOrder,
           user: true,
           personalInfo: personalInfo,
           userId: req.session.user_id,
         });
       }
-      
     }
-
-    
-
   } catch (err) {
-    
     console.log(err);
   }
 };
@@ -1227,7 +1160,6 @@ const deleteItemCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
-
     const oldCart = await cart.findOne({ _id: req.body.cartIdForUpdate });
 
     const price = oldCart.price;
@@ -1251,7 +1183,7 @@ const updateCart = async (req, res) => {
       },
       {
         $group: {
-          _id: "", 
+          _id: "",
           totalValue: {
             $sum: "$value",
           },
@@ -1266,8 +1198,7 @@ const updateCart = async (req, res) => {
     ]);
 
     let updatedValue = totalCartValue[0].totalValue;
-   
-
+   //updating user cart value in database
     await user.updateOne(
       { _id: req.session.user_id },
       {
@@ -1283,7 +1214,7 @@ const updateCart = async (req, res) => {
       _id: cartData[0].product_varient_id,
     });
 
-    const items = await cart.aggregate([
+    let items = await cart.aggregate([
       {
         $match: {
           userId: new mongoose.Types.ObjectId(paramsId),
@@ -1306,6 +1237,7 @@ const updateCart = async (req, res) => {
           productImage: { $arrayElemAt: ["$productDetails.images", 0] },
           stock: { $arrayElemAt: ["$productDetails.stock", 0] },
           price: { $arrayElemAt: ["$productDetails.price", 0] },
+          offer: { $arrayElemAt: ["$productDetails.offer", 0] },
         },
       },
       {
@@ -1325,22 +1257,83 @@ const updateCart = async (req, res) => {
           productImage: 1,
           stock: 1,
           price: 1,
+          offer: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "offers",
+          localField: "offer",
+          foreignField: "_id",
+          as: "offer",
         },
       },
     ]);
+   
+    const newData = [];
 
-    for (i = 0; i < items.length; i++) {
-      items[i].image = `/uploads/${items[i].productImage[0]}`;
-      items[i].totalAmount = items[i].quantity * items[i].price;
+      items.forEach((data) => {
+        if (data.offer.length > 0) {
+          data.offer = data.offer[0];
+        }
+      });
+
+
+
+      items.forEach(data => {
+        
+        if (!Array.isArray(data.offer)) {
+            if (data.offer.discount_type) {
+                data.offerprice = data.price - data.offer.discount_value;
+            } else {
+                const discountAmount = (data.offer.discount_value / 100) * data.price;
+                data.offerprice = data.price - discountAmount;
+            }
+            data.offerEndDate = data.offer.offer_end_date;
+            newData.push(data);
+        } else {
+            data.offer = false;
+            newData.push(data);
+        }
+    });
+    
+
+   
+
+      for (let i = 0; i < newData.length; i++) {
+        const currentItem = newData[i];
+        const hasOffer = currentItem.offer !== undefined;
+    
+        currentItem.image = `/uploads/${currentItem.productImage[0]}`;
+        currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
+        req.session.offerTotal += currentItem.totalAmount;
+    
+        if (i === 0) {
+            req.session.offerTotal = currentItem.totalAmount;
+            req.session.OfferDiscount = 0;
+        }
+    
+        if (hasOffer) {
+            req.session.OfferDiscount += (currentItem.price - currentItem.offerprice) * currentItem.quantity;
+        }
     }
+    
+      
+      
+    
+      console.log("offer total update",req.session.offerTotal,"offer discount",req.session.OfferDiscount);
 
-    const { cartValue } = await user.findOne({ _id: req.session.user_id });
+     
+      const cartValue = newData.reduce((acc, item) => acc + item.totalAmount, 0);
+
+      console.log("cart",cartValue);
+    
 
     //sending data to fetch
     const responseData = {
       message: "Data received successfully",
       cartId: req.body.cartIdForUpdate,
-      items,
+      items:newData,
       cartValue,
     };
     res.json(responseData);
@@ -1349,125 +1342,109 @@ const updateCart = async (req, res) => {
   }
 };
 
-const addBalance = async (req,res)=>{
-
-
-  try 
-  {
-
-    let {amount}= req.body;
-    const userId = req.session.user_id
-    const addingAmount = Number(amount)
+const addBalance = async (req, res) => {
+  try {
+    let { amount } = req.body;
+    const userId = req.session.user_id;
+    const addingAmount = Number(amount);
     // Check if the user exists, if not, insert a new user with the given balance
     const existingUser = await walletDB.findOne({ userId: userId });
 
     if (!existingUser) {
       await walletDB.insertMany([{ userId: userId, balance: amount }]);
     } else {
-      const oldAmount= existingUser.balance
-      amount= Number(amount)
-      amount +=oldAmount
+      const oldAmount = existingUser.balance;
+      amount = Number(amount);
+      amount += oldAmount;
 
-      await walletDB.updateOne({ userId: userId }, { $set: { balance: amount} });
+      await walletDB.updateOne(
+        { userId: userId },
+        { $set: { balance: amount } }
+      );
 
       await walletDB.updateOne(
         { userId: userId },
         {
           $push: {
-            transaction: { amount: addingAmount, type: "credit", date: new Date() },
+            transaction: {
+              amount: addingAmount,
+              type: "credit",
+              date: new Date(),
+            },
           },
         }
       );
-      }
+    }
 
-    const walletData = await walletDB.findOne({userId:req.session.user_id})
+    const walletData = await walletDB.findOne({ userId: req.session.user_id });
 
     console.log(walletData);
 
-    res.json({walletData})
-    
-  } 
-  catch (error) {
-
+    res.json({ walletData });
+  } catch (error) {
     console.log(error);
-
   }
+};
 
-}
-
-const loadWallet = async (req,res)=>{
-
+const loadWallet = async (req, res) => {
   try {
-
-    const walletData = await walletDB.find({userId:req.session.user_id})
+    const walletData = await walletDB.find({ userId: req.session.user_id });
 
     walletData.forEach((data) => {
-  data.transaction.forEach((txn) => {
-    txn.amount = (txn.type === "credit" ? "+" : "-") + txn.amount;
-  });
-});
+      data.transaction.forEach((txn) => {
+        txn.amount = (txn.type === "credit" ? "+" : "-") + txn.amount;
+      });
+    });
 
-    console.log("data wlaler",walletData);
+    console.log("data wlaler", walletData);
 
-    res.render('user/myWallet' , {
-      user:true,
-      userId:req.session.user_id,
-      walletData:walletData[0]
-
-    })
-
-    
+    res.render("user/myWallet", {
+      user: true,
+      userId: req.session.user_id,
+      walletData: walletData[0],
+    });
   } catch (error) {
-    
     console.log(error);
   }
-}
+};
 
-const addToWishList = async (req,res)=>{
-  
+const addToWishList = async (req, res) => {
   try {
-    
-    const {id} = req.body
-    const userId = req.session.user_id
+    const { id } = req.body;
+    const userId = req.session.user_id;
 
+    const data = await productVariants.findOne({ _id: id }).populate("product");
 
-    const data = await productVariants.findOne({_id:id}).populate("product")
-
-
-    const response = await whishlistDB.updateOne({user:userId},{
-      $push:{
-        productVarientId:new mongoose.Types.ObjectId(id)
+    const response = await whishlistDB.updateOne(
+      { user: userId },
+      {
+        $push: {
+          productVarientId: new mongoose.Types.ObjectId(id),
+        },
       }
-    })
-    if(response.matchedCount===0){
-
-      await whishlistDB.insertMany([{user:userId,productVarientId:new mongoose.Types.ObjectId(id)}])
+    );
+    if (response.matchedCount === 0) {
+      await whishlistDB.insertMany([
+        { user: userId, productVarientId: new mongoose.Types.ObjectId(id) },
+      ]);
     }
-   
 
-    res.json({success:true,data})
-
-
+    res.json({ success: true, data });
   } catch (error) {
-    
     console.log(error);
   }
-}
+};
 
-const loadWishList = async (req,res)=>{
-  
+const loadWishList = async (req, res) => {
   try {
-    
-    
-
     const whishlistData = await whishlistDB.aggregate([
       {
-          $match: {
-              user:  new mongoose.Types.ObjectId(req.session.user_id),
-          }
+        $match: {
+          user: new mongoose.Types.ObjectId(req.session.user_id),
+        },
       },
       {
-          $unwind: "$productVarientId"
+        $unwind: "$productVarientId",
       },
       {
         $lookup: {
@@ -1476,7 +1453,6 @@ const loadWishList = async (req,res)=>{
           foreignField: "_id",
           as: "product",
         },
-
       },
       {
         $project: {
@@ -1496,77 +1472,53 @@ const loadWishList = async (req,res)=>{
           foreignField: "_id",
           as: "product",
         },
-
       },
       {
         $addFields: {
           productName: "$product.product_name",
-        }
-      }
-      
-    ])
+        },
+      },
+    ]);
 
-    whishlistData.forEach((data)=>{
-      
-      data.productImage = data.productImage[0]
-    })
-   
-  
-console.log(whishlistData);
-   
+    whishlistData.forEach((data) => {
+      data.productImage = data.productImage[0];
+    });
 
-    res.render(
-      "user/myWishlist",
-      {
-        user:true,
-        userId:req.session.user_id,
-        whishlistData:whishlistData
-      }
-    )
-  } 
-  catch (error) 
-  {
+    console.log(whishlistData);
 
+    res.render("user/myWishlist", {
+      user: true,
+      userId: req.session.user_id,
+      whishlistData: whishlistData,
+    });
+  } catch (error) {
     console.log(error);
   }
-}
+};
 
-
-const removeFromWishList = async (req,res)=>{
-  
-  try 
-  {
-
-    const {whishlistId,productid}= req.body
-    console.log("this is product id",productid);
-    const query = {_id:whishlistId}
+const removeFromWishList = async (req, res) => {
+  try {
+    const { whishlistId, productid } = req.body;
+    console.log("this is product id", productid);
+    const query = { _id: whishlistId };
 
     const response = await whishlistDB.updateOne(
       query,
       { $pull: { productVarientId: new mongoose.Types.ObjectId(productid) } },
-      { new: true },
+      { new: true }
     );
 
     console.log(response);
-    
+
     if (response.modifiedCount > 0) {
-
-      res.json({success:true})
-
-    }else
-    {
-
-      res.json({success:false})
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
     }
-
-
-
   } catch (err) {
-
     console.log(err);
-    
   }
-}
+};
 
 //exporting every middlewares
 
@@ -1596,5 +1548,5 @@ module.exports = {
   loadWallet,
   addToWishList,
   loadWishList,
-  removeFromWishList
+  removeFromWishList,
 };

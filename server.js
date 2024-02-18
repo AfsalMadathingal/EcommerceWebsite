@@ -35,7 +35,7 @@ app.use(nocache())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-hbs.registerPartials(__dirname + '/views/partials', (err)=>console.log(err));
+hbs.registerPartials(__dirname + '/views/partials');
 hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
 
 //static assets

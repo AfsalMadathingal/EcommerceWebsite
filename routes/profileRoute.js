@@ -50,7 +50,7 @@ profileRoute.get('/mywallet/:id',profile.loadWallet)
 profileRoute.post('/addbalance',profile.addBalance)
 
 
-
+//return products
 profileRoute.get('/returnproducts/:id',(req,res)=>{
 
     res.render('user/returnedProducts',)
@@ -58,10 +58,9 @@ profileRoute.get('/returnproducts/:id',(req,res)=>{
 
 
 
+//WishList Related Routes
 profileRoute.get('/mywhishlist',profile.loadWishList)
-
 profileRoute.post('/addtowishlist',profile.addToWishList)
-
 profileRoute.post('/removefromwishlist',profile.removeFromWishList)
 
 

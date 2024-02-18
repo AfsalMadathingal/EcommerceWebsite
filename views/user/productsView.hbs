@@ -93,7 +93,7 @@
                             <div class="size-204 respon6-next">
                                 <div class="rs1-select2 bor8 bg0">
                                     <select class="form-select js-select2" name="time">
-                                        <option>Choose an option</option>
+                                        
                                         {{#each size}}
                                         <option>{{this.sizes}}</option>
                                         {{/each}}
@@ -553,39 +553,7 @@
 {{!-- old --}}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-    /*
-        $(document).ready(function () {
-            // Handle button click event
-            $('.add-to-cart').on('click', function () {
-                // Retrieve data from the button
-                var productId = $(this).data('product-id');
-                console.log(productId)
-                var quantity = $('.order__quantity--input').val();
-                console.log(quantity)
-                // Make an AJAX request
-                $.ajax({
-                    url: '/products/addtocart/'+productId, // Replace with your actual API endpoint
-                    method: 'POST',
-                    data: { productId: productId ,quantity:quantity },
-                    success: function (response) {
-                        // Handle successful response
-                        if(response.success)
-                        {
-                           
-                        }else{
-                           
-                        }
-                        console.log('Product added to cart:', response);
-                    },
-                    error: function (error) {
-                        // Handle error
-                        console.error('Error adding product to cart:', error);
-                    }
-                });
-            });
-        });
-    
-    */
+ 
 
     // Assuming you have jQuery and AJAX-ZOOM libraries loaded
 
@@ -684,7 +652,7 @@
         var currentQuantity = parseInt(inputElement.value, 10);
 
         // Ensure the quantity doesn't go below 0
-        if (currentQuantity > 0) {
+        if (currentQuantity > 1) {
             inputElement.value = currentQuantity - 1;
         }
     }
