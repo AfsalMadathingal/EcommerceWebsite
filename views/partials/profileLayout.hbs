@@ -38,6 +38,10 @@
                         <button class="side-button coupon  account-btn" type="button">
                             My Wallet</button>
                     </a>
+                     <a href="/profile/myreferrals/{{personalInfo._id}}">
+                        <button class="side-button coupon  account-btn" type="button">
+                            My Referrals</button>
+                    </a>
 
             </div>
 
@@ -53,7 +57,7 @@
                         if (currentPage === buttonHref) {
                             // Change button color directly using jQuery
                             $(this).css({
-                                'background-color': 'white', // Your desired active color
+                                'background-color': 'rgb(113,127,224)', // Your desired active color
                                 'color': 'black'
                             });
                         }

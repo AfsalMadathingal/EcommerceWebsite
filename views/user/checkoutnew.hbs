@@ -149,13 +149,15 @@
                     <div class="table-responsive">
                         <div class="bg-white">
                             <h3 class="p-3"> Order Summary</h3>
-                            {{#if discount}}
-                            <h5 class="ps-3 text-dark">Subtotal : ₹{{add cartValue discount}}</h5>
+                            {{#if couponDiscount}}
+                            <h5 class="ps-3 text-dark">Subtotal : ₹{{add cartValue couponDiscount}}</h5>
                             {{else}}
                             <h5 class="ps-3 text-dark">Subtotal : ₹{{ cartValue }}</h5>
                             {{/if}}
                             <hr class="bg-dark">
-                            <h5 class="ps-3 text-dark">Discount : {{discount}}</h5>
+                            <h5 class="ps-3 text-dark">Coupon Discount : {{couponDiscount}}</h5>
+                            <hr class="bg-dark">
+                            <h5 class="ps-3 text-dark">Offer Savings : {{OfferDiscount}}</h5>
                             <hr class="bg-dark">
                             <h3 class="ps-3 pb-3  text-dark">Order Total: ₹{{cartValue}}</h3>
 
@@ -395,11 +397,12 @@
                 }
             },
             theme: {
-                color: "blue"
+                color: "green"
             }
         };
-        const paymentObject = new window.Razorpay(paymentOptions);
-        paymentObject.open();
+        
+       const paymentObject = new window.Razorpay(paymentOptions);
+       paymentObject.open();
     }
 
 </script>

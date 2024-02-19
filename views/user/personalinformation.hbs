@@ -55,23 +55,7 @@
 <script src="/vendor/sweetalert/sweetalert.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        var currentPage = window.location.pathname;
-
-        $('.side-button').each(function () {
-            var buttonHref = $(this).parent().attr('href');
-
-            if (currentPage === buttonHref) {
-                // Change button color directly using jQuery
-                $(this).css({
-                    'background-color': 'white', // Your desired active color
-                    'color': 'black'
-                });
-            }
-        });
-    });
-
-
+  
 
 
 

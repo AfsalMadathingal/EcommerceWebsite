@@ -302,30 +302,44 @@ copytoClipboard()
 
 
   
-    const priceElements = document.querySelectorAll('.product-price');
-
-
-    let totalPrice = 0;
-
-    console.log(priceElements)
-
-    priceElements.forEach((element) => {
-        const priceText = element.textContent.trim();
-        const priceValue = parseFloat(priceText.replace('₹', ''));
-        totalPrice += priceValue;
-        
-    });
-
-  
-    const totalPriceElement = document.getElementById('Subtotal');
-    const total = document.getElementById('total')
-    totalPriceElement.textContent = `₹ ${totalPrice}`;
-    total.textContent = `₹ ${totalPrice}`;
+   
 
 
 
 
     document.addEventListener('DOMContentLoaded', function () {
+
+
+
+
+        const priceElements = document.querySelectorAll('.product-price');
+
+
+        let totalPrice = 0;
+
+        console.log(priceElements)
+
+        priceElements.forEach((element) => {
+            const priceText = element.textContent.trim();
+            console.log("price text",priceText)
+            const priceValue = parseFloat(priceText.replace('₹', ''));
+            console.log("price value",priceValue)
+            totalPrice += priceValue;
+
+        });
+
+
+        const totalPriceElement = document.getElementById('Subtotal');
+        const total = document.getElementById('total')
+        totalPriceElement.textContent = `₹ ${totalPrice}`;
+        total.textContent = `₹ ${totalPrice}`;
+
+        console.log(totalPrice)
+
+
+
+
+
         // Use event delegation on a static parent element (replace "table" with the appropriate parent)
         document.querySelector('table').addEventListener('click', function (event) {
             if (event.target.classList.contains('cart-item-remove-button')) {
@@ -335,6 +349,7 @@ copytoClipboard()
                 const tr = event.target.closest('tr');
                 const Subtotal = document.getElementById('Subtotal')
                 const total = document.getElementById('total')
+                const offerdiscount = document.getElementById('offerdiscount')
 
                 fetch('/profile/mycart/remove', {
                     method: 'POST',
@@ -347,8 +362,9 @@ copytoClipboard()
                     .then(data => {
                         // Manually remove the <tr> element
                         tr.parentNode.removeChild(tr);
-                        Subtotal.textContent = data
-                        total.textContent = data
+                        Subtotal.textContent = data.cartValue
+                        total.textContent = data.cartValue
+                        offerdiscount.textContent = data.savings
 
                         console.log('Server respons  sdfse:', data);
                     })
@@ -378,13 +394,14 @@ copytoClipboard()
 
 
             // Check if the clicked element is the "Increment" or "Decrement" button
-            if (target.classList.contains('btn-num-product-up')) {
+            if (target.classList.contains('btn-num-product-up') || target.classList.contains('zmdi-plus')) {
 
                 
                 
                 incrementQuantity(target);
 
-            } else if (target.classList.contains('btn-num-product-down')) {
+
+            } else if (target.classList.contains('btn-num-product-down') || target.classList.contains('zmdi-minus')  ) {
 
                
                 decrementQuantity(target);
@@ -406,10 +423,8 @@ copytoClipboard()
         const pricePerItem = document.getElementById(`totalPerItem-${cartIdForUpdate}`)
         const Subtotal = document.getElementById('Subtotal')
         const total = document.getElementById('total')
+        const offerSavings= document.getElementById('offerdiscount')
 
-        console.log("price",pricePerItem)
-
-        console.log(cartIdForUpdate);
 
         fetch('/profile/mycart/update', {
             method: 'POST',
@@ -431,21 +446,25 @@ copytoClipboard()
 
                     if (element._id == cartIdForUpdate) 
                     {
-                        console.log("element",element)
+                     
                         pricePerItem.textContent = element.totalAmount
                         if(couponApplied)
                         {
-                            console.log("coupon applied")
+                
                             Subtotal.textContent = data.cartValue 
                             total.textContent = data.cartValue - couponDiscount
+
                         }else
                         {
                         Subtotal.textContent = data.cartValue
                         total.textContent = data.cartValue
 
                         }
+                        
                        
                     }
+                    
+                    offerSavings.textContent=data.savings
                 })
                 console.log('Server response:', data);
             })
@@ -468,6 +487,8 @@ copytoClipboard()
             const pricePerItem = document.getElementById(`totalPerItem-${cartIdForUpdate}`)
             const Subtotal = document.getElementById('Subtotal')
             const total = document.getElementById('total')
+            const offerSavings= document.getElementById('offerdiscount')
+
 
             console.log(cartIdForUpdate);
 
@@ -506,7 +527,7 @@ copytoClipboard()
                             }
 
 
-
+                                offerSavings.textContent=data.savings
                         }
                     })
 

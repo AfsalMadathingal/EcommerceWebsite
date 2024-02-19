@@ -27,7 +27,7 @@ app.use('/',session({
 }))
 
 // Logger
-// app.use(logger('dev'))
+app.use(logger('dev'))
 
 //using nocache
 app.use(nocache())
@@ -52,8 +52,8 @@ app.use("/admin", adminRoute);
 
 
 //for user routes
-const user_route = require("./routes/userRoute");
-app.use("/", user_route);
+const userRoute = require("./routes/userRoute");
+app.use("/", userRoute);
  
 
 

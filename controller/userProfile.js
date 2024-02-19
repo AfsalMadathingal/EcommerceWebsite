@@ -1,5 +1,6 @@
 //Requiring Nessesery Modules
 const products = require("../model/productsModel.js");
+const referral = require("../model/referralModel");
 const size = require("../model/sizeModel.js");
 const color = require("../model/colorModel.js");
 const category = require("../model/categoryModel.js");
@@ -295,41 +296,153 @@ const loadChekOut = async (req, res) => {
 
     const addressData = await address.find({ userId: userId });
     const userData = await user.find({ _id: userId });
-    let cartValue = userData[0].cartValue;
+    //let cartValue = userData[0].cartValue;
 
+    let items = await cart.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(req.session.user_id),
+        },
+      },
+      {
+        $lookup: {
+          from: "product_varients",
+          foreignField: "_id",
+          localField: "product_varient_id",
+          as: "productDetails",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          quantity: { $toInt: "$quantity" },
+          productid: { $arrayElemAt: ["$productDetails.product", 0] },
+          productImage: { $arrayElemAt: ["$productDetails.images", 0] },
+          stock: { $arrayElemAt: ["$productDetails.stock", 0] },
+          price: { $arrayElemAt: ["$productDetails.price", 0] },
+          offer: { $arrayElemAt: ["$productDetails.offer", 0] },
+        },
+      },
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "productid",
+          as: "productDetails",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          quantity: 1,
+          productName: { $arrayElemAt: ["$productDetails.product_name", 0] },
+          productImage: 1,
+          stock: 1,
+          price: 1,
+          offer: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "offers",
+          localField: "offer",
+          foreignField: "_id",
+          as: "offer",
+        },
+      },
+    ]);
     
+    
+    
+    const newData = [];
+    
+    items.forEach((data) => {
+      if (data.offer.length > 0) {
+        data.offer = data.offer[0];
+      }
+    });
+    
+    
+    
+    items.forEach(data => {
+      
+      if (!Array.isArray(data.offer)) {
+          if (data.offer.discount_type) {
+              data.offerprice = data.price - data.offer.discount_value;
+          } else {
+              const discountAmount = (data.offer.discount_value / 100) * data.price;
+              data.offerprice = data.price - discountAmount;
+          }
+          data.offerEndDate = data.offer.offer_end_date;
+          newData.push(data);
+      } else {
+          data.offer = false;
+          newData.push(data);
+      }
+    });
+    
+    
+    
+      for (let i = 0; i < newData.length; i++) 
+      {
+        const currentItem = newData[i];
+        const hasOffer = currentItem.offer !== false;
+        currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
+        req.session.offerTotal += currentItem.totalAmount;
+    
+        if (i === 0) {
+            req.session.offerTotal = currentItem.totalAmount;
+            req.session.OfferDiscount = 0;
+        }
+    
+        if (hasOffer) {
+            req.session.OfferDiscount += (currentItem.price - currentItem.offerprice) * currentItem.quantity;
+        }
+    }
+    
+    
+    let cartValue = newData.reduce((acc, item) => acc + item.totalAmount, 0);
+
     if (cartValue == 0) {
 
       return  res.redirect(`/profile/mycart/load/${userId}`);
  
+
+
+
     }
 
     if (req.session.appliedCoupon) {
+
       if (req.session.discountPercentage) 
       {
         value = (req.session.discountPercentage / 100) * cartValue;
         cartValue -= value;
         req.session.discount = value;
-      } else if (req.session.discountAmount) {
+      } else if (req.session.discountAmount) 
+      {
         cartValue -= req.session.discountAmount;
-        req.session.discount = req.session.discountAmount;
+        req.session.coponDiscount = req.session.discountAmount;
       }
 
-    } else if(req.session.offerTotal) {
+    } else if(req.session.offerTotal) 
+    {
 
       cartValue = req.session.offerTotal;
-      req.session.discount =req.session.OfferDiscount;
-     
-    }else
+      
+    }
+    else
     {
-      req.session.discount = 0;
+      req.session.coponDiscount = 0;
     }
 
 
-    console.log("offer total checkout ",req.session.offerTotal,"offer discount",req.session.OfferDiscount);
-
+   
     res.status(200).render("user/checkoutnew", {
-      discount: req.session.discount,
+      couponDiscount:  req.session.coponDiscount,
+      OfferDiscount: req.session.OfferDiscount,
       user: true,
       address: addressData,
       cartValue: cartValue,
@@ -344,7 +457,8 @@ const loadChekOut = async (req, res) => {
 
 
 
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res) => 
+{
   const { userId, selectedAddress, walletPayment } = req.body;
 
   try {
@@ -352,6 +466,7 @@ const placeOrder = async (req, res) => {
     const userData = await user.find({ _id: userId });
     const cartData = await cart.find({ userId: userId });
     const orderNo = Math.floor(100000 + Math.random() * 900000);
+    
 
     let totalAmount;
     const subTotal = userData[0].cartValue;
@@ -981,6 +1096,7 @@ const deleteAddress = async (req, res) => {
 //Cart Related Middlewares
 const loadCart = async (req, res) => {
   try {
+    console.log("on load cart :",req.session);
     paramsId = req.params.id;
     sessionId = req.session.user_id;
 
@@ -989,7 +1105,9 @@ const loadCart = async (req, res) => {
       "couponId",
       "discountAmount",
       "discountPercentage",
-      "discount","OfferDiscount","OfferDiscount"
+      "discount","OfferDiscount",
+      "coponDiscount"
+
     
     ].forEach((variable) => {
       delete req.session[variable];
@@ -997,8 +1115,7 @@ const loadCart = async (req, res) => {
 
     if (paramsId == sessionId) {
 
-      const cartData = await cart.find({ userId: sessionId });
-     
+    
    
       let items = await cart.aggregate([
         {
@@ -1090,15 +1207,16 @@ const loadCart = async (req, res) => {
       let newTotal=0 ;
       let offerDiscountAmount=0;
       let discountForOrder=0
-      console.log("new data",newData);
+    
 
       for (let i = 0; i < newData.length; i++) {
+
         const currentItem = newData[i];
-        const hasOffer = currentItem.offer !== undefined;
-    
+        const hasOffer = currentItem.offer !== false;
         currentItem.image = `/uploads/${currentItem.productImage[0]}`;
         currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
         newTotal += currentItem.totalAmount;
+       
     
         if (hasOffer) {
             const discountPrice = currentItem.price - currentItem.offerprice;
@@ -1106,6 +1224,7 @@ const loadCart = async (req, res) => {
             currentItem.discountPrice = discountPrice;
             discountForOrder += discountPrice * currentItem.quantity;
         }
+
     }
     
 
@@ -1114,6 +1233,7 @@ const loadCart = async (req, res) => {
 
       req.session.offerTotal = newTotal;
       req.session.OfferDiscount = offerDiscountAmount;
+
 
       if (personalInfo.cartValue == 0) {
         res.render("user/emptyCart");
@@ -1133,7 +1253,8 @@ const loadCart = async (req, res) => {
   }
 };
 
-const deleteItemCart = async (req, res) => {
+const deleteItemCart = async (req, res) => 
+{
   try {
     //deleting cart item and minus the amount from user database
     const deletedData = await cart.findOneAndDelete({ _id: req.body.cartId });
@@ -1145,18 +1266,133 @@ const deleteItemCart = async (req, res) => {
     const quantity = deletedData.quantity;
     const price = product.price;
     const totalAmount = quantity * price;
+
     await user.updateOne(
       { _id: req.session.user_id },
       { $inc: { cartValue: -totalAmount } }
     );
 
-    const { cartValue } = await user.findOne({ _id: req.session.user_id });
+    
+let items = await cart.aggregate([
+  {
+    $match: {
+      userId: new mongoose.Types.ObjectId(req.session.user_id),
+    },
+  },
+  {
+    $lookup: {
+      from: "product_varients",
+      foreignField: "_id",
+      localField: "product_varient_id",
+      as: "productDetails",
+    },
+  },
+  {
+    $project: {
+      _id: 1,
+      userId: 1,
+      quantity: { $toInt: "$quantity" },
+      productid: { $arrayElemAt: ["$productDetails.product", 0] },
+      productImage: { $arrayElemAt: ["$productDetails.images", 0] },
+      stock: { $arrayElemAt: ["$productDetails.stock", 0] },
+      price: { $arrayElemAt: ["$productDetails.price", 0] },
+      offer: { $arrayElemAt: ["$productDetails.offer", 0] },
+    },
+  },
+  {
+    $lookup: {
+      from: "product_details",
+      foreignField: "_id",
+      localField: "productid",
+      as: "productDetails",
+    },
+  },
+  {
+    $project: {
+      _id: 1,
+      userId: 1,
+      quantity: 1,
+      productName: { $arrayElemAt: ["$productDetails.product_name", 0] },
+      productImage: 1,
+      stock: 1,
+      price: 1,
+      offer: 1,
+    },
+  },
+  {
+    $lookup: {
+      from: "offers",
+      localField: "offer",
+      foreignField: "_id",
+      as: "offer",
+    },
+  },
+]);
 
-    res.json(cartValue);
+
+
+const newData = [];
+
+items.forEach((data) => {
+  if (data.offer.length > 0) {
+    data.offer = data.offer[0];
+  }
+});
+
+
+
+items.forEach(data => {
+  
+  if (!Array.isArray(data.offer)) {
+      if (data.offer.discount_type) {
+          data.offerprice = data.price - data.offer.discount_value;
+      } else {
+          const discountAmount = (data.offer.discount_value / 100) * data.price;
+          data.offerprice = data.price - discountAmount;
+      }
+      data.offerEndDate = data.offer.offer_end_date;
+      newData.push(data);
+  } else {
+      data.offer = false;
+      newData.push(data);
+  }
+});
+
+
+
+  for (let i = 0; i < newData.length; i++) 
+  {
+    const currentItem = newData[i];
+    const hasOffer = currentItem.offer !== false;
+    currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
+    req.session.offerTotal += currentItem.totalAmount;
+
+    if (i === 0) {
+        req.session.offerTotal = currentItem.totalAmount;
+        req.session.OfferDiscount = 0;
+    }
+
+    if (hasOffer) {
+        req.session.OfferDiscount += (currentItem.price - currentItem.offerprice) * currentItem.quantity;
+    }
+}
+
+
+  const cartValue = newData.reduce((acc, item) => acc + item.totalAmount, 0);
+
+
+   
+
+    res.json({
+      cartValue,
+      savings:req.session.OfferDiscount,
+    });
   } catch (error) {
     console.log(error);
   }
 };
+
+
 
 const updateCart = async (req, res) => {
   try {
@@ -1167,34 +1403,14 @@ const updateCart = async (req, res) => {
     const newValue = req.body.newValue * price;
 
     await cart.updateOne(
-      {
-        _id: req.body.cartIdForUpdate,
-      },
-      {
-        $set: { quantity: req.body.newValue, value: newValue },
-      }
+      { _id: req.body.cartIdForUpdate },
+      { $set: { quantity: req.body.newValue, value: newValue } }
     );
 
     const totalCartValue = await cart.aggregate([
-      {
-        $match: {
-          userId: new mongoose.Types.ObjectId(req.session.user_id),
-        },
-      },
-      {
-        $group: {
-          _id: "",
-          totalValue: {
-            $sum: "$value",
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          totalValue: 1,
-        },
-      },
+      { $match: { userId: new mongoose.Types.ObjectId(req.session.user_id) } },
+      { $group: { _id: "", totalValue: { $sum: "$value" } } },
+      { $project: { _id: 0, totalValue: 1 } }
     ]);
 
     let updatedValue = totalCartValue[0].totalValue;
@@ -1217,7 +1433,7 @@ const updateCart = async (req, res) => {
     let items = await cart.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(paramsId),
+          userId: new mongoose.Types.ObjectId(sessionId),
         },
       },
       {
@@ -1270,41 +1486,40 @@ const updateCart = async (req, res) => {
       },
     ]);
    
+
+
     const newData = [];
 
-      items.forEach((data) => {
-        if (data.offer.length > 0) {
-          data.offer = data.offer[0];
-        }
-      });
-
-
-
-      items.forEach(data => {
-        
-        if (!Array.isArray(data.offer)) {
-            if (data.offer.discount_type) {
-                data.offerprice = data.price - data.offer.discount_value;
-            } else {
-                const discountAmount = (data.offer.discount_value / 100) * data.price;
-                data.offerprice = data.price - discountAmount;
-            }
-            data.offerEndDate = data.offer.offer_end_date;
-            newData.push(data);
-        } else {
-            data.offer = false;
-            newData.push(data);
-        }
+    items.forEach((data) => {
+      if (data.offer.length > 0) {
+        data.offer = data.offer[0];
+      }
     });
-    
 
+
+
+    items.forEach(data => {
+      
+      if (!Array.isArray(data.offer)) {
+          if (data.offer.discount_type) {
+              data.offerprice = data.price - data.offer.discount_value;
+          } else {
+              const discountAmount = (data.offer.discount_value / 100) * data.price;
+              data.offerprice = data.price - discountAmount;
+          }
+          data.offerEndDate = data.offer.offer_end_date;
+          newData.push(data);
+      } else {
+          data.offer = false;
+          newData.push(data);
+      }
+  });
+  
    
 
       for (let i = 0; i < newData.length; i++) {
         const currentItem = newData[i];
-        const hasOffer = currentItem.offer !== undefined;
-    
-        currentItem.image = `/uploads/${currentItem.productImage[0]}`;
+        const hasOffer = currentItem.offer !== false;
         currentItem.totalAmount = currentItem.quantity * (hasOffer ? currentItem.offerprice : currentItem.price);
         req.session.offerTotal += currentItem.totalAmount;
     
@@ -1328,13 +1543,13 @@ const updateCart = async (req, res) => {
 
       console.log("cart",cartValue);
     
-
     //sending data to fetch
     const responseData = {
       message: "Data received successfully",
       cartId: req.body.cartIdForUpdate,
       items:newData,
       cartValue,
+      savings:req.session.OfferDiscount,
     };
     res.json(responseData);
   } catch (error) {
@@ -1402,6 +1617,9 @@ const loadWallet = async (req, res) => {
       user: true,
       userId: req.session.user_id,
       walletData: walletData[0],
+      personalInfo: await user.findOne({
+        _id:req.session.user_id
+      })
     });
   } catch (error) {
     console.log(error);
@@ -1490,6 +1708,7 @@ const loadWishList = async (req, res) => {
       user: true,
       userId: req.session.user_id,
       whishlistData: whishlistData,
+     
     });
   } catch (error) {
     console.log(error);
@@ -1520,6 +1739,33 @@ const removeFromWishList = async (req, res) => {
   }
 };
 
+
+const loadReferral = async (req, res) => {
+  
+  try {
+    console.log("user id",req.session.user_id);
+
+     const id = new mongoose.Types.ObjectId(req.session.user_id)
+
+     console.log(id);
+      const data = await referral.findOne({userId:id})
+    console.log("refrral history" , data);
+    
+    res.render("user/myReferrals", {
+      user: true,
+      userId: req.session.user_id,
+      personalInfo:await user.findOne({
+        _id:req.session.user_id
+      }),
+      refrralHistory: await referral.findOne({userId:id}).sort({history:-1})
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
 //exporting every middlewares
 
 module.exports = {
@@ -1549,4 +1795,5 @@ module.exports = {
   addToWishList,
   loadWishList,
   removeFromWishList,
+  loadReferral
 };

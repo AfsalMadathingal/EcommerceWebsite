@@ -14,17 +14,26 @@ const { log } = require("console");
 paymentRouter.post("/orders", async (req, res) => {
   try {
     const { userId, selectedAddress } = req.body;
+
     let { cartValue } = await user.findOne({ _id: userId });
+
     const instance = new Razorpay({
       key_id: process.env.RAZORPAY_API_KEY,
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
-    if (req.session.discount) {
-      cartValue = cartValue * 100 - req.session.discount * 100;
+    if ( req.session.coponDiscount ) {
+
+      cartValue = req.session.offerTotal ? req.session.offerTotal : cartValue;
+      cartValue = cartValue * 100 - req.session.coponDiscount * 100;
     } else {
-      cartValue = cartValue * 100;
+
+      cartValue = req.session.offerTotal ? req.session.offerTotal * 100 : cartValue * 100;
+
     }
+
+    console.log("cartvalue", cartValue , "req.sess", req.session.offerTotal);
+
     const options = {
       amount: cartValue,
       currency: "INR",

@@ -1,5 +1,7 @@
 // requiring user model file
 const user = require("../model/userModel");
+const referral = require("../model/referralModel");
+const walletDB = require("../model/walletModel");
 // requiring otp model file
 const userOtp = require("../model/OTPModel");
 // for otp
@@ -182,6 +184,7 @@ const loadForgotPassword = async function (req, res) {
 
 //render login page
 const loadLogin = function (req, res) {
+
   if (req.session.wrongCredentials) {
     res.render("user/userLogin", { wrongCredentials: true });
 
@@ -197,12 +200,14 @@ const loadLogin = function (req, res) {
 //render signup page
 
 const loadsignup = function (req, res) {
+
   if (req.session.UserExists) {
     res.render("user/UserSignup", { alert: req.session.signupError });
     req.session.signupError = false;
   } else {
     res.render("user/userSignup");
   }
+
 };
 
 //home page for log in user
@@ -335,6 +340,34 @@ const otpVerify = async function (req, res) {
       console.log("verified");
       await userOtp.deleteOne({ user_id: req.session.currentUserId });
       await user.insertMany(req.session.userData);
+      await referral.insertMany({userId:req.session.currentUserId})
+      const{name}= await user.findOne({_id:req.session.currentUserId})
+
+   
+      if(req.session.referralId)
+      {
+        await referral.updateOne(
+          { userId: req.session.referralId },
+          {
+            $push: {
+              history: {
+                name: name,
+                date: new Date(),
+                Amount: 100
+              }
+            }
+          }
+        );
+
+        await walletDB.updateOne(
+          { userId: req.session.referralId },
+          {
+            $inc: {
+              balance: 100
+            }
+          }
+        )
+      }
     } else {
       res.render("user/otp", {
         mobileNumber: req.session.mobileNumber,

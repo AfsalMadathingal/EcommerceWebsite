@@ -35,10 +35,11 @@ profileRoute.post('/mycart/update',profile.updateCart)
 profileRoute.get('/mycart/checkout',profile.loadChekOut)
 
 
+
 //Order Related Routes
 profileRoute.use('/payment',paymentRouter)
-profileRoute.get('/myorders/success',profile.orderSuccess)
 profileRoute.post('/mycart/createorder',profile.placeOrder)
+profileRoute.get('/myorders/success',profile.orderSuccess)
 profileRoute.get('/myorders/:id',profile.loadOrders)
 profileRoute.patch('/cancelOrder',profile.cancelOrder)
 profileRoute.get('/myorders/view/:id',profile.viewOrder)
@@ -62,6 +63,11 @@ profileRoute.get('/returnproducts/:id',(req,res)=>{
 profileRoute.get('/mywhishlist',profile.loadWishList)
 profileRoute.post('/addtowishlist',profile.addToWishList)
 profileRoute.post('/removefromwishlist',profile.removeFromWishList)
+
+
+//referral related routes
+
+profileRoute.get('/myreferrals/:id',profile.loadReferral)
 
 
 

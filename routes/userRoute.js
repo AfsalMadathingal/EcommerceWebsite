@@ -7,6 +7,17 @@ const Products= require('../controller/UserSideProducts.js')
 const productRoute = require('./productsRoute.js')
 const profileRoute = require('./profileRoute.js')
 const couponRoute = require('./couponRoute.js')
+const referralRoute = require('./ReferralRoute.js')
+
+
+//refferal related routes
+userRoute.use('/refferal',referralRoute)
+//routing to product related request
+userRoute.use('/products',productRoute)
+//routing to profile related requests
+userRoute.use('/profile',auth.blockChecker,auth.redirectToLogin,profileRoute)
+//routing to coupon related requests
+userRoute.use('/coupon',auth.blockChecker,auth.redirectToLogin,couponRoute)
 
 
 
@@ -15,16 +26,6 @@ const couponRoute = require('./couponRoute.js')
 userRoute.get('/', auth.isLogin)
 userRoute.get('/home',auth.checkLoginUser,Products.loadHomeUser)
 userRoute.get('/user_home',auth.checkSession, Products.loadHomeUser)
-
-//routing to product related request
-userRoute.use('/products',productRoute)
-
-//routing to profile related requests
-userRoute.use('/profile',auth.blockChecker,auth.redirectToLogin,profileRoute)
-
-
-//routing to coupon related requests
-userRoute.use('/coupon',auth.blockChecker,auth.redirectToLogin,couponRoute)
 
 
 //forgot Password realated routes
