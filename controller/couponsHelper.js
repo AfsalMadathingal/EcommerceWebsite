@@ -47,9 +47,20 @@ const addCoupons = async (req,res)=>{
 
   try {
 
+    console.log(req.body);
     
-    const {Couponid,Discount,expireDate,userlimit,discription,discountType}=req.body;
+    const {Couponid,Discount,expireDate,userlimit,discription,discountType }=req.body;
 
+   const couponExist = await couponsDB.findOne({code:Couponid})
+
+    if(couponExist)
+    { 
+    
+
+    return res.json({success:false})
+    
+    }
+    
     //discount type 1 = amount 0= percentage 
     let discountTypeValue;
 
@@ -74,7 +85,8 @@ const addCoupons = async (req,res)=>{
 
     await coupon.save()
 
-    res.redirect('/admin/coupons')
+ 
+    res.json({success:true})
    
 
     

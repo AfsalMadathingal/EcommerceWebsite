@@ -55,6 +55,7 @@ adminRoute.delete('/deleteoldimage',productsManagement.deleteImage)
 //manage orders Related Routes
 adminRoute.get('/ordersManagement',auth.checkSession,productsManagement.loadOrders)
 adminRoute.patch('/ordersManagement/changeStatus',auth.checkSession,productsManagement.changeOrderStatus)
+adminRoute.get('/ordersManagement/:id',auth.checkSession,productsManagement.viewOrder)
 
 
 //manage offers and coupons

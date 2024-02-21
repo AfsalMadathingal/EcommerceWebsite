@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
+const userdetails = require("./userModel.js");
+const address = require("./userAddress.js");
+const productVariants = require("./productVariants.js");
 
 const orderDetails = mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     require: true,
+    ref: userdetails,
   },
 
   orderAmount: {
@@ -18,6 +22,7 @@ const orderDetails = mongoose.Schema({
   deliveryAddress: {
     type: mongoose.Schema.Types.ObjectId,
     require: true,
+    ref: address,
   },
   orderDate: {
     type: Date,
@@ -35,10 +40,11 @@ const orderDetails = mongoose.Schema({
     type: Date,
   },
   OrderedItems: {
-    type: mongoose.Schema.Types.Array,
-    require: true,
+    type: Array,
+    ref: productVariants,
+    required: true,
+    strictPopulate: false // Override strict population
   },
-
   coupon: {
     type: Object,
     default: null,

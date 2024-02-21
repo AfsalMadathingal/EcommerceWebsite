@@ -114,14 +114,16 @@ paymentRouter.post("/walletPayment", async (req, res) => {
       return res.status(400).json({message:"Insufficient Balance",success:false})
 
     }
+
     const response = await wallet.updateOne(
       { userId: userId }, 
       { $inc: { balance: -userData[0].cartValue }, 
       $push: { transaction: { amount: userData[0].cartValue, type: "debit", date: new Date() 
-    }} 
+    }}
     });
 
-    console.log(response);
+    console.log("response",response);
+
     if (response.modifiedCount > 0) {
 
       return res.status(200).json({message:"Payment Successfull",success:true})
@@ -131,6 +133,7 @@ paymentRouter.post("/walletPayment", async (req, res) => {
 
 
   } catch (error) {
+
     console.log(error);
   }
   

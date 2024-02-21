@@ -9,6 +9,7 @@ const product_varient = mongoose.Schema({
     ref: productdetails,
     require: true,
     
+    
   },
   color_id: {
     type: mongoose.Schema.Types.ObjectId,

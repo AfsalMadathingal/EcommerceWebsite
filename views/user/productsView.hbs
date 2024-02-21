@@ -125,7 +125,7 @@
 
                                 <div class="order__quantity m-4 ">
                                     <input class="order__quantity--input" type="number" value="1" name="quantity">
-                                    <button class="order__quantity--btn minus" type="button"
+                                    <button id="plusbutton" class="order__quantity--btn minus" type="button"
                                         aria-label="button for remove quantity product"><img
                                             src="/images/icon-minus.svg" alt=""></button>
                                     <button class="order__quantity--btn plus" type="button"
@@ -133,7 +133,7 @@
                                             alt=""></button>
                                 </div>
 
-                                <button
+                                <button id="addcart-btn"
                                     class="add-to-cart flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail "
                                     data-product-id="{{data.0._id}}">
                                     Add to cart

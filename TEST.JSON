@@ -1,29 +1,42 @@
-[
+data form details [
     {
-        "_id": "65ccb8c799fa025b58ce3658",
-        "productVarientId": "65be32580651437987c57bc1",
-        "product": [
-            {
-                "name": "Symbol Premium Men's Allday Fresh Buttondown Oxford Shirt",
-                "image": [
-                    "db5695f8-0fb9-4f7e-8554-1fcd26393d07.jpg",
-                    "d8157134-1f7b-4880-8e24-c452e6612072.jpg",
-                    "8c13578c-075c-43bd-a13c-0ad1f770bd57.jpg"
-                ],
-                "price": 500,
-                "stock": 15
-            }
+        "coupon": null,
+        "offer": null,
+        "_id": "65c0b36f52b3274d2e461612",
+        "userId": {
+            "_id": "65b26c959d939a14fedd17b8",
+            "name": "afsal",
+            "gender": "Male",
+            "email": "afsalm@afsalm.com",
+            "phone": 8157035328,
+            "is_Blocked": false,
+            "password_encrypted": "$2b$10$yaWADqOACJjgPpyEeiPe2uMDyfixAs1kGDKTivgqE7T3KFJcc7wea",
+            "date_joined": "2024-01-25T00:00:00.000Z",
+            "__v": 0,
+            "cartValue": 0
+        },
+        "orderAmount": 9995,
+        "deliveryAddress": {
+            "_id": "65b8d2c2c040e01904784c28",
+            "userId": "65b26c959d939a14fedd17b8",
+            "name": "afsal m",
+            "mobile": 81570354328,
+            "pincode": 679583,
+            "addressLine1": "ponnani nagaram po malappuram ",
+            "addressLine2": "kerala",
+            "city_dist_town": "malappuram",
+            "state": "Kerala",
+            "type": "home",
+            "__v": 0
+        },
+        "orderDate": "2024-02-05T10:07:43.576Z",
+        "orderStatus": "Shipped",
+        "OrderedItems": [
+            [
+                "65be31fd0651437987c57bb4"
+            ]
         ],
-        "productDetails": [
-            {
-                "_id": "65be32580651437987c57bbf",
-                "product_id": 4,
-                "product_name": "Symbol Premium Men's Allday Fresh Buttondown Oxford Shirt",
-                "category_id": "65acc794a87e01cc7946bf63",
-                "about_product": "Oxford cloth button down shirt – that timeless product\r\nAnti-odor finish for all day freshness\r\nTemperature control finish (Cool IT TM ) to keep you cool\r\nPeached finish for a super soft touch\r\nPair up with a chino or a jeans for that smart casual look",
-                "is_listed": true,
-                "__v": 0
-            }
-        ]
+        "orderNo": 707824,
+        "__v": 0
     }
 ]

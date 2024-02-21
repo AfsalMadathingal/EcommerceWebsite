@@ -7,6 +7,8 @@ const productsController= require ('../controller/UserSideProducts')
 
 //routing to product related request
 productRoute.get('/allproducts',productsController.loadAllproduct)
+productRoute.get('/lowtohigh',productsController.loadLowToHigh)
+productRoute.get('/hightolow',productsController.loadHighToLow)
 productRoute.post('/addtocart/:id',productsController.addToCart)
 
 //offer related request

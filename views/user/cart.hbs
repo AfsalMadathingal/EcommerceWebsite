@@ -448,6 +448,7 @@ copytoClipboard()
                     {
                      
                         pricePerItem.textContent = element.totalAmount
+
                         if(couponApplied)
                         {
                 
@@ -515,7 +516,8 @@ copytoClipboard()
                         if (element._id == cartIdForUpdate) {
 
                             pricePerItem.textContent = element.totalAmount
-                            if (couponApplied) {
+                            if (couponApplied) 
+                            {
                                 console.log("coupon applied")
                                 Subtotal.textContent = data.cartValue
                                 total.textContent = data.cartValue - couponDiscount

@@ -28,6 +28,9 @@ const loadOffers = async (req, res) => {
 
 
 const loadAddOffers = async (req, res) => {
+
+  const category = await catogoryDB.find({});
+  
   try {
     
     res.render("admin/Addoffer", {

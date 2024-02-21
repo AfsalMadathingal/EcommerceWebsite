@@ -3,74 +3,6 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
 <div class="details-section">
-   
-    {{!-- <div class="table-user datatable overflow-scroll">
-        <table class="table  table-hover user-table-data">
-
-            <thead>
-                <tr>
-                    <th scope="col">SL</th>
-                    <th scope="col">Order Id</th>
-                    <th scope="col">Customer Details</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Other Action</th>
-                </tr>
-            </thead>
-            {{#each orderData}}
-            <tbody>
-                <tr data-product-id="{{this.product_id}}">
-
-                    <td>{{@index}}</td>
-                    <td>{{this.orderNo}}</td>
-                    <td>{{this.deliveryName}}
-                        {{this.deliveryAddress1}}
-                        {{this.deliveryAddress2}}
-                        {{this.mobile}}
-                        {{this.city}}
-                        {{this.state}}
-                        {{this.type}}
-                    </td>
-                    <td>{{this.orderAmount}}</td>
-                    <td id="order-status">{{this.orderStatus}}</td>
-                    <td>
-
-                        
-                        <!-- Example single danger button -->
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Change Order Status
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" data-status="Shipped"
-                                data-id="{{this._id}}">Shipped</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="#" data-status="Pending"
-                                data-id="{{this._id}}">Pending</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="#" data-status="Delivered"
-                                data-id="{{this._id}}">Delivered</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="#" data-status="Cancelled"
-                                data-id="{{this._id}}"
-                                >Cancelled</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
-            </tbody>
-            {{/each}}
-        </table>
-    </div> --}}
-{{!-- gpt --}}
 <div class="ms-auto me-auto mt-1 ">
     <main class="table" id="orders_table ">
         <section class="table__header">
@@ -103,14 +35,24 @@
                     <tr class="tbody" data-order-id="{{this._id}}">
                         <td>{{@index}}</td>
                         <td>{{this.orderNo}}</td>
-                        <td>
+                        <td> 
+                            <address>
                             {{this.deliveryName}}
+                            <br>
                             {{this.deliveryAddress1}}
+                            <br>
                             {{this.deliveryAddress2}}
+                            <br>
                             {{this.mobile}}
+                            <br>
                             {{this.city}}
+                            <br>
                             {{this.state}}
+                            <br>
                             {{this.type}}
+                            <br>
+                            </address>
+                           
                         </td>
                         <td>{{this.orderAmount}}</td>
                         <td id="order-status">{{this.orderStatus}}</td>
@@ -207,6 +149,40 @@
 <script>
 
 
+document.addEventListener("DOMContentLoaded",function(){
+
+    const log = console.log.bind()
+
+    const order = document.querySelectorAll('.tbody')
+
+    log(order)
+
+    order.forEach((orderRow)=>{
+
+    orderRow.addEventListener("click",function(e){
+
+      const id =   orderRow.getAttribute('data-order-id')
+
+        window.location.href = `/admin/ordersManagement/${id}`
+    })
+
+    })
+
+    
+
+
+
+})
+
+
+
+
+
+
+
+
+
+
 // Assuming you have jQuery loaded in your project
 
     $(document).ready(function () {
@@ -251,17 +227,18 @@
 
 
 
-  
-    /**
-Responsive HTML Table With Pure CSS - Web Design/UI Design
 
-Code written by:
-👨🏻‍⚕️ @Coding Design (Jeet Saru)
 
-> You can do whatever you want with the code. However if you love my content, you can **SUBSCRIBED** my YouTube Channel.
 
-🌎link: www.youtube.com/codingdesign 
-*/
+
+
+
+
+
+
+
+
+
 
 const search = document.querySelector('.input-group1 input'),
     table_rows = document.querySelectorAll('tbody tr'),

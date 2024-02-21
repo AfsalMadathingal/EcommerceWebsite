@@ -36,6 +36,7 @@ const loadHomeUser = async (req, res) => {
           price: 1,
           stock: 1,
           images: 1,
+          offer:1,
         },
       },
       {
@@ -60,6 +61,7 @@ const loadHomeUser = async (req, res) => {
           stock: 1,
           category: "$category.category",
           images: 1,
+          offer:1,
         },
       },
     ]);
@@ -464,7 +466,7 @@ const loadAllproduct = async (req, res) =>
       }
     });
 
-    console.log(product_data);
+    console.log("from the load all",product_data[1]);
 
     if (req.session.user_id) {
       res.render("user/allproducts", {
@@ -518,6 +520,69 @@ const offerChecker = async (varientId) => {
   }
 
 }
+
+
+const loadLowToHigh = async (req, res) => {
+  
+
+  try {
+
+   const productData = await productVariants.find({}).populate("product").sort({ price: 1 })
+
+
+   productData.forEach((element) => {
+    if (element.images) {
+      let images = element.images;
+      element.images = images[0];
+    }
+  });
+   
+   res.render("user/allproducts", {
+    user: true,
+    userId: req.session.user_id,
+    data: productData,
+  });
+
+  } catch (error) {
+    
+    console.log(error);
+
+    res.send("something error please go back to home");
+  }
+}
+
+const loadHighToLow = async (req, res) => {
+  
+
+  try {
+
+   const productData = await productVariants.find({}).populate("product").sort({ price: -1 })
+
+
+   productData.forEach((element) => {
+    if (element.images) {
+      let images = element.images;
+      element.images = images[0];
+    }
+  });
+   
+   res.render("user/allproducts", {
+    user: true,
+    userId: req.session.user_id,
+    data: productData,
+  });
+
+  } catch (error) {
+    
+    console.log(error);
+
+    res.send("something error please go back to home");
+  }
+}
+
+
+
+
 module.exports = {
   loadHomeUser,
   loadProduct,
@@ -525,4 +590,6 @@ module.exports = {
   loadAllproduct,
   loadDealsAndOffers,
   offerChecker,
+  loadLowToHigh,
+  loadHighToLow
 };

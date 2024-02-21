@@ -97,7 +97,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form onsubmit="return Validation()" action="/admin/createCoupon" method="post">
+                    <form id="couponForm" >
                         <div class="mb-3">
                             <label for="recipient-name" class="col-form-label">Coupons Number/ID</label>
                             <input type="text" name="Couponid" placeholder="Enter Coupon ID/NUMBER" class="form-control"
@@ -125,16 +125,18 @@
                         </div>
 
                         <label class="form-label">Discount Type</label>
+                         <p id="alert-for-distype"></p>
                         <div class="form-check">
 
-                            <input class="form-check-input" type="radio" name="discountType" id="discountPercentage"
-                                value="percentage" checked>
+                            <input class="form-check-input" name="discountType" type="radio" id="discountPercentage" 
+                                value="percentage" >
                             <label class="form-check-label" for="discountPercentage">
                                 Discount Percentage
                             </label>
+
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="discountType" id="discountAmount"
+                            <input class="form-check-input" name="discountType" type="radio" id="discountAmount" 
                                 value="amount">
                             <label class="form-check-label" for="discountAmount">
                                 Discount Amount
@@ -142,7 +144,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="recipient-name" class="col-form-label">Discount Value In Number</label>
-                            <input type="text" name="Discount" placeholder="Enter discription" class="form-control"
+                            <input type="text" name="Discount" placeholder="Enter Value in Number" class="form-control"
                                 id="discount-value">
                             <p class="alert-for-error"></p>
                         </div>
@@ -150,7 +152,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" id="submitCoupon" class="btn btn-primary">Create</button>
 
                 </div>
 
@@ -241,3 +243,4 @@
 </div>
 </div>
 <script src="/js/couponsManagement.js"></script>
+

@@ -15,10 +15,10 @@ const walletDB = require("../model/walletModel.js");
 const whishlistDB = require("../model/whishlist.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { text } = require("express");
 const saltRounds = 10;
 const Razorpay = require("razorpay");
 const { offerChecker } = require("../controller/UserSideProducts.js");
+const orderHelper = require("../controller/orderHelper");
 
 //profile related Middlewares
 const loadChangePassword = async (req, res) => {
@@ -491,7 +491,11 @@ const placeOrder = async (req, res) =>
 
     })
 
-    
+  // console.log("from the helper",await orderHelper.orderCreate(req, res)); 
+
+   const UpdatedAmount = await orderHelper.orderCreate(req, res);
+
+   console.log("updated amount",UpdatedAmount);
 
     if (req.session.order) {
       transactionId = req.session.order.razorpay_payment_id;
@@ -512,7 +516,7 @@ const placeOrder = async (req, res) =>
 
     const orderData = new order({
       userId: userId,
-      orderAmount: totalAmount,
+      orderAmount: UpdatedAmount,
       deliveryAddress: selectedAddress,
       orderDate: date,
       OrderedItems: products,
@@ -527,7 +531,7 @@ const placeOrder = async (req, res) =>
     const paymentData = new payment({
       userId: userId,
       orderId: orderData._id,
-      amount: totalAmount,
+      amount: UpdatedAmount,
       status: "completed",
       paymentMethod: paymentMethod,
       transactionid: transactionId,
@@ -541,10 +545,10 @@ const placeOrder = async (req, res) =>
 
     
     req.session.dataForOrder = {
-      discount: req.session.discount ? req.session.discount : null,
+      discount: req.session.coupondiscount ? req.session.coupondiscount  : null,
       user: true,
       addressData: addressData,
-      totalAmount: totalAmount,
+      totalAmount: UpdatedAmount,
       orderId: orderNo,
       userId: req.session.user_id,
       subTotal: subTotal,
@@ -571,7 +575,7 @@ const orderSuccess = async (req, res) => {
   }
 };
 
-const placeOrderRazopay = async (req, res) => {};
+
 
 const cancelOrder = async (req, res) => {
   try {
@@ -1788,7 +1792,6 @@ module.exports = {
   deleteAddress,
   viewOrder,
   viewInvoice,
-  placeOrderRazopay,
   orderSuccess,
   addBalance,
   loadWallet,

@@ -7,6 +7,7 @@ const productVariants = require("../model/productVariants.js");
 const orders = require("../model/orderModel.js");
 const mongoose = require("mongoose");
 const { response } = require("../routes/productsRoute.js");
+const {log}= console
 
 
 const loadProducts = async (req, res) => {
@@ -433,6 +434,7 @@ const loadOrders = async (req, res) => {
       adminlogin: true,
       orderData: orderData,
       layout: "newSidebar",
+      pageTitle: "Orders",
     });
   } catch (error) {}
 };
@@ -452,6 +454,41 @@ const changeOrderStatus = async (req, res) => {
   } catch (error) {}
 };
 
+
+const viewOrder = async (req, res) => {
+  
+  try {
+    
+    
+
+    const orderData = await orders.find({_id:req.params.id}).populate({
+      path: "userId deliveryAddress OrderedItems.product",
+      options: { strictPopulate: true }
+    })
+
+    
+
+    
+
+      log("data form details",JSON.stringify(orderData))
+
+     
+
+      res.status(200).render("admin/viewOrder", {
+
+        adminlogin: true,
+        orderData: orderData,
+        layout: "newSidebar",
+        pageTitle: "View Order"
+
+      })
+      
+  } catch (error) {
+    
+    console.log(error);
+  }
+}
+
 module.exports = {
   loadProducts,
   loadAddProducts,
@@ -463,4 +500,5 @@ module.exports = {
   updateProduct,
   editImage,
   deleteImage,
+  viewOrder
 };
