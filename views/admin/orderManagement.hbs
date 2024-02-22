@@ -151,28 +151,28 @@
 
 document.addEventListener("DOMContentLoaded",function(){
 
-    const log = console.log.bind()
 
-    const order = document.querySelectorAll('.tbody')
+document.querySelectorAll('.dropdown-toggle').forEach(button => {
 
-    log(order)
+    button.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+     
+    });
+});
 
-    order.forEach((orderRow)=>{
-
-    orderRow.addEventListener("click",function(e){
-
-      const id =   orderRow.getAttribute('data-order-id')
-
-        window.location.href = `/admin/ordersManagement/${id}`
-    })
-
-    })
-
+document.querySelectorAll('.tbody').forEach(orderRow => {
+    orderRow.addEventListener("click", function() {
+        const id = orderRow.getAttribute('data-order-id');
+        window.location.href = `/admin/ordersManagement/${id}`;
+    });
+});
     
 
 
 
 })
+
 
 
 
@@ -189,6 +189,7 @@ document.addEventListener("DOMContentLoaded",function(){
         // Attach a click event to the dropdown items with class 'dropdown-item'
         $('.dropdown-item').on('click', function (event) {
             event.preventDefault(); // Prevent the default link behavior
+            event.stopPropagation();
             
             var newStatus = $(this).data('status'); // Get the new status from data attribute
             var orderId = $(this).data('id'); // Get the order ID from data attribute

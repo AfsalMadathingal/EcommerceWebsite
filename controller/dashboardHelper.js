@@ -15,6 +15,9 @@ const Adminlayout = "newSidebar";
 
 
 const loadDahboard = async (req, res) => {
+
+
+
   try {
     const userCount = await user.find({}).count();
     const orderCount = await order.find({}).count();
@@ -300,9 +303,10 @@ console.log(data);
       layout: Adminlayout,
       reportData:data,
       pageTitle: "Reports",
+      title: "Sales Report",
       daily:daily,
       weekly:weekly,
-      yearly:yearly,
+      yearly:"yearly",
     })
 
     

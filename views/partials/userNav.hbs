@@ -135,7 +135,7 @@
 <div class="wrap-header-mobile">
 	<!-- Logo moblie -->
 	<div class="logo-mobile">
-		<a href="/"><img src="images/icons/logoourshop.png" alt="IMG-LOGO"></a>
+		<a href="/"><img src="/images/icons/logoourshop.png" alt="IMG-LOGO"></a>
 	</div>
 
 
@@ -197,9 +197,55 @@
 		<li>
 			<a href="contact.html">Customer Service</a>
 		</li>
+		
+{{#if user}}
 		<li>
+        <a href="/profile/personalinformation/{{personalInfo._id}}">
+            <span >
+                <i class="fa-solid fa-circle-info"></i> Profile Information
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="/profile/manageaddress/{{personalInfo._id}}">
+            <span >
+                <i class="fa-solid fa-address-book"></i> Manage Addresses
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="/profile/myorders/{{personalInfo._id}}">
+            <span>
+                <i class="fa-solid fa-cart-shopping"></i> My Orders
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="/profile/returnproducts/{{personalInfo._id}}">
+            <span >
+                <i class="fa-solid fa-arrow-right-arrow-left"></i> Returned Products
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="/profile/mywallet/{{personalInfo._id}}">
+            <span >
+                <i class="fa-solid fa-wallet"></i> My Wallet
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="/profile/myreferrals/{{personalInfo._id}}">
+            <span class="">
+                <i class="fa-solid fa-indian-rupee-sign"></i> My Referrals
+            </span>
+        </a>
+    </li>
+	{{/if}}
+	<li>
 			<a href="/user_logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
 		</li>
+
 	</ul>
 </div>
 

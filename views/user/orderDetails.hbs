@@ -25,13 +25,18 @@
                                 <span class="me-3">Payment method: {{orderData.paymentMethod}}</span>
                                 <span class="badge rounded-pill bg-info">Staus: {{orderData.orderStatus}}</span>
                             </div>
+                           
                             <div class="d-flex">
+                                 {{#if deliverd}}
                                 <a href="/profile/myorders/invoice/{{orderData._id}}">
                                 <button class="btn btn-dark  d-none d-lg-block btn-icon-text">
                                     <span class="text">Invoice</span>
                                     <i class="fa-solid fa-receipt"></i>
                                     </button>
                                     </a>
+                                {{else}}
+                                    <button class="btn btn-dark  d-none d-lg-block btn-icon-text">Invoice Not Available</button>
+                                {{/if}}
                                 <div class="dropdown">
                                     <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>

@@ -529,13 +529,23 @@ const loadLowToHigh = async (req, res) => {
 
    const productData = await productVariants.find({}).populate("product").sort({ price: 1 })
 
+// Assuming productData is an array of objects
+productData.forEach((element) => {
+  if (element.images) {
+    let images = element.images;
+    element.images = images[0];
+  }
+  Object.assign(element, element.product);
+  delete element.product; // Remove the product property if needed
+});
 
-   productData.forEach((element) => {
-    if (element.images) {
-      let images = element.images;
-      element.images = images[0];
-    }
-  });
+
+
+
+
+
+
+  console.log(productData);
    
    res.render("user/allproducts", {
     user: true,

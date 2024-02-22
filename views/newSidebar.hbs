@@ -14,7 +14,7 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <title>Admin Panel</title>
+    <title>{{title}}</title>
 </head>
 
 <body>
@@ -126,7 +126,7 @@
 
     </nav>
 
-    <section class="home">
+    <section class="home bg-transparent ">
         <nav class="navbar bg-white bg-opacity-25 ">
             <div class="container-fluid text-center d-flex justify-content-center">
                 <a class="navbar-brand " href="#">
@@ -145,6 +145,24 @@
 
 
      
+<script>
+$(document).ready(function () {
+    var currentPage = window.location.pathname;
+
+    $('.nav-link').each(function () {
+        var buttonHref = $(this).find('a').attr('href');
+
+        if (currentPage === buttonHref) {
+            // Change parent li background color directly using jQuery
+            $(this).css({
+                'background-color': '#f44718', // Your desired active color
+                'color': 'white',
+                'border-radius': '10px'
+            });
+        }
+    });
+});
+</script>
 
 
 <!-- Include Handlebars.js from CDN -->
@@ -215,6 +233,7 @@
         --primary-color-light: #3a3b3c;
         --toggle-color: #fff;
         --text-color: #ccc;
+        background-image: url(/images/dark.jpg);
     }
 
     /* ===== Sidebar ===== */

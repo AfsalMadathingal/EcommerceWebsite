@@ -1,21 +1,3 @@
-/*  $(document).ready(function () {
-          $('#exportPdf').on('click', function () {
-              // Options for the PDF export
-              var options = {
-                  margin: 10,
-                  filename: 'invoice.pdf',
-                  image: { type: 'jpeg', quality: 0.98 },
-                  html2canvas: { scale: 2 },
-                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-              };
-  
-              // Target the container containing your invoice content
-              var element = document.querySelector('.invoice');
-  
-              // Call html2pdf function
-              html2pdf(element, options);
-          });
-      });*/
 
 document.addEventListener("DOMContentLoaded", () => {
   const totalAmount = document.querySelectorAll(".total-amount");
@@ -105,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Render the template with the fetched data
             const renderedHTML = template(data);
-            document.getElementById("table-container").innerHTML = renderedHTML;
+            document.getElementById("salesReport").innerHTML = renderedHTML;
           } else {
             console.error("No data to render");
             document.getElementById("table-container").innerHTML =

@@ -756,11 +756,16 @@ const viewOrder = async (req, res) => {
       },
     ]);
 
+    console.log(orderData[0].orderStatus);
+    let deliverd;
+    (orderData[0].orderStatus=="Delivered")?deliverd=true:deliverd=false
+
     console.log("order Data", orderData[0]);
     res.render("user/orderDetails", {
       user: true,
       userId: req.session.user_id,
       orderData: orderData[0],
+      deliverd:deliverd
     });
   } catch (error) {
     console.log(error);
@@ -1240,7 +1245,12 @@ const loadCart = async (req, res) => {
 
 
       if (personalInfo.cartValue == 0) {
-        res.render("user/emptyCart");
+        res.render("user/emptyCart"
+        ,{
+          user: true,
+          personalInfo: personalInfo,
+          userId: req.session.user_id,
+        });
       } else {
         res.render("user/cart", {
           coupon: coupon,

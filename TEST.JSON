@@ -1,8 +1,8 @@
-data form details [
+[
     {
         "coupon": null,
         "offer": null,
-        "_id": "65c0b36f52b3274d2e461612",
+        "_id": "65c221d0bf1c2f936ab39eee",
         "userId": {
             "_id": "65b26c959d939a14fedd17b8",
             "name": "afsal",
@@ -15,7 +15,7 @@ data form details [
             "__v": 0,
             "cartValue": 0
         },
-        "orderAmount": 9995,
+        "orderAmount": 2000,
         "deliveryAddress": {
             "_id": "65b8d2c2c040e01904784c28",
             "userId": "65b26c959d939a14fedd17b8",
@@ -29,14 +29,33 @@ data form details [
             "type": "home",
             "__v": 0
         },
-        "orderDate": "2024-02-05T10:07:43.576Z",
-        "orderStatus": "Shipped",
+        "orderDate": "2024-02-06T12:10:56.726Z",
+        "orderStatus": "Pending",
         "OrderedItems": [
-            [
-                "65be31fd0651437987c57bb4"
-            ]
+            {
+                "product_varient_id": [
+                    {
+                        "_id": "65be32580651437987c57bc1",
+                        "product": "65be32580651437987c57bbf",
+                        "color_id": "65ad0c1aab83dc9ef87e9c1a",
+                        "size_id": "65aa10fd280978b72cb74192",
+                        "images": [
+                            "db5695f8-0fb9-4f7e-8554-1fcd26393d07.jpg",
+                            "d8157134-1f7b-4880-8e24-c452e6612072.jpg",
+                            "8c13578c-075c-43bd-a13c-0ad1f770bd57.jpg"
+                        ],
+                        "stock": 15,
+                        "price": 500,
+                        "cost": 200,
+                        "barcode": 6541654654,
+                        "__v": 0,
+                        "offer": "65cf6853d4c333691726fde5"
+                    }
+                ],
+                "quantity": 4
+            }
         ],
-        "orderNo": 707824,
+        "orderNo": 291492,
         "__v": 0
     }
 ]

@@ -6,9 +6,7 @@ const path = require('path');
 const logger = require('morgan')
 const nocache = require("nocache");
 const app=express()
-var router=express.Router()
 require('dotenv').config()
-const Razorpay = require('razorpay')
 const hbsHelper = require('./controller/hbsHelper.js')
 
 //Establish a connection to data base
@@ -27,7 +25,7 @@ app.use('/',session({
 }))
 
 // Logger
-app.use(logger('dev'))
+// app.use(logger('dev'))
 
 //using nocache
 app.use(nocache())

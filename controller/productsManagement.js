@@ -462,8 +462,12 @@ const viewOrder = async (req, res) => {
     
 
     const orderData = await orders.find({_id:req.params.id}).populate({
-      path: "userId deliveryAddress OrderedItems.product",
+      path: "userId deliveryAddress OrderedItems.product_varient_id",
       options: { strictPopulate: true }
+    }).project({
+      "OrderedItems.product_varient_id.product": 1
+    }).populate({path:"product",
+       options: { strictPopulate: true }
     })
 
     
