@@ -5,9 +5,12 @@ var hbs = require('hbs')
 const path = require('path');
 const logger = require('morgan')
 const nocache = require("nocache");
+const http = require('http');
 const app=express()
 require('dotenv').config()
 const hbsHelper = require('./controller/hbsHelper.js')
+const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
+const server = http.createServer(app);
 
 //Establish a connection to data base
 mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
@@ -39,10 +42,18 @@ hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelpe
 //static assets
 app.use(express.static('public/assets'));
 
+
 //listening port 3000
-app.listen(3000,()=>{
+// app.listen(3000,()=>{
+//     console.log("connected to http://localhost:3000/");
+// })
+
+initializeSocket(server)
+
+server.listen(3000, () => {
     console.log("connected to http://localhost:3000/");
 })
+
 
 //for admin route
 const adminRoute = require("./routes/adminRoute");

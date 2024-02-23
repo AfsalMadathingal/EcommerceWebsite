@@ -1,0 +1,467 @@
+<link rel="stylesheet" href="/css/table-user.css">
+<link rel="stylesheet" href="/css/responsiveTable.css">
+<link rel="stylesheet" href="/css/chatAdmin.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+
+
+<div class="details-section">
+
+    <div class="ms-auto me-auto mt-1">
+
+        <main class="table" id="customers_table">
+            <section class="table__header">
+                <h1>Customers Support </h1>
+
+                <div class="input-group1">
+                    <input type="search" placeholder="Search Data...">
+                    <i class="fa-solid fa-magnifying-glass bg-transparent "></i>
+                </div>
+                <div class="export__file" data-bs-toggle="modal" data-bs-target="#createModal">
+                    <label for="export-file" class="export__file-btn" title="Create Category"></label>
+                    <input type="checkbox" id="export-file">
+                </div>
+
+            </section>
+            <section class="table__body1">
+                <table>
+                    <thead>
+                        <tr>
+                            <th> Message received form customer<span class="icon-arrow">&UpArrow;</span></th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+                    <tbody class="tbody">
+                        <tr>
+                            <td id="masgreceived">
+
+                                <p id="MessageText">Message From customer: </p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                    open chat
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </section>
+
+
+
+        </main>
+
+
+    </div>
+</div>
+</div>
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Chat with Customer</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="">
+                    <div class="chat_window   ">
+                        <div class="top_menu">
+                            <div class="buttons">
+                                <div class="button close"></div>
+                                <div class="button minimize"></div>
+                                <div class="button maximize"></div>
+                            </div>
+                            <div class="title">Chat</div>
+                        </div>
+                        <ul class="messages"></ul>
+                        <div class="bottom_wrapper clearfix">
+                            <div class="message_input_wrapper">
+                                <input id="messageinput" class="message_input"
+                                    placeholder="Type your message here..." />
+                            </div>
+                            <div class="send_message text-center text-dark">
+                               <h4 class="pt-2">Send</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message_template">
+                        <li class="message">
+                            <div class="avatar"></div>
+                            <div class="text_wrapper">
+                                <div class="text"></div>
+                            </div>
+                        </li>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="
+https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css
+" rel="stylesheet">
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"
+    integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4"
+    crossorigin="anonymous"></script>
+<script>
+
+
+
+    const socket = io();
+
+    socket.on('user message', (msg) => {
+
+        const text = document.getElementById('MessageText')
+
+        text.innerHTML = `Message From customer:${msg}`
+
+        console.log('Received dfgmessage: ' + msg);
+
+
+        toastr.info("Onemsg from user")
+
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "1000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+    /**
+Responsive HTML Table With Pure CSS - Web Design/UI Design
+
+Code written by:
+👨🏻‍⚕️ @Coding Design (Jeet Saru)
+
+> You can do whatever you want with the code. However if you love my content, you can **SUBSCRIBED** my YouTube Channel.
+
+🌎link: www.youtube.com/codingdesign 
+*/
+
+    const search = document.querySelector('.input-group1 input'),
+        table_rows = document.querySelectorAll('tbody tr'),
+        table_headings = document.querySelectorAll('thead th');
+
+    // 1. Searching for specific data of HTML table
+    search.addEventListener('input', searchTable);
+
+    function searchTable() {
+        table_rows.forEach((row, i) => {
+            let table_data = row.textContent.toLowerCase(),
+                search_data = search.value.toLowerCase();
+
+            row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
+            row.style.setProperty('--delay', i / 25 + 's');
+        })
+
+        document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+            visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
+        });
+    }
+
+    // 2. Sorting | Ordering data of HTML table
+
+    table_headings.forEach((head, i) => {
+        let sort_asc = true;
+        head.onclick = () => {
+            table_headings.forEach(head => head.classList.remove('active'));
+            head.classList.add('active');
+
+            document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+            table_rows.forEach(row => {
+                row.querySelectorAll('td')[i].classList.add('active');
+            })
+
+            head.classList.toggle('asc', sort_asc);
+            sort_asc = head.classList.contains('asc') ? false : true;
+
+            sortTable(i, sort_asc);
+        }
+    })
+
+
+    function sortTable(column, sort_asc) {
+        [...table_rows].sort((a, b) => {
+            let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
+                second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+
+            return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+        })
+            .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
+    }
+
+    // 3. Converting HTML table to PDF
+
+    const pdf_btn = document.querySelector('#toPDF');
+    const customers_table = document.querySelector('#customers_table');
+
+
+    const toPDF = function (customers_table) {
+        const html_code = `
+    <!DOCTYPE html>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <main class="table" id="customers_table">${customers_table.innerHTML}</main>`;
+
+        const new_window = window.open();
+        new_window.document.write(html_code);
+
+        setTimeout(() => {
+            new_window.print();
+            new_window.close();
+        }, 400);
+    }
+
+    pdf_btn.onclick = () => {
+        toPDF(customers_table);
+    }
+
+    // 4. Converting HTML table to JSON
+
+    const json_btn = document.querySelector('#toJSON');
+
+    const toJSON = function (table) {
+        let table_data = [],
+            t_head = [],
+
+            t_headings = table.querySelectorAll('th'),
+            t_rows = table.querySelectorAll('tbody tr');
+
+        for (let t_heading of t_headings) {
+            let actual_head = t_heading.textContent.trim().split(' ');
+
+            t_head.push(actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase());
+        }
+
+        t_rows.forEach(row => {
+            const row_object = {},
+                t_cells = row.querySelectorAll('td');
+
+            t_cells.forEach((t_cell, cell_index) => {
+                const img = t_cell.querySelector('img');
+                if (img) {
+                    row_object['customer image'] = decodeURIComponent(img.src);
+                }
+                row_object[t_head[cell_index]] = t_cell.textContent.trim();
+            })
+            table_data.push(row_object);
+        })
+
+        return JSON.stringify(table_data, null, 4);
+    }
+
+    json_btn.onclick = () => {
+        const json = toJSON(customers_table);
+        downloadFile(json, 'json')
+    }
+
+    // 5. Converting HTML table to CSV File
+
+    const csv_btn = document.querySelector('#toCSV');
+
+    const toCSV = function (table) {
+        // Code For SIMPLE TABLE
+        // const t_rows = table.querySelectorAll('tr');
+        // return [...t_rows].map(row => {
+        //     const cells = row.querySelectorAll('th, td');
+        //     return [...cells].map(cell => cell.textContent.trim()).join(',');
+        // }).join('\n');
+
+        const t_heads = table.querySelectorAll('th'),
+            tbody_rows = table.querySelectorAll('tbody tr');
+
+        const headings = [...t_heads].map(head => {
+            let actual_head = head.textContent.trim().split(' ');
+            return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+        }).join(',') + ',' + 'image name';
+
+        const table_data = [...tbody_rows].map(row => {
+            const cells = row.querySelectorAll('td'),
+                img = decodeURIComponent(row.querySelector('img').src),
+                data_without_img = [...cells].map(cell => cell.textContent.replace(/,/g, ".").trim()).join(',');
+
+            return data_without_img + ',' + img;
+        }).join('\n');
+
+        return headings + '\n' + table_data;
+    }
+
+    csv_btn.onclick = () => {
+        const csv = toCSV(customers_table);
+        downloadFile(csv, 'csv', 'customer orders');
+    }
+
+    // 6. Converting HTML table to EXCEL File
+
+    const excel_btn = document.querySelector('#toEXCEL');
+
+    const toExcel = function (table) {
+        // Code For SIMPLE TABLE
+        // const t_rows = table.querySelectorAll('tr');
+        // return [...t_rows].map(row => {
+        //     const cells = row.querySelectorAll('th, td');
+        //     return [...cells].map(cell => cell.textContent.trim()).join('\t');
+        // }).join('\n');
+
+        const t_heads = table.querySelectorAll('th'),
+            tbody_rows = table.querySelectorAll('tbody tr');
+
+        const headings = [...t_heads].map(head => {
+            let actual_head = head.textContent.trim().split(' ');
+            return actual_head.splice(0, actual_head.length - 1).join(' ').toLowerCase();
+        }).join('\t') + '\t' + 'image name';
+
+        const table_data = [...tbody_rows].map(row => {
+            const cells = row.querySelectorAll('td'),
+                img = decodeURIComponent(row.querySelector('img').src),
+                data_without_img = [...cells].map(cell => cell.textContent.trim()).join('\t');
+
+            return data_without_img + '\t' + img;
+        }).join('\n');
+
+        return headings + '\n' + table_data;
+    }
+
+    excel_btn.onclick = () => {
+        const excel = toExcel(customers_table);
+        downloadFile(excel, 'excel');
+    }
+
+    const downloadFile = function (data, fileType, fileName = '') {
+        const a = document.createElement('a');
+        a.download = fileName;
+        const mime_types = {
+            'json': 'application/json',
+            'csv': 'text/csv',
+            'excel': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+        a.href = `
+        data:${mime_types[fileType]};charset=utf-8,${encodeURIComponent(data)}
+    `;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+</script>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        // Use event delegation on a static parent element (replace "table" with the appropriate parent)
+        $('table').on('click', '.block-button', function () {
+            const userId = $(this).closest('tr').data('user-id');
+            const blockButton = $(this);
+
+            $.ajax({
+                url: '/admin/block',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ userId }),
+                success: function (response) {
+                    const htmlCode = '<button type="button" class=" btn  btn-dark unblock-button">UnBlock</button>';
+                    blockButton.replaceWith(htmlCode);
+                    console.log('Server response:', response);
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        // Use event delegation for the "Unblock" button as well
+        $('table').on('click', '.unblock-button', function () {
+            const userId = $(this).closest('tr').data('user-id');
+            const unblockButton = $(this);
+
+            $.ajax({
+                url: '/admin/unblock', // Adjust the endpoint for unblocking
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ userId }),
+                success: function (response) {
+                    const htmlCode = '<button type="button" class="block-button btn  btn-successblock-button">Block</button>';
+                    unblockButton.replaceWith(htmlCode);
+                    console.log('Server response:', response);
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+
+
+
+</script>
+
+<style>
+    .user1-count {
+        background-color: white;
+        color: black;
+        padding: 15px;
+        /* Adjust padding as needed */
+        border: 1px solid #ccc;
+        /* Optional: Add a border for better visibility */
+        border-radius: 10px;
+        /* Add border-radius for curved corners */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* Add a subtle box shadow */
+        margin: 10px;
+        /* Add margin for spacing */
+        text-align: center;
+    }
+
+    @media (max-width: 767px) {
+
+        /* Adjust styles for smaller screens if needed */
+        .user1-count {
+            padding: 10px;
+            /* Adjust padding for smaller screens */
+            margin: 5px;
+            /* Adjust margin for smaller screens */
+        }
+    }
+</style>

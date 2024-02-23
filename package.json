@@ -29,6 +29,7 @@
     "pdfmake": "^0.2.9",
     "razorpay": "^2.9.2",
     "sendotp": "^1.2.9",
+    "socket.io": "^4.7.4",
     "springedge": "^1.0.6",
     "uuid": "^9.0.1",
     "validator": "^13.11.0"

@@ -9,6 +9,7 @@ const productsManagement =require('../controller/productsManagement')
 const dashboarHelper = require('../controller/dashboardHelper')
 const offer = require('../controller/offerHelper')
 const coupons = require('../controller/couponsHelper')
+const adminCustomerServiceHelper = require('../controller/customerServiceAdminSide');
 //middleware
 const auth = require("../middleware/adminAuth");
 const upload =require('../middleware/upload')
@@ -70,6 +71,9 @@ adminRoute.post('/createCoupon',auth.checkSession,coupons.addCoupons)
 adminRoute.post('/editcoupon',auth.checkSession,coupons.editCoupon)
 adminRoute.post('/deletecoupon',auth.checkSession,coupons.deleteCoupon)
 adminRoute.post('/validation',offer.validation)
+
+//customer service
+adminRoute.get('/customerService',auth.checkSession,adminCustomerServiceHelper.loadCustomerServiceAdmin)
 
 
 
