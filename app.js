@@ -12,59 +12,47 @@ const hbsHelper = require('./controller/hbsHelper.js')
 const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
 const server = http.createServer(app);
 
-//Establish a connection to data base
-mongoose.connect("mongodb://127.0.0.1:27017/OURSHOP")
+
+mongoose.connect(process.env.MONGO_URL)
+const PORT = process.env.PORT
 
 
-//body Parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
-
-//session
 app.use('/',session({
     secret:'secret',
     resave: false,
     saveUninitialized: true,
 }))
 
-// Logger
+
 // app.use(logger('dev'))
 
-//using nocache
-app.use(nocache())
 
-// view engine setup
+app.use(nocache())
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
 hbs.registerPartials(__dirname + '/views/partials');
 hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
 
-//static assets
 app.use(express.static('public/assets'));
 
 
 
-//for customer service chat 
 initializeSocket(server)
 
-
-server.listen(3000, () => {
-    console.log("connected to http://localhost:3000/");
+server.listen(PORT, () => {
+    console.log(`connected to http://localhost:${PORT}/`);
 })
 
 
-//for admin route
-const adminRoute = require("./routes/adminRoute");
+const adminRoute = require("./routes/adminRoute.js");
 app.use("/admin", adminRoute);
 
-
-//for user routes
-const userRoute = require("./routes/userRoute");
+const userRoute = require("./routes/userRoute.js");
 app.use("/", userRoute);
  
-
-
-//error route
 app.use((req, res, next) => {
     res.status(404).render('errorpage', { title: 'Page Not Found' });
   });
