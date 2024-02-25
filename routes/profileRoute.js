@@ -52,10 +52,7 @@ profileRoute.post('/addbalance',profile.addBalance)
 
 
 //return products
-profileRoute.get('/returnproducts/:id',(req,res)=>{
-
-    res.render('user/returnedProducts',)
-})
+profileRoute.patch('/returnProduct/',profile.returnProduct)
 
 
 

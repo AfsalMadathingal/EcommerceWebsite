@@ -43,7 +43,7 @@ const orderDetails = mongoose.Schema({
     type: Array,
     ref: productVariants,
     required: true,
-    strictPopulate: false // Override strict population
+    strictPopulate: false 
   },
   coupon: {
     type: Object,
@@ -63,6 +63,9 @@ const orderDetails = mongoose.Schema({
 
   },
   transactionId:{
+    type:String
+  },
+  returnReason:{
     type:String
   }
 });

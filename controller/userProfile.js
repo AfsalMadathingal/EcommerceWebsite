@@ -1780,6 +1780,30 @@ const loadReferral = async (req, res) => {
 
 }
 
+
+const returnProduct = async (req, res) => {
+
+  try {
+
+    const {id,reason } = req.body;
+
+    await order.updateOne({ _id: id }, {
+      $set:{
+        returnReason:reason,
+        orderStatus:"Returned"
+      }
+    })
+
+    res.json(true)
+    
+  } catch (error) {
+
+    res.json(false)
+
+    console.log(error);
+  }
+}
+
 //exporting every middlewares
 
 module.exports = {
@@ -1808,5 +1832,6 @@ module.exports = {
   addToWishList,
   loadWishList,
   removeFromWishList,
-  loadReferral
+  loadReferral,
+  returnProduct
 };

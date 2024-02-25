@@ -9,6 +9,20 @@ const { default: mongoose } = require("mongoose");
 const cart = require("../model/cart.js");
 const offerDB = require("../model/offerModel.js");
 
+
+const loadMenProduct = async (req, res) => {
+
+  try {
+
+
+
+    
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
 const loadHomeUser = async (req, res) => {
   try {
     //connecting Product collections with lookup
@@ -66,6 +80,8 @@ const loadHomeUser = async (req, res) => {
       },
     ]);
 
+    const categoryData = await category.find({});
+    console.log(categoryData);
     // getting the first image path form the array to display in product page
 
     product_data.forEach((element) => {
@@ -80,14 +96,17 @@ const loadHomeUser = async (req, res) => {
         user: true,
         userId: req.session.user_id,
         data: product_data,
+        category: categoryData
       });
     } else {
       res.render("user/HomePage", {
         data: product_data,
         userId: req.session.user_id,
+        category: categoryData
       });
     }
   } catch (error) {
+    console.log(error);
     res.send(error);
   }
 };
@@ -466,13 +485,16 @@ const loadAllproduct = async (req, res) =>
       }
     });
 
-    console.log("from the load all",product_data[1]);
+
+
+  console.log("cat",category);
 
     if (req.session.user_id) {
       res.render("user/allproducts", {
         user: true,
         userId: req.session.user_id,
         data: product_data,
+        
       });
     } else {
       res.render("user/allproducts", {

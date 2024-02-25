@@ -13,6 +13,13 @@ productRoute.post('/addtocart/:id',productsController.addToCart)
 
 //offer related request
 productRoute.get('/dealsAndOffers',productsController.loadDealsAndOffers)
+
+//category 
+// productRoute.get('/product/view/men/',productsController.loadMenProduct)
+// productRoute.get('/product/view/women/',productsController.loadWomenProduct)
+// productRoute.get('/product/view/kids/',productsController.loadKidsProduct)
+
+//single product 
 productRoute.get('/:id',productsController.loadProduct);
 
 

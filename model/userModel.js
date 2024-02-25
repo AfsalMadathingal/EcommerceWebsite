@@ -35,6 +35,11 @@ const userDetails= mongoose.Schema({
         type:Number,
         default:0
     }
+    ,
+    chatStatus:{
+        type:Boolean,
+        default:0
+    }
 })
 
 

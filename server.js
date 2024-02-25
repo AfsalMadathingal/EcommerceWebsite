@@ -43,12 +43,10 @@ hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelpe
 app.use(express.static('public/assets'));
 
 
-//listening port 3000
-// app.listen(3000,()=>{
-//     console.log("connected to http://localhost:3000/");
-// })
 
+//for customer service chat 
 initializeSocket(server)
+
 
 server.listen(3000, () => {
     console.log("connected to http://localhost:3000/");
