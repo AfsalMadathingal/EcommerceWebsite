@@ -185,30 +185,50 @@ const loadForgotPassword = async function (req, res) {
 //render login page
 const loadLogin = function (req, res) {
 
-  if (req.session.wrongCredentials) {
-    res.render("user/userLogin", { wrongCredentials: true });
+  try {
 
-    req.session.wrongCredentials = false;
-  } else if (req.session.blocked) {
-    res.render("user/userLogin", { blocked: true });
+    if (req.session.wrongCredentials) {
+      res.render("user/userLogin", { wrongCredentials: true });
+  
+      req.session.wrongCredentials = false;
+    } else if (req.session.blocked) {
+      res.render("user/userLogin", { blocked: true });
+  
+      req.session.blocked = false;
+    } else {
+      res.render("user/userLogin");
+    }
+    
+  } catch (error) {
 
-    req.session.blocked = false;
-  } else {
-    res.render("user/userLogin");
+    console.log(error);
+    
   }
+
+ 
 };
 
 //render signup page
 const loadsignup = function (req, res) {
 
+try {
+  
   if (req.session.UserExists) 
   {
     res.status(200).render("user/userSignup", { alert: req.session.signupError });
+
     req.session.signupError = false;
 
   } else {
+
     res.status(200).render("user/userSignup");
+
   }
+
+} catch (error) {
+  
+  console.log(error);
+}
 
 };
   
