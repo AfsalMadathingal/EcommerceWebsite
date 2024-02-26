@@ -5,8 +5,6 @@ I'm Afsal, a self-taught full-stack developer 💻. I've chosen the MERN stack a
 
 Feel free to reach out if you have any questions or feedback!
 
-LIVE LINK : https://ourshop-td73.onrender.com/  
-"Some bugs are present and am working on it "
 
 
 Best regards,
