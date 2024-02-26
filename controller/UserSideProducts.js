@@ -357,6 +357,7 @@ const loadProduct = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
+  
   if (req.session.user_id) {
     try {
       const data = req.body;
@@ -421,7 +422,8 @@ const addToCart = async (req, res) => {
 const loadAllproduct = async (req, res) => 
 {
   try {
-    //connecting Product collections with lookup
+   
+
     const product_data = await productVariants.aggregate([
       {
         $lookup: {
@@ -476,7 +478,7 @@ const loadAllproduct = async (req, res) =>
       },
     ]);
 
-    // getting the first image path form the array to display in product page
+   
 
     product_data.forEach((element) => {
       if (element.images) {
@@ -487,17 +489,17 @@ const loadAllproduct = async (req, res) =>
 
 
 
-  console.log("cat",category);
+
 
     if (req.session.user_id) {
-      res.render("user/allproducts", {
+      res.render("user/allProducts", {
         user: true,
         userId: req.session.user_id,
         data: product_data,
         
       });
     } else {
-      res.render("user/allproducts", {
+      res.render("user/allProducts", {
 
         data: product_data,
       });
@@ -508,7 +510,7 @@ const loadAllproduct = async (req, res) =>
 
 const loadDealsAndOffers = async (req, res) => {
 
-  console.log("hiii");
+
   try {
 
     console.log("hello load offeres");
