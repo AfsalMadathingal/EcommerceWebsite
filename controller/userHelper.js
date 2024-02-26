@@ -197,13 +197,15 @@ const loadLogin = function (req, res) {
     res.render("user/userLogin");
   }
 };
-//render signup page
 
+//render signup page
 const loadsignup = function (req, res) {
 
-  if (req.session.UserExists) {
-    res.render("user/UserSignup", { alert: req.session.signupError });
+  if (req.session.UserExists) 
+  {
+    res.render("user/userSignup", { alert: req.session.signupError });
     req.session.signupError = false;
+
   } else {
     res.render("user/userSignup");
   }

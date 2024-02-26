@@ -111,11 +111,13 @@ const loadUserManagement = async (req, res) => {
   }
 };
 
-const blockUser = async (req, res) => {
+const blockUser = async (req, res) => 
+{
   const userid = req.body.userId;
 
   await userDB.updateOne({ _id: userid }, { $set: { is_Blocked: true } });
   res.end();
+  
 };
 
 const unblockUser = async (req, res) => {
