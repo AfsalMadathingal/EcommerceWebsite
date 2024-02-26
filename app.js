@@ -13,7 +13,7 @@ const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
 const server = http.createServer(app);
 
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL ||'mongodb://127.0.0.1:27017/OURSHOP')
 const PORT = process.env.PORT
 
 
