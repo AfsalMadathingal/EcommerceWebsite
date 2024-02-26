@@ -215,13 +215,13 @@ try {
   
   if (req.session.UserExists) 
   {
-    res.status(200).render("/user/userSignup", { alert: req.session.signupError });
+    res.status(200).render("user/userSignup", { alert: req.session.signupError });
 
     req.session.signupError = false;
 
   } else {
 
-    res.status(200).render("../views/user/userSignup.hbs");
+    res.status(200).render("user/userSignup");
 
   }
 
