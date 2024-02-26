@@ -11,12 +11,8 @@ require('dotenv').config()
 const hbsHelper = require('./controller/hbsHelper.js')
 const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
 const server = http.createServer(app);
-
-
 mongoose.connect(process.env.MONGO_URL ||'mongodb://127.0.0.1:27017/OURSHOP')
 const PORT = process.env.PORT
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use('/',session({
@@ -29,14 +25,16 @@ app.use('/',session({
 // app.use(logger('dev'))
 
 
+app.use(express.static('public/assets'));
 app.use(nocache())
-app.set('view', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-
 hbs.registerPartials(__dirname + '/views/partials');
 hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
-app.use(express.static('public/assets'));
+
+
+
 
 
 
