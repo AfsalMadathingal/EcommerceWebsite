@@ -211,7 +211,7 @@ const loadsignup = function (req, res) {
   }
 
 };
-
+  
 //home page for log in user
 const loadHomeUser = async function (req, res) {
   if (req.session.user_id) {
