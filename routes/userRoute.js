@@ -11,16 +11,12 @@ const referralRoute = require('./ReferralRoute.js')
 const customerServiceRoute = require('./customerServiceRoute.js')
 
 
-//refferal related routes
+
 userRoute.use('/refferal',referralRoute)
-//routing to product related request
 userRoute.use('/products',productRoute)
-//routing to profile related requests
 userRoute.use('/profile',auth.blockChecker,auth.redirectToLogin,profileRoute)
-//routing to coupon related requests
 userRoute.use('/coupon',auth.blockChecker,auth.redirectToLogin,couponRoute)
-//customer service related routes
-userRoute.use('/customerService',customerServiceRoute)
+userRoute.use('/customerService',auth.blockChecker,auth.redirectToLogin,customerServiceRoute)
 
 
 

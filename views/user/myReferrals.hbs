@@ -9,13 +9,13 @@
 
 
 
-        <div class=" p-sm-1 p-lg-5    rounded-4  m-2 d-inline-block   shadow align-content-center text-center   ">
+        <div class=" p-sm-1 p-lg-5    rounded-4  m-2 d-inline-block   shadow align-content-center text-center ">
             <h4><i class="fa-solid fa-share-nodes"></i> Total Referral</h4>
             <h4 class="pt-2 pb-2 text-success " id="balance">{{walletData.balance}}</h4>
 
         </div>
         <div class="mt-auto mb-auto border-1 shadow  p-3  rounded-4  m-2 d-inline-block ">
-            <span class="text-success">Your Reffrel Link : <h6 class="pt-2 pb-2" id="link">  http://localhost:3000/refferal/?ref={{personalInfo._id}}</h6></span>
+            <span class="text-success">Your Reffrel Link : <h6 class="pt-2 pb-2" id="link">  {{referralLink}}{{personalInfo._id}}</h6></span>
             <p>You will Get RS100 in your wallet  for each referal </p>
             <p class="text-danger" id="error"></p>
             <button id="copyButton" class="btn btn-primary me-5   mt-1    "><i class="fa-solid fa-clipboard"></i> Copy Your Reffral Link</button>

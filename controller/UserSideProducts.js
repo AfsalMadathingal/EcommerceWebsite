@@ -235,12 +235,8 @@ const loadProduct = async (req, res) => {
     try {
       const id = req.params.id;
 
-      //connecting Product collections with lookup
       const offer = await offerChecker(id);
 
-      console.log("oifffer",offer);
-
-      
 
       const data = await productVariants.aggregate([
         {
@@ -357,7 +353,7 @@ const loadProduct = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
-  
+
   if (req.session.user_id) {
     try {
       const data = req.body;

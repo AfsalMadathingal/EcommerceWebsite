@@ -992,14 +992,16 @@ const loadEditAddress = async (req, res) => {
     const id = req.params.id;
 
     const data = await address.findOne({ _id: id });
+    const personalInfo = await user.findOne({ _id: req.session.user_id });
 
-    console.log(data);
-
+  
     res.render("user/editAddress", {
       addressData: data,
       user: true,
       userId: req.session.user_id,
+      personalInfo:personalInfo
     });
+
   } catch (error) {
     console.log(error);
   }
@@ -1763,7 +1765,7 @@ const loadReferral = async (req, res) => {
 
      console.log(id);
       const data = await referral.findOne({userId:id})
-    console.log("refrral history" , data);
+
     
     res.render("user/myReferrals", {
       user: true,
@@ -1771,7 +1773,8 @@ const loadReferral = async (req, res) => {
       personalInfo:await user.findOne({
         _id:req.session.user_id
       }),
-      refrralHistory: await referral.findOne({userId:id}).sort({history:-1})
+      refrralHistory: await referral.findOne({userId:id}).sort({history:-1}),
+      referralLink: process.env.REFERRALS_LINK || "http://localhost:3000/refferal/?ref="
     });
 
   } catch (error) {
