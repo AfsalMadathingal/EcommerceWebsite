@@ -203,11 +203,11 @@ const loadsignup = function (req, res) {
 
   if (req.session.UserExists) 
   {
-    res.render("user/userSignup", { alert: req.session.signupError });
+    res.status(200).render("user/userSignup", { alert: req.session.signupError });
     req.session.signupError = false;
 
   } else {
-    res.render("user/userSignup");
+    res.status(200).render("user/userSignup");
   }
 
 };
@@ -280,14 +280,14 @@ const registerUser = async function (req, res, next) {
 
 //reder otp page
 const LoadOtpPage = function (req, res, next) {
-  res.render("user/otp", { mobileNumber: req.session.mobileNumber });
+  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber });
 
 };
 
 //retry otp
 const LoadOtpRetryPage = function (req, res, next) {
 
-  res.render("user/otp", { mobileNumber: req.session.mobileNumber });
+  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber });
 
 };
 
