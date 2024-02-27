@@ -55,9 +55,10 @@ paymentRouter.post("/orders", async (req, res) => {
         key: process.env.RAZORPAY_API_KEY,
       });
     });
+
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" ,error:error});
   }
 });
 
