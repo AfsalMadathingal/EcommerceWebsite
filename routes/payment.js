@@ -49,7 +49,7 @@ paymentRouter.post("/orders", async (req, res) => {
       console.log("order", order);
 
       res.status(200).json({
-        data: order,
+        order: order,
         userId: userId,
         selectedAddress: selectedAddress,
         key: process.env.RAZORPAY_API_KEY,

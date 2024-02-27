@@ -316,13 +316,13 @@
                 },
                 body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
             });
-            response.then(async response => {
+            response.then(async (response )=> {
 
                 const data = await response.json();
 
-                console.log("data", data.data);
-
-                initializePayment(data.data);
+                console.log("data", data.order);
+                const {order}= data
+                initializePayment(order);
 
             }).catch(err => {
 
