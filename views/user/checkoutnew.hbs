@@ -344,8 +344,11 @@ async function handlePayment(selectedAddress) {
             order_id: paymentData.id,
 
             handler: async (response) => {
+
+                console.log("response",response)
                 try {
                     const verifyUrl = '/profile/payment/verify';
+
                     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
                   
                     const verifyResponse = await fetch(verifyUrl, {
@@ -353,10 +356,10 @@ async function handlePayment(selectedAddress) {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(razorpay_order_id, razorpay_payment_id, razorpay_signature );
-                    }).catch(err => {
-                        console.log("eerrr",err)
+                        body: JSON.stringify({ razorpay_order_id, razorpay_payment_id, razorpay_signature })
+
                     })
+
                     const verifyData = await verifyResponse.json();
                     
 
@@ -381,7 +384,7 @@ async function handlePayment(selectedAddress) {
                                             title: 'Payment Successful!',
                                             text: 'Your order has been placed successfully',
                                             buttons: false,
-                                            timer: 2000
+                                            timer: 6000
                                         }).then(() => {
 
                                             window.location.href = ('/profile/myorders/success')
