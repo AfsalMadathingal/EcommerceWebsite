@@ -46,6 +46,8 @@ paymentRouter.post("/orders", async (req, res) => {
         return res.status(500).json({ message: "Something went wrong" });
       }
 
+      console.log("order", order);
+
       res.status(200).json({
         data: order,
         userId: userId,
