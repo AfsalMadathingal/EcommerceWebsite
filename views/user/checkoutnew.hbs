@@ -282,7 +282,7 @@
 
         const orderurl = '/profile/mycart/createorder';
 
-        const response = fetch(orderurl, {
+        const response = await fetch(orderurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -303,37 +303,33 @@
 
     }
 
-  async  function handlePayment (selectedAddress) {
+async function handlePayment(selectedAddress) {
+    const userId = document.getElementById('rzp-button').getAttribute('data-id');
 
-        const userId = document.getElementById('rzp-button').getAttribute('data-id');
+    const orderurl = '/profile/payment/orders';
+    try {
+        const response = await fetch(orderurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
+        });
 
-        try {
-            const orderurl = '/profile/payment/orders';
-            const response = await fetch(orderurl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId: userId, selectedAddress: selectedAddress }),
-            });
-            response.then(async (response )=> {
-
-                const data = await response.json();
-
-                console.log("data", data);
-                const {order}= data
-                initializePayment(order);
-
-            }).catch(err => {
-
-                console.log(err);
-
-            });
-        } catch (err) {
-            console.log('Error:', err);
-
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+
+        const data = await response.json();
+        console.log("data", data);
+        const { order } = data;
+        initializePayment(order);
+    } catch (err) {
+        
+        console.error('Error:', err);
+        
     }
+}
 
     const initializePayment = (paymentData) => {
 
