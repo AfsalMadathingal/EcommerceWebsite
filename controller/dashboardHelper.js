@@ -1,4 +1,3 @@
-//Requiring Nessesery Modules
 const products = require("../model/productsModel.js");
 const size = require("../model/sizeModel.js");
 const color = require("../model/colorModel.js");
@@ -12,12 +11,7 @@ const payment = require("../model/payment.js");
 const mongoose = require("mongoose");
 const Adminlayout = "newSidebar";
 
-
-
 const loadDahboard = async (req, res) => {
-
-
-
   try {
     const userCount = await user.find({}).count();
     const orderCount = await order.find({}).count();
@@ -49,8 +43,7 @@ const loadDahboard = async (req, res) => {
   }
 };
 
-const chartData = async (req, res) => 
-{
+const chartData = async (req, res) => {
   try {
     let { filter } = req.body;
 
@@ -60,7 +53,7 @@ const chartData = async (req, res) =>
       {
         $match: {
           orderDate: {
-            $exists: true, // Ensure orderDate field exists
+            $exists: true, 
           },
         },
       },
@@ -104,130 +97,55 @@ const chartData = async (req, res) =>
 };
 
 const salesreport = async (req, res) => {
-
-
   try {
-
-    const {range}=req.params
+    const { range } = req.params;
     let data;
-    let daily
-    let weekly
-    let yearly
+    let daily;
+    let weekly;
+    let yearly;
 
-
-    if (range=="r1")
-    {
+    if (range == "r1") {
       const dailyReport = await order.aggregate([
         {
-            $lookup: {
-                from: "user_details",
-                foreignField: "_id",
-                localField: "userId",
-                as: "userDetails",
-            },
-        },
-        {
-            $project: {
-                _id: 1,
-                orderAmount: 1,
-                orderDate: {
-                    $dateToString: {
-                        format: "%d-%m-%Y",
-                        date: "$orderDate",
-                    },
-                },
-                userName: { $arrayElemAt: ["$userDetails.name", 0] },
-                orderNo: 1,
-            },
-        },
-        {
-            $group: {
-                _id: "$orderDate",
-                totalOrders: { $sum: 1 },
-                totalAmount: { $sum: "$orderAmount" },
-            },
-        },
-        {
-            $sort: {
-                _id: 1,
-            },
-        },
-    ]);
-
-      daily=true;
-      data= dailyReport;
-
-    }else if (range=="r7")
-    {
-      
-    const weeklyReport = await order.aggregate([
-      {
-        $lookup: {
-          from: "user_details",
-          foreignField: "_id",
-          localField: "userId",
-          as: "userDetails",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          orderAmount: 1,
-          orderDate: {
-            $dateToString: {
-              format: "%d-%m-%Y",
-              date: "$orderDate",
-            },
+          $lookup: {
+            from: "user_details",
+            foreignField: "_id",
+            localField: "userId",
+            as: "userDetails",
           },
-          userName: { $arrayElemAt: ["$userDetails.name", 0] },
-          orderNo: 1,
         },
-      },
-      {
-        $sort: {
-          orderDate: 1,
-        },
-      },
-      {
-        $project: {
-            week: { $isoWeek: { $dateFromString: { dateString: "$orderDate", format: "%d-%m-%Y" } } },
+        {
+          $project: {
+            _id: 1,
             orderAmount: 1,
+            orderDate: {
+              $dateToString: {
+                format: "%d-%m-%Y",
+                date: "$orderDate",
+              },
+            },
+            userName: { $arrayElemAt: ["$userDetails.name", 0] },
             orderNo: 1,
-            orderDate: { $dateFromString: { dateString: "$orderDate", format: "%d-%m-%Y" } }
-        }
-    },
-    {
-        $group: {
-            _id: { week: "$week" },
-            start_date: { $min: "$orderDate" },
-            end_date: { $max: "$orderDate" },
+          },
+        },
+        {
+          $group: {
+            _id: "$orderDate",
+            totalOrders: { $sum: 1 },
             totalAmount: { $sum: "$orderAmount" },
-            totalOrders: { $sum: 1 }
-        }
-    },
-    {
-        $project: {
-            "_id.week": 1,
-            start_date: { $dateToString: { format: "%d-%m-%Y", date: "$start_date" } },
-            end_date: { $dateToString: { format: "%d-%m-%Y", date: "$end_date" } },
-            totalAmount: 1,
-            totalOrders: 1
-        }
-    },
-    {
-        $sort: {
-            "_id.week": 1
-        }
-    }
-      ])
-  
-      data= weeklyReport;
-      weekly=true
-  
-    }else if (range=="r365")
-    {
+          },
+        },
+        {
+          $sort: {
+            _id: 1,
+          },
+        },
+      ]);
 
-      const monthlyReport = await order.aggregate([
+      daily = true;
+      data = dailyReport;
+    } else if (range == "r7") {
+      const weeklyReport = await order.aggregate([
         {
           $lookup: {
             from: "user_details",
@@ -257,13 +175,99 @@ const salesreport = async (req, res) => {
         },
         {
           $project: {
+            week: {
+              $isoWeek: {
+                $dateFromString: {
+                  dateString: "$orderDate",
+                  format: "%d-%m-%Y",
+                },
+              },
+            },
+            orderAmount: 1,
+            orderNo: 1,
+            orderDate: {
+              $dateFromString: { dateString: "$orderDate", format: "%d-%m-%Y" },
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { week: "$week" },
+            start_date: { $min: "$orderDate" },
+            end_date: { $max: "$orderDate" },
+            totalAmount: { $sum: "$orderAmount" },
+            totalOrders: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            "_id.week": 1,
+            start_date: {
+              $dateToString: { format: "%d-%m-%Y", date: "$start_date" },
+            },
+            end_date: {
+              $dateToString: { format: "%d-%m-%Y", date: "$end_date" },
+            },
+            totalAmount: 1,
+            totalOrders: 1,
+          },
+        },
+        {
+          $sort: {
+            "_id.week": 1,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            week: "$_id.week",
+            start_date: 1,
+            end_date: 1,
+            totalAmount: 1,
+          }
+        }
+      ]);
+
+      data = weeklyReport;
+      weekly = true;
+    } else if (range == "r365") {
+      const monthlyReport = await order.aggregate([
+        {
+          $lookup: {
+            from: "user_details",
+            foreignField: "_id",
+            localField: "userId",
+            as: "userDetails",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            orderAmount: 1,
+            orderDate: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$orderDate",
+              },
+            },
+            userName: { $arrayElemAt: ["$userDetails.name", 0] },
+            orderNo: 1,
+          },
+        },
+        {
+          $sort: {
+            orderDate: 1,
+          },
+        },
+        {
+          $project: {
             month: {
               $dateToString: {
-                format: "%m/%Y",
+                format: "%Y/%m",
                 date: {
                   $dateFromString: {
                     dateString: "$orderDate",
-                    format: "%d-%m-%Y",
+                    format: "%Y-%m-%d",
                   },
                 },
               },
@@ -286,100 +290,89 @@ const salesreport = async (req, res) => {
         },
       ]);
 
-      data= monthlyReport;
-      yearly=true
-
+      data = monthlyReport;
+      yearly = true;
     }
-    
-   
 
 
-      
-  
-console.log(data);
-    res.render('admin/salesReport',{
 
+    console.log(data);
+
+    const start_date = data[0].start_date;
+    const end_date = data[data.length - 1].end_date;
+
+    res.render("admin/salesReport", {
       adminlogin: true,
       layout: Adminlayout,
-      reportData:data,
+      reportData: data,
       pageTitle: "Reports",
       title: "Sales Report",
-      daily:daily,
-      weekly:weekly,
-      yearly:"yearly",
-    })
-
-    
+      daily: daily,
+      weekly: weekly,
+      yearly: "yearly",
+      start_date: start_date,
+      end_date: end_date,
+      
+    });
   } catch (error) {
     console.log(error);
   }
 };
 
 const salesReportFilter = async (req, res) => {
-
   const { fromDate, toDate } = req.body;
 
   try {
-
     console.log(fromDate, toDate);
-const userStartDateString = fromDate; // Example start date string provided by the user
-const userEndDateString = toDate; // Example end date string provided by the user
+    const userStartDateString = fromDate;
+    const userEndDateString = toDate;
+    let [startMonth, startDay, startYear] = userStartDateString.split("/");
+    let [endMonth, endDay, endYear] = userEndDateString.split("/");
 
-let [startMonth, startDay, startYear] = userStartDateString.split('/');
-let [endMonth, endDay, endYear] = userEndDateString.split('/');
+    const userStartDate = new Date(`${startYear}-${startMonth}-${startDay}`);
+    const userEndDate = new Date(`${endYear}-${endMonth}-${endDay}`);
 
-// Creating Date objects for the start and end dates provided by the user
-const userStartDate = new Date(`${startYear}-${startMonth}-${startDay}`);
-const userEndDate = new Date(`${endYear}-${endMonth}-${endDay}`);
+    console.log("User Start Date:", userStartDate);
+    console.log("User End Date:", userEndDate);
 
-console.log("User Start Date:", userStartDate);
-console.log("User End Date:", userEndDate);
-// Adding another $match stage to filter documents based on the orderDate within the specified range
-const pipeline = [
-  {
-    $match: {
-      orderDate: {
-        $gte: userStartDate,
-        $lte: userEndDate,
-      }
-    }
-  },
-  {
-    $project: {
-      _id: 1,
-      orderAmount: 1,
-      orderDate: {
-        $dateToString: {
-          format: "%d-%m-%Y",
-          date: "$orderDate",
+    const pipeline = [
+      {
+        $match: {
+          orderDate: {
+            $gte: userStartDate,
+            $lte: userEndDate,
+          },
         },
       },
-      orderStatus: 1,
-    }
-  }
- 
-];
+      {
+        $project: {
+          _id: 1,
+          orderAmount: 1,
+          orderDate: {
+            $dateToString: {
+              format: "%d-%m-%Y",
+              date: "$orderDate",
+            },
+          },
+          orderStatus: 1,
+        },
+      },
+    ];
 
-const data = await order.aggregate(pipeline)
+    const data = await order.aggregate(pipeline);
 
-// const data = await order.aggregate(pipeline);
-res.json(data)
-// console.log(data);
-    
+  
+    res.json(data);
+   
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while generating the report');
+    res.status(500).send("An error occurred while generating the report");
   }
-}
-
-
+};
 
 module.exports = {
   loadDahboard,
   chartData,
   salesreport,
-  salesReportFilter
+  salesReportFilter,
 };
-
-
-

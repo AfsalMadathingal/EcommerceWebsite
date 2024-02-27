@@ -25,7 +25,7 @@
         <table id="salesReport" class="display table table-striped bg-white  rounded-2   " style="width:100%">
             <thead>
                 <tr>
-                    <th colspan="3" class="text-center">Sales Report</th> 
+                    <th colspan="3" class="text-center">Sales Report</th>
                 </tr>
                 <tr>
                     <th class="text-center">Date Range</th>
@@ -36,8 +36,6 @@
             <tbody>
                 {{#each reportData}}
                 <tr>
-
-
                     {{#if this._id.month}}
                     <td>
                         <span class="text-inverse">{{this._id.month}}</span><br>
@@ -55,11 +53,9 @@
                         <span class="text-inverse">{{this.start_date}}- {{this.end_date}}</span><br>
                     </td>
                     {{/if}}
-
-
                     <td class="text-center">{{this.totalOrders}}</td>
                     <td class="text-center total-amount" data-value="{{this.totalAmount}}">₹
-                        {{this.totalAmount}}</td>
+                    {{this.totalAmount}}</td>
                 </tr>
                 {{/each}}
                 <div class="total d-flex bg-light rounded-2  justify-content-between p-3">
@@ -79,27 +75,16 @@
 <script src="/js/salesReport.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<!-- Linking Bootstrap JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<!-- Linking DataTables Core JS -->
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
-<!-- Linking DataTables Bootstrap 5 Integration JS -->
 <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
-<!-- Linking DataTables Buttons JS -->
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/dataTables.buttons.js"></script>
-<!-- Linking DataTables Buttons Bootstrap 5 Integration JS -->
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.bootstrap5.js"></script>
-<!-- Linking JSZip -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<!-- Linking PDFMake -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<!-- Linking PDFMake vfs_fonts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<!-- Linking DataTables Buttons HTML5 Export JS -->
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.html5.min.js"></script>
-<!-- Linking DataTables Buttons Print JS -->
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.print.min.js"></script>
-<!-- Linking DataTables Buttons Column Visibility JS -->
 <script src="https://cdn.datatables.net/buttons/3.0.0/js/buttons.colVis.min.js"></script>
 <script>
 
@@ -114,6 +99,31 @@
 
 
     });
+
+    const start = '{{start_date}}'
+    const end = '{{end_date}}'
+
+    if(start && end){
+         function formatDate(date) {
+        const parts = start.split('-');
+        const dateObject = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        const year = dateObject.getFullYear();
+        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObject.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    const toDate = document.getElementById('toDate');
+    const fromDate = document.getElementById('fromDate');
+    const startDateFormat = formatDate(start);
+    const endDateFormat = formatDate(end);
+    toDate.value = endDateFormat;
+    fromDate.value = startDateFormat;
+    }
+
+    
+   
+
+
 
 
 
