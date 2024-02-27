@@ -325,7 +325,7 @@ async function handlePayment(selectedAddress) {
         const { order } = data;
         initializePayment(order);
     } catch (err) {
-        
+
         console.error('Error:', err);
         
     }
@@ -352,7 +352,7 @@ async function handlePayment(selectedAddress) {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body
+                        body:body
                     });
                     const verifyData = await verifyResponse.json();
 
@@ -389,6 +389,7 @@ async function handlePayment(selectedAddress) {
                     }
 
                 } catch (error) {
+
                     console.log(error);
                 }
             },
