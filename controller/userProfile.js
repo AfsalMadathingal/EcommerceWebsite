@@ -253,25 +253,35 @@ const loadOrders = async (req, res) => {
         },
       ]);
 
-      console.log(JSON.stringify(orderData[0]));
-      //date formating
+      
       orderData.forEach(async (element1) => {
+
         const dateString = element1.orderDate;
         const dateObject = new Date(dateString);
-        // Get day, month, and year
         const day = dateObject.getDate();
-        const month = dateObject.getMonth() + 1; // Note: Months are zero-indexed, so we add 1
+        const month = dateObject.getMonth() + 1; 
         const year = dateObject.getFullYear();
-        // Format the date components
         const formattedDate = `${day}/${month}/${year}`;
         element1.orderDate = formattedDate;
 
         if (element1.orderStatus == "Cancelled") {
+
           element1.cancel = true;
+
+        }else if (element1.orderStatus == "Returned") {
+
+          element1.return = true;
+          
+        }else
+        {
+          element1.openOrder= true;
         }
+        
+        
       });
 
-      console.log(orderData);
+      console.log("Order",orderData);
+
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
 

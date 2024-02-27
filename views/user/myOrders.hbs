@@ -14,9 +14,8 @@
       </div>
       <div class="order_tab">
         <ul class="tabs">
-          <li class="tab-link current" data-tab="order_tab">Orders</li>
-          <li class="tab-link" data-tab="buy_again">Buy Again</li>
-          <li class="tab-link" data-tab="open_orders">Open Orders</li>
+          <li class="tab-link current" data-tab="order_tab">Open Orders</li>
+          <li class="tab-link" data-tab="open_orders">Returned Orders</li>
           <li class="tab-link" data-tab="cancelled_orders">Cancelled Orders</li>
         </ul>
         <div class="orderFilter">
@@ -30,6 +29,7 @@
         </div>
       </div>
       {{#each orderData}}
+       {{#if this.openOrder}}
       <div id="order_tab" class="orderCardWrap tab-content1 current mt-2 order_tab ">
         <div class="orderCard rounded-4">
           <div class="orderHead rounded-4    ">
@@ -72,105 +72,114 @@
               </div>
               <div class="itemDesc">
                 <h4>{{this.productname}}</h4>
-                <p>Sold by: <span>Our Shop</span></p>
+                <p>Soldff by: <span>Our Shop</span></p>
                 <P>Quantity: <span>{{this.variantId.quantity}}</span></P>
-                {{!-- <span class="itemPrice">Rs {{this.orderAmount}}</span> --}}
                 <a href="/products/{{this.variantId.product_varient_id}}">
                   <button class="buy_again">Buy it again</button>
                 </a>
-
               </div>
             </div>
             {{/each}}
+        
             <div class="btn_group">
-              <button data-id="{{this._id}}"  class="buy_again return-product">Return this Order</button>
+              <button data-id="{{this._id}}" class="buy_again return-product">Return this Order</button>
               <button data-id="{{this._id}}" class="gift_btn">Leave Review</button>
               <button data-id="{{this._id}}" class="gift_btn">Track Order</button>
-              {{#if this.cancel}}
-              <button disabled="true" id="cancel-order-{{this._id}}" class=" btn-danger btn "
-                data-id="{{this._id}}">Cancel Order</button>
-              {{else}}
               <button id="cancel-order-{{this._id}}" class=" btn-danger btn " data-id="{{this._id}}">Cancel
                 Order</button>
-              {{/if}}
             </div>
           </div>
         </div>
       </div>
-
+    {{/if}}
       {{/each }}
-      <div id="buy_again" class="orderCardWrap tab-content1">
-        <div class="again">
-          <h2>Frequently repurchased in Health & Personal Care</h2>
-          <ul>
-            <li>
-              <img src="images/product1.jpg" alt="">
-              <h4>Pigeon Stainless Steel Swig Water Bottle 750ml (Set of 2)</h4>
-              <span>Rs {{this.orderAmount}}</span>
-              <button class="buy_again">Add to Cart</button>
-            </li>
-            <li>
-              <img src="images/product1.jpg" alt="">
-              <h4>Pigeon Stainless Steel Swig Water Bottle 750ml (Set of 2)</h4>
-              <span>$413.00</span>
-              <button class="buy_again">Add to Cart</button>
-            </li>
-            <li>
-              <img src="images/product1.jpg" alt="">
-              <h4>Pigeon Stainless Steel Swig Water Bottle 750ml (Set of 2)</h4>
-              <span>$413.00</span>
-              <button class="buy_again">Add to Cart</button>
-            </li>
-            <li>
-              <img src="images/product1.jpg" alt="">
-              <h4>Pigeon Stainless Steel Swig Water Bottle 750ml (Set of 2)</h4>
-              <span>$413.00</span>
-              <button class="buy_again">Add to Cart</button>
-            </li>
-          </ul>
-        </div>
-      </div>
       <div id="open_orders" class="orderCardWrap tab-content1">
-        Lorem1
-      </div>
-      <div id="cancelled_orders" class="orderCardWrap tab-content1">
+        {{#each orderData}}
+        {{#if this.return}}
         <div class="orderCard">
           <div class="orderHead">
             <ul class="orderLeft">
               <li>
-                <p>ORDER PLACED <span>12 March 2019</span></p>
+                <p>ORDER PLACED <span>{{this.orderDate}}</span></p>
               </li>
               <li>
-                <p>TOTAL <span>$413.00</span></p>
+                <p>TOTAL <span>Rs {{this.orderAmount}}</span></p>
               </li>
               <li>
                 <p>SHIP TO <span class="customerName">Customer Name</span>
                   <span class="cstmrInfo">
-                    <strong>Customer Name</strong> Lorem Ipsum is simply dummy text
+                    <strong> {{this.addressName}}</strong> {{this.addressLine1}} {{this.addressLine2}}
                   </span>
                 </p>
               </li>
             </ul>
             <div class="invoiceDetails">
-              <p>ORDER # 171-8448362-6456308</p>
+              <p>ORDER # {{this.orderNo}}
             </div>
           </div>
+          {{#each this.OrderedItems}}
           <div class="itemDetails">
-            <h3>Delivered 16-Mar-2019</h3>
+            <h3>Returned</h3>
             <p>Package was handed to a receptionist</p>
-            <p>Signed by: Priti.</p>
+            <p>Signed by: Afsal.</p>
             <div class="itemInfo">
-              <div class="itemImg">
-                <img src="images/product1.jpg" alt="">
+              <div class="itemImg p-3 ">
+                <img src="/uploads/{{this.image}}" alt="">
               </div>
               <div class="itemDesc">
-                <h4>Pigeon Stainless Steel Swig Water Bottle 750ml (Set of 2)</h4>
-                <p>Sold by: <span>E-Emporium</span></p>
-                <span class="itemPrice">$0.00</span>
+                <h4>{{this.productname}}</h4>
+                <p>Sold by: <span>Our Shop</span></p>
               </div>
             </div>
           </div>
         </div>
+        {{/each}}
+        {{/if}}
+        {{/each}}
+      </div>
+      <div id="cancelled_orders" class="orderCardWrap tab-content1">
+        {{#each orderData}}
+        {{#if this.cancel}}
+        <div class="orderCard">
+          <div class="orderHead">
+            <ul class="orderLeft">
+              <li>
+                <p>ORDER PLACED <span>{{this.orderDate}}</span></p>
+              </li>
+              <li>
+                <p>TOTAL <span>Rs {{this.orderAmount}}</span></p>
+              </li>
+              <li>
+                <p>SHIP TO <span class="customerName">Customer Name</span>
+                  <span class="cstmrInfo">
+                    <strong> {{this.addressName}}</strong> {{this.addressLine1}} {{this.addressLine2}}
+                  </span>
+                </p>
+              </li>
+            </ul>
+            <div class="invoiceDetails">
+              <p>ORDER # {{this.orderNo}}
+            </div>
+          </div>
+          {{#each this.OrderedItems}}
+          <div class="itemDetails">
+            <h3>Cancelled</h3>
+            <p>Package was handed to a receptionist</p>
+            <p>Signed by: Afsal.</p>
+            <div class="itemInfo">
+              <div class="itemImg p-3 ">
+                <img src="/uploads/{{this.image}}" alt="">
+              </div>
+              <div class="itemDesc">
+                <h4>{{this.productname}}</h4>
+                <p>Sold by: <span>Our Shop</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        {{/if}}
+        {{/each}}
       </div>
     </div>
   </div>
@@ -186,10 +195,10 @@
 
 
   document.addEventListener('DOMContentLoaded', function () {
-   
+
     let parentContainers = document.querySelectorAll('.order_tab');
 
-    
+
     parentContainers.forEach(function (parentContainer) {
       parentContainer.addEventListener('click', function (event) {
 
@@ -251,58 +260,57 @@
 
   returnButton.forEach((btn) => {
 
-      btn.addEventListener('click', () => {
-        
-        const id = btn.getAttribute('data-id')
+    btn.addEventListener('click', () => {
 
-        
-swal({
-  icon: "warning",
-  title: 'Select Return Reason',
-  content: {
-    element: "select",
-    attributes: {
-      id: "return-reason",
-      innerHTML: `
+      const id = btn.getAttribute('data-id')
+
+
+      swal({
+        icon: "warning",
+        title: 'Select Return Reason',
+        content: {
+          element: "select",
+          attributes: {
+            id: "return-reason",
+            innerHTML: `
         <option value="defective">Defective Product</option>
         <option value="wrong">Wrong Item Sent</option>
         <option value="unsatisfied">Unsatisfied with the Product</option>
         <option value="other">Other</option>
       `
-    },
-    
-  },
-  buttons: {
-    confirm: true,
-    cancel: true,
-  },
-}).then((value) => {
-  if (value) {
-    const reason = document.getElementById('return-reason').value;
+          },
 
-    fetch('/profile/returnProduct', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
+        },
+        buttons: {
+          confirm: true,
+          cancel: true,
+        },
+      }).then((value) => {
+        if (value) {
+          const reason = document.getElementById('return-reason').value;
 
-      },
-      body: JSON.stringify({ id: id, reason: reason }),
-    }).then(response => response.json()).then(data => {
-      if(data)
-      {
-        swal("Success", "your request was successful", "success").then(() => {
-          window.location.reload()
-        })
+          fetch('/profile/returnProduct', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
 
-      }
+            },
+            body: JSON.stringify({ id: id, reason: reason }),
+          }).then(response => response.json()).then(data => {
+            if (data) {
+              swal("Success", "your request was successful", "success").then(() => {
+                window.location.reload()
+              })
+
+            }
+          })
+
+
+        }
+      });
+
+
     })
-  
-    
-  }
-});
-
-
-      })
 
 
   })
