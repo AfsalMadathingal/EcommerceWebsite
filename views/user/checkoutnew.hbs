@@ -308,7 +308,7 @@ async function handlePayment(selectedAddress) {
 
     const orderurl = '/profile/payment/orders';
     try {
-        const response =  fetch(orderurl, {
+        const response = await fetch(orderurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
