@@ -159,10 +159,10 @@ const initializePayment = (paymentData) => {
                     razorpay_signature
                 });
 
-                const verifyData = await verifyResponse.json();
-                
+               
+                console.log("response",verifyResponse)
 
-                if (verifyData.success) {
+                if (verifyResponse.data.success) {
 
 
 
@@ -176,7 +176,9 @@ const initializePayment = (paymentData) => {
                         .then(response => response.json())
                         .then(data => {
                             if (data) {
-                                console.log("verify data", verifyData);
+
+                               
+
                                 if (true) {
                                     swal({
                                         icon: 'success',
