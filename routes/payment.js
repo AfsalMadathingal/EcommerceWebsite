@@ -64,6 +64,7 @@ paymentRouter.post("/orders", async (req, res) => {
 
 //payment verify
 paymentRouter.post("/verify", (req, res) => {
+  
   try {
     if (req.session.discount) {
       req.body.discount = req.session.discount;
