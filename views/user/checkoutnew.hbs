@@ -282,7 +282,7 @@
 
         const orderurl = '/profile/mycart/createorder';
 
-        const response = await fetch(orderurl, {
+        const response =  fetch(orderurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -308,7 +308,7 @@ async function handlePayment(selectedAddress) {
 
     const orderurl = '/profile/payment/orders';
     try {
-        const response = await fetch(orderurl, {
+        const response =  fetch(orderurl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -320,6 +320,7 @@ async function handlePayment(selectedAddress) {
             throw new Error('Network response was not ok');
         }
 
+        console.log("response",response)
         const data = await response.json();
         console.log("data", data);
         const { order } = data;

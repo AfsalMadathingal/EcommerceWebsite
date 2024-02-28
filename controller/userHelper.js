@@ -37,7 +37,7 @@ const loadForgotRest = async(req,res)=>{
 
     req.session.idForReset=req.params;
     
-    res.render('user/ForgotPasswordForm')
+    res.render('user/ForgotPasswordForm',{title:'Forgot Password'})
 
 
     
@@ -178,7 +178,7 @@ await springedge.messages.send(
 
 const loadForgotPassword = async function (req, res) {
   
-  res.render('user/forgotPassword')
+  res.render('user/forgotPassword',{title:'Forgot Password'})
 
 }
 
@@ -188,15 +188,15 @@ const loadLogin = function (req, res) {
   try {
 
     if (req.session.wrongCredentials) {
-      res.render("user/userLogin", { wrongCredentials: true });
+      res.render("user/userLogin", { wrongCredentials: true ,title:"Login" });
   
       req.session.wrongCredentials = false;
     } else if (req.session.blocked) {
-      res.render("user/userLogin", { blocked: true });
+      res.render("user/userLogin", { blocked: true , title:"Login" });
   
       req.session.blocked = false;
     } else {
-      res.render("user/userLogin");
+      res.render("user/userLogin",{title:"Login"});
     }
     
   } catch (error) {
@@ -215,13 +215,13 @@ try {
   
   if (req.session.UserExists) 
   {
-    res.status(200).render("user/userSignup", { alert: req.session.signupError });
+    res.status(200).render("user/userSignup", { alert: req.session.signupError ,title:"Signup" });
 
     req.session.signupError = false;
 
   } else {
 
-    res.status(200).render("user/userSignup");
+    res.status(200).render("user/userSignup",{title:"Signup"});
 
   }
 
@@ -235,9 +235,9 @@ try {
 //home page for log in user
 const loadHomeUser = async function (req, res) {
   if (req.session.user_id) {
-    res.render("user/HomePage", { user: true, name: req.session.user_id });
+    res.render("user/HomePage", { user: true, name: req.session.user_id , title: "Home Page"});
   } else {
-    res.render("user/HomePage");
+    res.render("user/HomePage",{title: "Home Page"});
   }
 };
 
@@ -300,14 +300,14 @@ const registerUser = async function (req, res, next) {
 
 //reder otp page
 const LoadOtpPage = function (req, res, next) {
-  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber });
+  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber ,title:"Otp Page"});
 
 };
 
 //retry otp
 const LoadOtpRetryPage = function (req, res, next) {
 
-  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber });
+  res.status(200).render("user/otp", { mobileNumber: req.session.mobileNumber , title:"Otp Page"});
 
 };
 
@@ -394,6 +394,7 @@ const otpVerify = async function (req, res) {
       res.render("user/otp", {
         mobileNumber: req.session.mobileNumber,
         alert: "OTP Wrong",
+        title: "Wrong OTP",
       });
       console.log("wrong");
     }

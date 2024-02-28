@@ -25,7 +25,7 @@ const loadMenProduct = async (req, res) => {
 
 const loadHomeUser = async (req, res) => {
   try {
-    //connecting Product collections with lookup
+
     const product_data = await productVariants.aggregate([
       {
         $lookup: {
@@ -81,8 +81,6 @@ const loadHomeUser = async (req, res) => {
     ]);
 
     const categoryData = await category.find({});
-    console.log(categoryData);
-    // getting the first image path form the array to display in product page
 
     product_data.forEach((element) => {
       if (element.images) {
@@ -96,13 +94,14 @@ const loadHomeUser = async (req, res) => {
         user: true,
         userId: req.session.user_id,
         data: product_data,
-        category: categoryData
+        category: categoryData,
+        title: "Home Page",
       });
     } else {
       res.render("user/HomePage", {
         data: product_data,
-        userId: req.session.user_id,
         category: categoryData
+        ,title: "Home Page",
       });
     }
   } catch (error) {
@@ -119,8 +118,7 @@ const loadProduct = async (req, res) => {
       
       const offer = await offerChecker(id);
 
-      console.log(offer);
-      //connecting Product collections with lookup
+  
 
       const data = await productVariants.aggregate([
         {
@@ -224,10 +222,11 @@ const loadProduct = async (req, res) => {
         data: data,
         colors: colors,
         user: true,
-        size: size
+        size: size,
+        title: "Product",
       });
     } catch (error) {
-      res.render("errorpage");
+      res.render("errorpage",{title:"Error"});
       console.log(error);
     }
     
@@ -343,7 +342,8 @@ const loadProduct = async (req, res) => {
       res.render("user/productsView", {
         data: data,
         colors: colors,
-        size: size
+        size: size,
+        title: "Product",
       });
     } catch (error) {
       res.render("errorpage");
@@ -492,12 +492,14 @@ const loadAllproduct = async (req, res) =>
         user: true,
         userId: req.session.user_id,
         data: product_data,
+        title: "All Products",
         
       });
     } else {
       res.render("user/allProducts", {
 
         data: product_data,
+        title: "All Products",
       });
     }
   } catch (error) {}
@@ -513,10 +515,15 @@ const loadDealsAndOffers = async (req, res) => {
     const dealsAndOffers = await offerDB.find({});
     console.log(dealsAndOffers);
     if (req.session.user_id) {
-      res.render('user/dealsAndOffers', {dealsAndOffers:dealsAndOffers,user:true,userId:req.session.user_id})
+      res.render('user/dealsAndOffers', {
+        dealsAndOffers:dealsAndOffers,
+        user:true,
+        userId:req.session.user_id,
+        title:"Deals and Offers"
+      })
     }else
     {
-      res.render('user/dealsAndOffers', {dealsAndOffers:dealsAndOffers})
+      res.render('user/dealsAndOffers', {dealsAndOffers:dealsAndOffers, title:"Deals and Offers"})
     }
     
     
@@ -549,28 +556,22 @@ const loadLowToHigh = async (req, res) => {
 
    const productData = await productVariants.find({}).populate("product").sort({ price: 1 })
 
-// Assuming productData is an array of objects
+
 productData.forEach((element) => {
   if (element.images) {
     let images = element.images;
     element.images = images[0];
   }
   Object.assign(element, element.product);
-  delete element.product; // Remove the product property if needed
+  delete element.product; 
 });
-
-
-
-
-
-
-
-  console.log(productData);
    
    res.render("user/allproducts", {
     user: true,
     userId: req.session.user_id,
     data: productData,
+    title: "All Products",
+
   });
 
   } catch (error) {
@@ -600,6 +601,7 @@ const loadHighToLow = async (req, res) => {
     user: true,
     userId: req.session.user_id,
     data: productData,
+    title: "All Products",
   });
 
   } catch (error) {

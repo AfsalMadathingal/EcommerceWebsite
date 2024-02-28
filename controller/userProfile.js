@@ -28,6 +28,7 @@ const loadChangePassword = async (req, res) => {
       personalInfo: personalInfo,
       user: true,
       userId: req.session.user_id,
+      title: "Profile",
     });
   } catch (error) {}
 };
@@ -102,6 +103,7 @@ const loadProfile = async (req, res) => {
       personalInfo: personalInfo,
       user: true,
       userId: req.session.user_id,
+      title: "Profile",
     });
   } else {
     res.redirect("'/user_login_form'");
@@ -290,6 +292,7 @@ const loadOrders = async (req, res) => {
         user: true,
         personalInfo: personalInfo,
         userId: req.session.user_id,
+        title: "My Orders",
       });
     }
   } catch (error) {
@@ -457,6 +460,7 @@ const loadChekOut = async (req, res) => {
       address: addressData,
       cartValue: cartValue,
       userId: userId,
+      title: "Checkout",
     });
   } catch (error) {
     console.log(error);
@@ -577,9 +581,18 @@ const placeOrder = async (req, res) =>
 
 const orderSuccess = async (req, res) => {
   try {
-    console.log("ordersuccess ", req.session.dataForOrder);
+    
 
-    res.render("user/orderPlaced", req.session.dataForOrder);
+    res.render("user/orderPlaced", {
+      orderData: req.session.dataForOrder,
+      user: true,
+      userId: req.session.user_id,
+      title: "Order Placed",
+
+    } );
+
+    console.log("order success", req.session.dataForOrder);
+
   } catch (error) {
     console.log(error);
   }
@@ -775,7 +788,8 @@ const viewOrder = async (req, res) => {
       user: true,
       userId: req.session.user_id,
       orderData: orderData[0],
-      deliverd:deliverd
+      deliverd:deliverd,
+      title: "Order Details",
     });
   } catch (error) {
     console.log(error);
@@ -987,6 +1001,7 @@ const loadAddress = async (req, res) => {
         addressData: addressData,
         user: true,
         userId: req.session.user_id,
+        title: "Address",
       });
     } else {
       res.redirect("/");
@@ -1009,7 +1024,8 @@ const loadEditAddress = async (req, res) => {
       addressData: data,
       user: true,
       userId: req.session.user_id,
-      personalInfo:personalInfo
+      personalInfo:personalInfo,
+      title: "Edit Address",
     });
 
   } catch (error) {
@@ -1069,6 +1085,7 @@ const loaAddNewAddress = async (req, res) => {
       personalInfo: personalInfo,
       user: true,
       userId: req.session.user_id,
+      title: "Add Address",
     });
   } else {
     res.redirect("/");
@@ -1262,6 +1279,7 @@ const loadCart = async (req, res) => {
           user: true,
           personalInfo: personalInfo,
           userId: req.session.user_id,
+          title: "Cart",
         });
       } else {
         res.render("user/cart", {
@@ -1271,6 +1289,7 @@ const loadCart = async (req, res) => {
           user: true,
           personalInfo: personalInfo,
           userId: req.session.user_id,
+          title: "Cart",
         });
       }
     }
@@ -1619,8 +1638,7 @@ const addBalance = async (req, res) => {
 
     const walletData = await walletDB.findOne({ userId: req.session.user_id });
 
-    console.log(walletData);
-
+   
     res.json({ walletData });
   } catch (error) {
     console.log(error);
@@ -1629,6 +1647,7 @@ const addBalance = async (req, res) => {
 
 const loadWallet = async (req, res) => {
   try {
+
     const walletData = await walletDB.find({ userId: req.session.user_id });
 
     walletData.forEach((data) => {
@@ -1637,14 +1656,16 @@ const loadWallet = async (req, res) => {
       });
     });
 
-    console.log("data wlaler", walletData);
+    
 
     res.render("user/myWallet", {
       user: true,
       userId: req.session.user_id,
       walletData: walletData[0],
+      title: "Wallet",
       personalInfo: await user.findOne({
-        _id:req.session.user_id
+        _id:req.session.user_id,
+       
       })
     });
   } catch (error) {
@@ -1734,6 +1755,7 @@ const loadWishList = async (req, res) => {
       user: true,
       userId: req.session.user_id,
       whishlistData: whishlistData,
+      title: "WishList",
      
     });
   } catch (error) {
@@ -1784,7 +1806,8 @@ const loadReferral = async (req, res) => {
         _id:req.session.user_id
       }),
       refrralHistory: await referral.findOne({userId:id}).sort({history:-1}),
-      referralLink: process.env.REFERRALS_LINK || "http://localhost:3000/refferal/?ref="
+      referralLink: process.env.REFERRALS_LINK || "http://localhost:3000/refferal/?ref=",
+      title: "My Referrals"
     });
 
   } catch (error) {

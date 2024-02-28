@@ -22,9 +22,9 @@
                                 <div class="d-flex justify-content-center mb-5 flex-column align-items-center"> <span
                                         class="check1"><i class="fa fa-check"></i></span> <span
                                         class="font-weight-bold">Order Confirmed</span> <small class="mt-2">Order No :
-                                        <b>{{orderId}} </b> <br></small> <a href="#"
+                                        <b>{{orderData.orderId}} </b> <br></small> <a href="#"
                                         class="text-decoration-none invoice-link">View Invoice</a> </div>
-                                <a href="/profile/myorders/{{addressData.0.userId}}">
+                                <a href="/profile/myorders/{{orderData.addressData.0.userId}}">
                                     <button class="btn btn-danger btn-block order-button">Go to your Order</button>
                                 </a>
 
@@ -38,13 +38,13 @@
                                 <div class="mt-3">
                                     <div class="card-body">
                                         Delivery Address :
-                                        <br> {{addressData.0.name}} <br>
-                                        {{addressData.0.mobile}} <br>
-                                        {{addressData.0.addressLine1}} <br>
-                                        {{addressData.0.addressLine2}} <br>
-                                        {{addressData.0.city_dist_town}} <br>
-                                        {{addressData.0.pincode}} <br>
-                                        <h6> <b>Adress Type: {{addressData.0.type}}</b></h6>
+                                        <br> {{orderData.addressData.0.name}} <br>
+                                        {{orderData.addressData.0.mobile}} <br>
+                                        {{orderData.addressData.0.addressLine1}} <br>
+                                        {{orderData.addressData.0.addressLine2}} <br>
+                                        {{orderData.addressData.0.city_dist_town}} <br>
+                                        {{orderData.addressData.0.pincode}} <br>
+                                        <h6> <b>Adress Type: {{orderData.addressData.0.type}}</b></h6>
 
                                     </div>
                                 </div>
@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹
-                                             {{subTotal}}</span> </div>
+                                             {{orderData.subTotal}}</span> </div>
                                 </div>
                             </div>
                             <div class="row g-0 border-bottom">
@@ -72,8 +72,8 @@
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹ 0</span>
                                     </div>
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span>₹
-                                        {{#if discount}}
-                                        {{discount}}
+                                        {{#if orderData.discount}}
+                                        {{orderData.discount}}
                                         {{else}}
                                         0
                                         {{/if}}
@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="p-3 d-flex justify-content-center align-items-center"> <span
-                                            class="font-weight-bold">₹ {{totalAmount}}</span> </div>
+                                            class="font-weight-bold">₹ {{orderData.totalAmount}}</span> </div>
                                 </div>
                             </div>
                         </div>

@@ -10,7 +10,8 @@ try {
             user:true,
             id:req.session.user_id,
             receiverId:adminId,
-            userId:req.session.user_id
+            userId:req.session.user_id,
+            title:"Customer Support"
     })
   
     
@@ -32,5 +33,4 @@ try {
 
 module.exports = {
     loadCustomerService,
-   
 }
