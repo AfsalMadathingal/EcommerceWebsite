@@ -64,8 +64,9 @@ paymentRouter.post("/orders", async (req, res) => {
 
 //payment verify
 paymentRouter.post("/verify", (req, res) => {
-  
+
   try {
+    
     if (req.session.discount) {
       req.body.discount = req.session.discount;
       req.session.order = req.body;
@@ -73,8 +74,7 @@ paymentRouter.post("/verify", (req, res) => {
       req.session.order = req.body;
     }
     
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
@@ -91,6 +91,7 @@ paymentRouter.post("/verify", (req, res) => {
     } else {
       res.status(400).json({ message: "Invalid signature", success: false });
     }
+
   } catch (error) {
     console.log(error);
     console.log(error);
