@@ -150,14 +150,13 @@ const initializePayment = (paymentData ,response) => {
 
                 const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
               
-                const verifyResponse = await fetch('/profile/payment/verify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ razorpay_order_id, razorpay_payment_id, razorpay_signature })
+                const axios = require('axios').default;
 
-                })
+                const verifyResponse = await axios.post('/profile/payment/verify', {
+                    razorpay_order_id,
+                    razorpay_payment_id,
+                    razorpay_signature
+                });
 
                 const verifyData = await verifyResponse.json();
                 
