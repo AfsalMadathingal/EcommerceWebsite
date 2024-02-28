@@ -1,4 +1,4 @@
-const rzpKey = process.env.RAZORPAY_API_KEY;
+const rzpKey = 'rzp_test_hZPyhffeqYGexk'
 let selectedAddress;
 document.getElementById('rzp-button').onclick = function (e) {
 
@@ -121,7 +121,9 @@ try {
     
     const data = await response.json();
     const { order } = data;
-    initializePayment(order,data);
+
+    initializePayment(order);
+
 } catch (err) {
 
     console.error('Error:', err);
