@@ -84,6 +84,8 @@ paymentRouter.post("/verify", (req, res) => {
     console.log(razorpay_signature);
     console.log(expectedSignature);
 
+    console.log('keys', process.env.RAZORPAY_SECRET, process.env.RAZORPAY_API_KEY);
+
     if (razorpay_signature === expectedSignature) {
       res
         .status(200)
