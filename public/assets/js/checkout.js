@@ -1,4 +1,4 @@
-const rzpKey = 'rzp_test_hZPyhffeqYGexk';
+const rzpKey = process.env.RAZORPAY_API_KEY;
 let selectedAddress;
 document.getElementById('rzp-button').onclick = function (e) {
 
@@ -129,7 +129,7 @@ try {
 }
 }
 
-const initializePayment = (paymentData ,response) => {
+const initializePayment = (paymentData) => {
 
     const userId = document.getElementById('rzp-button').getAttribute('data-id');
     const paymentOptions = {
@@ -150,7 +150,6 @@ const initializePayment = (paymentData ,response) => {
 
                 const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
               
-                const axios = require('axios').default;
 
                 const verifyResponse = await axios.post('/profile/payment/verify', {
                     razorpay_order_id,
