@@ -1607,7 +1607,6 @@ const addBalance = async (req, res) => {
     let { amount } = req.body;
     const userId = req.session.user_id;
     const addingAmount = Number(amount);
-    // Check if the user exists, if not, insert a new user with the given balance
     const existingUser = await walletDB.findOne({ userId: userId });
 
     if (!existingUser) {
@@ -1823,6 +1822,15 @@ const returnProduct = async (req, res) => {
 
     const {id,reason } = req.body;
 
+    const {orderAmount}= await order.findOne({ _id: id })
+
+    await walletDB.updateOne(
+      { userId: req.session.user_id },
+      { $inc: { balance: orderAmount } , 
+      $push: { transaction: { amount: orderAmount, type: "credit", date: new Date() } } }
+    )
+  
+
     await order.updateOne({ _id: id }, {
       $set:{
         returnReason:reason,
@@ -1830,7 +1838,7 @@ const returnProduct = async (req, res) => {
       }
     })
 
-    res.json(true)
+    res.json({success:true,orderAmount})
     
   } catch (error) {
 

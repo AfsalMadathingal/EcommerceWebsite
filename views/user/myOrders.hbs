@@ -231,7 +231,7 @@
                 swal({
                   icon: 'success',
                   title: 'Success!',
-                  text: 'Your request was successful.',
+                  text: `Your request was successful`,
                 })
 
                 event.target.disabled = true;
@@ -299,7 +299,7 @@
             body: JSON.stringify({ id: id, reason: reason }),
           }).then(response => response.json()).then(data => {
             if (data) {
-              swal("Success", "your request was successful", "success").then(() => {
+              swal("Success", `your request was successful  ${data.orderAmount} has been refunded. to your wallet`, "success").then(() => {
                 window.location.reload()
               })
 
