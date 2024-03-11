@@ -144,7 +144,6 @@
 <script>
         $(document).ready(function () {
             $('#exportPdf').on('click', function () {
-                // Options for the PDF export
                 var options = {
                     margin: 10,
                     filename: 'invoice.pdf',
@@ -153,10 +152,9 @@
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // Target the container containing your invoice content
+               
                 var element = document.querySelector('.invoice');
 
-                // Call html2pdf function
                 html2pdf(element, options);
             });
         });

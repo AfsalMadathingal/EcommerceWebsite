@@ -10,6 +10,7 @@ productRoute.get('/allproducts',productsController.loadAllproduct)
 productRoute.get('/lowtohigh',productsController.loadLowToHigh)
 productRoute.get('/hightolow',productsController.loadHighToLow)
 productRoute.post('/addtocart/:id',productsController.addToCart)
+productRoute.get('/all-product-search',productsController.searchProduct)
 
 //offer related request
 productRoute.get('/dealsAndOffers',productsController.loadDealsAndOffers)

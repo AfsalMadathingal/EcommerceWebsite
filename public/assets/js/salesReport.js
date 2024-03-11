@@ -26,19 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
       var fromDate = document.getElementById("fromDate").value;
       var toDate = document.getElementById("toDate").value;
 
-      // Split the date string by the '-' delimiter to extract year, month, and day
+   
       const [year, month, day] = fromDate.split("-");
 
       let [year2, month2, day2] = toDate.split("-");
       day2++;
 
-      // Convert month from 'mm' to 'dd' format
+     
       const convertedFromDateString = `${month}/${day}/${year}`;
       const convertedToDateString = `${month2}/${day2}/${year2}`;
 
-      console.log("Converted Date String:", convertedFromDateString);
-
-      // Perform a fetch request to the server to get filtered data
+  
       fetch("/admin/salesReport/filterReport/", {
         method: "POST",
         headers: {

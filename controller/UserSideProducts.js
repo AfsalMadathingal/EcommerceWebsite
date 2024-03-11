@@ -10,6 +10,18 @@ const cart = require("../model/cart.js");
 const offerDB = require("../model/offerModel.js");
 
 
+
+const imageSave =  function (product_data) {
+
+  product_data.forEach((element) => {
+    if (element.images) {
+      let images = element.images;
+      element.images = images[0];
+    }
+  });
+
+} 
+
 const loadMenProduct = async (req, res) => {
 
   try {
@@ -88,6 +100,7 @@ const loadHomeUser = async (req, res) => {
         element.images = images[0];
       }
     });
+    
 
     if (req.session.user_id) {
       res.render("user/HomePage", {
@@ -476,12 +489,9 @@ const loadAllproduct = async (req, res) =>
 
    
 
-    product_data.forEach((element) => {
-      if (element.images) {
-        let images = element.images;
-        element.images = images[0];
-      }
-    });
+
+
+  imageSave(product_data)
 
 
 
@@ -557,19 +567,20 @@ const loadLowToHigh = async (req, res) => {
    const productData = await productVariants.find({}).populate("product").sort({ price: 1 })
 
 
-productData.forEach((element) => {
-  if (element.images) {
-    let images = element.images;
-    element.images = images[0];
-  }
-  Object.assign(element, element.product);
-  delete element.product; 
-});
-   
+   imageSave(productData)
+
+  productData.forEach((element) => {
+    
+    element.product? element.product_name = element.product.product_name:element.product_name = "Not Available";
+    
+  })
+
+  
+  
    res.render("user/allproducts", {
     user: true,
     userId: req.session.user_id,
-    data: productData,
+    data: result,
     title: "All Products",
 
   });
@@ -589,13 +600,9 @@ const loadHighToLow = async (req, res) => {
 
    const productData = await productVariants.find({}).populate("product").sort({ price: -1 })
 
+  imageSave(productData)
 
-   productData.forEach((element) => {
-    if (element.images) {
-      let images = element.images;
-      element.images = images[0];
-    }
-  });
+  console.log(productData);
    
    res.render("user/allproducts", {
     user: true,
@@ -613,6 +620,101 @@ const loadHighToLow = async (req, res) => {
 }
 
 
+const searchProduct = async (req, res) => {
+
+  try {
+
+    const value = req.query.search;
+
+    console.log("sdfdsf",value);
+
+    const product_data = await productVariants.aggregate([
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "product",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $project: {
+          _id: 1,
+          product: 1,
+          product_id: "$product.product_id",
+          product_name: "$product.product_name",
+          category: "$product.category_id",
+          about_product: "$product.about_product",
+          is_listed: 1,
+          price: 1,
+          stock: 1,
+          images: 1,
+          offer: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "categorydetails",
+          foreignField: "_id",
+          localField: "category",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $project: {
+          _id: 1,
+          product_id: 1,
+          product: 1,
+          product_name: 1,
+          about_product: 1,
+          price: 1,
+          stock: 1,
+          category: "$category.category",
+          images: 1,
+          offer: 1,
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { "product.product_name": { $regex: value, $options: "i" } },
+            { "product.about_product": { $regex: value, $options: "i" } },
+          ]
+        }
+      },
+    ]);
+    
+    
+    imageSave(product_data)
+    
+    if (req.session.user_id) {
+      res.render("user/allProducts", {
+        user: true,
+        userId: req.session.user_id,
+        data: product_data,
+        title: "All Products",
+        
+      });
+    } else {
+      res.render("user/allProducts", {
+
+        data: product_data,
+        title: "All Products",
+      });
+    }
+
+    
+  } catch (error) {
+
+    console.log(error);
+  }
+}
 
 
 module.exports = {
@@ -623,5 +725,6 @@ module.exports = {
   loadDealsAndOffers,
   offerChecker,
   loadLowToHigh,
-  loadHighToLow
+  loadHighToLow,
+  searchProduct
 };

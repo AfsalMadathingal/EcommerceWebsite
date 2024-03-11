@@ -43,7 +43,7 @@
 						<i class="zmdi zmdi-search"></i>
 					</button>
 
-					<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product"
+					<input id="searchProduct" class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product"
 						placeholder="Search">
 				</div>
 			</div>
@@ -57,30 +57,7 @@
 						</div>
 
 						<ul>
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									Default
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									Popularity
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									Average rating
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-									Newness
-								</a>
-							</li>
-
+					
 							<li class="p-b-6">
 								<a href="/products/lowtohigh" class="filter-link stext-106 trans-04">
 									Price: Low to High
@@ -109,31 +86,19 @@
 
 							<li class="p-b-6">
 								<a href="#" class="filter-link stext-106 trans-04">
-									$0.00 - $50.00
+									₹ 500 - ₹ 1,000
 								</a>
 							</li>
 
 							<li class="p-b-6">
 								<a href="#" class="filter-link stext-106 trans-04">
-									$50.00 - $100.00
+									₹ 1000 - ₹ 2,000
 								</a>
 							</li>
 
 							<li class="p-b-6">
 								<a href="#" class="filter-link stext-106 trans-04">
-									$100.00 - $150.00
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									$150.00 - $200.00
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<a href="#" class="filter-link stext-106 trans-04">
-									$200.00+
+									₹ 2000 - ₹ 10,000
 								</a>
 							</li>
 						</ul>
@@ -162,36 +127,6 @@
 
 								<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
 									Blue
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #b3b3b3;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Grey
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #00ad5f;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Green
-								</a>
-							</li>
-
-							<li class="p-b-6">
-								<span class="fs-15 lh-12 m-r-6" style="color: #fa4251;">
-									<i class="zmdi zmdi-circle"></i>
-								</span>
-
-								<a href="#" class="filter-link stext-106 trans-04">
-									Red
 								</a>
 							</li>
 
@@ -243,7 +178,7 @@
 			</div>
 		</div>
 
-		<div class="row isotope-grid">
+		<div id="productsSingle" class="row isotope-grid">
 			{{#each data}}
 			<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{this.category}}  ">
 				<!-- Block2 -->
@@ -622,7 +557,7 @@
 		</div>
 	</div>
 </div>
-
+<script src="/js/allProductSearch.js"></script>
 <!--===============================================================================================-->
 <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
@@ -727,7 +662,13 @@
 
 </body>
 
+
+
+
+
 <style>
+
+
 	.top-right-text {
     position: absolute;
     top: 10px;

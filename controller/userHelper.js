@@ -357,9 +357,10 @@ const otpVerify = async function (req, res) {
     console.log(userOtpDetails);
   
     if (userOtpDetails.otp == userEnteredOtp) {
+
       req.session.user_id = req.session.currentUserId;
-      res.redirect("/");
-      console.log("verified");
+
+     
       await userOtp.deleteOne({ user_id: req.session.currentUserId });
       await user.insertMany(req.session.userData);
       await referral.insertMany({userId:req.session.currentUserId})
@@ -390,6 +391,10 @@ const otpVerify = async function (req, res) {
           }
         )
       }
+
+
+      res.redirect("/");
+      
     } else {
       res.render("user/otp", {
         mobileNumber: req.session.mobileNumber,

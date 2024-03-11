@@ -11,7 +11,15 @@ require('dotenv').config()
 const hbsHelper = require('./controller/hbsHelper.js')
 const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
 const server = http.createServer(app);
-mongoose.connect(process.env.MONGO_URL ||'mongodb://127.0.0.1:27017/OURSHOP')
+
+
+
+mongoose.connect(process.env.MONGO_URL ||'mongodb://127.0.0.1:27017/OURSHOP').then(()=>{
+    console.log("Database Connected Successfully");
+})
+
+
+
 const PORT = process.env.PORT
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -33,12 +41,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 
-
-
-
-
-
+//for socketIo 
 initializeSocket(server)
+
 
 server.listen(PORT, () => {
     console.log(`connected to http://localhost:${PORT}/`);
