@@ -535,24 +535,53 @@ $(document).ready(function () {
         searchBtn = body.querySelector(".search-box"),
         modeSwitch = body.querySelector(".toggle-switch"),
         modeText = body.querySelector(".mode-text");
+        const div = body.querySelectorAll('tbody')
 
-
+    sidebar.classList.toggle("close");
+    
     toggle.addEventListener("click", () => {
         sidebar.classList.toggle("close");
+       
     })
 
     searchBtn.addEventListener("click", () => {
         sidebar.classList.remove("close");
     })
 
-    modeSwitch.addEventListener("click", () => {
-        body.classList.toggle("dark");
+ modeSwitch.addEventListener("click", () => {
+    body.classList.toggle("dark");
+    localStorage.setItem('theme', body.classList.contains("dark") ? "dark" : "light");
 
-        if (body.classList.contains("dark")) {
-            modeText.innerText = "Light mode";
-        } else {
-            modeText.innerText = "Dark mode";
+    if (body.classList.contains("dark")) {
+        modeText.innerText = "Light mode";
+        div.forEach((d)=>{
+         d.style.backgroundColor = '#242424'
+           d.style.color = 'white'
+            })
+    } else {
+        modeText.innerText = "Dark mode";
+        div.forEach((d)=>{
+           d.style.backgroundColor = 'white'
+           d.style.color = 'black'
+        })
+    }
+});
 
-        }
-    });
+// Check for saved theme preference in the browser on page load
+document.addEventListener("DOMContentLoaded", () => {
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        body.classList.add(savedTheme);
+        modeText.innerText = savedTheme === "dark" ? "Light mode" : "Dark mode";
+
+ div.forEach((d)=>{
+           d.style.backgroundColor = savedTheme === "dark" ? '#242424':   'white'
+           d.style.color = savedTheme === "dark" ? 'white':   'black'
+        })
+         
+
+    }
+});
+
 </script>
