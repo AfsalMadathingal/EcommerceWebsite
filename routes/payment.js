@@ -5,12 +5,8 @@ const user = require("../model/userModel.js");
 const wallet = require("../model/walletModel.js");
 const address = require("../model/userAddress.js");
 const cart = require("../model/cart.js");
-const order = require("../model/orderModel.js");
-const payment = require("../model/payment.js");
-const { log } = require("console");
 
-//create order
-
+//create order-
 paymentRouter.post("/orders", async (req, res) => {
   try {
     const { userId, selectedAddress } = req.body;

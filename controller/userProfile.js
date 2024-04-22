@@ -35,7 +35,6 @@ const loadChangePassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    console.log("reset password");
 
     const id = req.body.id;
     const oldPassword = req.body.OldPassword;
@@ -74,7 +73,6 @@ const editProfile = async (req, res) => {
   try {
     const { userId, fullname, phone, email, gender } = req.body;
 
-    console.log(userId, fullname, phone, email, gender);
 
     const response = await user.updateOne(
       { _id: userId },
@@ -88,15 +86,16 @@ const editProfile = async (req, res) => {
       }
     );
 
-    console.log(response);
+
 
     res.json("done");
   } catch (error) {}
 };
 
 const loadProfile = async (req, res) => {
-  console.log("hello from load profile");
-  if (req.session.user_id == req.params.id) {
+ 
+  if (req.session.user_id == req.params.id) 
+  {
     const personalInfo = await user.findOne({ _id: req.params.id });
 
     res.render("user/personalinformation", {
@@ -116,8 +115,8 @@ const loadOrders = async (req, res) => {
     const userId = req.params.id;
 
     if (userId == req.session.user_id) {
-      const cartData = await order.find({ userId: userId });
 
+  
       const orderData = await order.aggregate([
         {
           $match: { userId: new mongoose.Types.ObjectId(userId) },
@@ -282,8 +281,6 @@ const loadOrders = async (req, res) => {
         
       });
 
-      console.log("Order",orderData);
-
 
       const personalInfo = await user.findOne({ _id: req.session.user_id });
 
@@ -306,11 +303,8 @@ const loadOrders = async (req, res) => {
 const loadChekOut = async (req, res) => {
   try {
     const userId = req.session.user_id;
-
     const addressData = await address.find({ userId: userId });
     const userData = await user.find({ _id: userId });
-    //let cartValue = userData[0].cartValue;
-
     let items = await cart.aggregate([
       {
         $match: {
@@ -480,9 +474,7 @@ const placeOrder = async (req, res) =>
     const userData = await user.find({ _id: userId });
     const cartData = await cart.find({ userId: userId });
     const orderNo = Math.floor(100000 + Math.random() * 900000);
-    
 
-    let totalAmount;
     const subTotal = userData[0].cartValue;
     let products = [];
     const date = new Date().toLocaleDateString("en-US", {
@@ -591,7 +583,6 @@ const orderSuccess = async (req, res) => {
 
     } );
 
-    console.log("order success", req.session.dataForOrder);
 
   } catch (error) {
     console.log(error);
@@ -1764,17 +1755,15 @@ const loadWishList = async (req, res) => {
 
 const removeFromWishList = async (req, res) => {
   try {
-    const { whishlistId, productid } = req.body;
-    console.log("this is product id", productid);
-    const query = { _id: whishlistId };
 
+    const { whishlistId, productid } = req.body;
+    const query = { _id: whishlistId };
     const response = await whishlistDB.updateOne(
       query,
       { $pull: { productVarientId: new mongoose.Types.ObjectId(productid) } },
       { new: true }
     );
 
-    console.log(response);
 
     if (response.modifiedCount > 0) {
       res.json({ success: true });
@@ -1790,12 +1779,9 @@ const removeFromWishList = async (req, res) => {
 const loadReferral = async (req, res) => {
   
   try {
-    console.log("user id",req.session.user_id);
 
-     const id = new mongoose.Types.ObjectId(req.session.user_id)
-
-     console.log(id);
-      const data = await referral.findOne({userId:id})
+    const id = new mongoose.Types.ObjectId(req.session.user_id)
+    const data = await referral.findOne({userId:id})
 
     
     res.render("user/myReferrals", {

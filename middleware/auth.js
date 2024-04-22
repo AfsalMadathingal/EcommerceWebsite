@@ -98,8 +98,7 @@ const blockChecker = async (req, res,next) => {
 const liveChecker = async (req, res) => {
     try {
         const { inputString } = req.body;
-        console.log(inputString);
-
+      
         const allNumbersRegex = /^[0-9]+$/;
         const mixedRegex = /[a-zA-Z0-9]/;
 

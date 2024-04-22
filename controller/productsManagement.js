@@ -6,7 +6,6 @@ const category = require("../model/categoryModel.js");
 const productVariants = require("../model/productVariants.js");
 const orders = require("../model/orderModel.js");
 const mongoose = require("mongoose");
-const { response } = require("../routes/productsRoute.js");
 const {log}= console
 
 
@@ -64,7 +63,7 @@ const loadProducts = async (req, res) => {
 
     const count = await productsDB.countDocuments();
 
-    console.log(req.files);
+
 
     res.status(200).render("admin/productsManagement", {
       adminlogin: true,
@@ -74,7 +73,7 @@ const loadProducts = async (req, res) => {
       layout: "newSidebar",
     });
   } catch (error) {
-    console.log(req.file);
+   
     res.send(error);
   }
 };
@@ -173,11 +172,11 @@ const loadEditProduct = async (req, res) => {
       obj.image2 = images[1];
       obj.image3 = images[2];
 
-      delete obj.images; // Remove the original 'images' field if needed
+      delete obj.images; 
       return obj;
     });
 
-    console.log(data);
+
 
     res.status(200).render("admin/editProduct", {
       adminlogin: true,
@@ -201,8 +200,6 @@ const addNewProduct = async (req, res, next) => {
     });
     const sizeId = await size.findOne({ size: productData.size });
 
-    console.log(productData.category);
-    console.log(productData);
 
     product = new productsDB({
       product_id: productData.productId,
@@ -218,13 +215,12 @@ const addNewProduct = async (req, res, next) => {
       req.files.forEach(function (file, index, arr) {
         filenames.push(file.filename);
       });
-      console.log(filenames);
       req.session.imagepath = filenames;
     }
 
     const colorId = await color.findOne({ color: productData.color });
 
-    productVariant = new productVariants({
+    const productVariant = new productVariants({
       product: product._id.toString(),
       color_id: colorId._id.toString(),
       size_id: sizeId._id.toString(),
@@ -238,7 +234,6 @@ const addNewProduct = async (req, res, next) => {
     await product.save();
     await productVariant.save();
 
-    console.log("add is working");
     res.redirect("/admin/products_management");
   } catch (error) {
     console.log(error);
@@ -279,14 +274,6 @@ const updateProduct = async (req, res, next) => {
     })
 
 
-
-    console.log("data",productData);
-  
-    console.log("1",response1);
-    console.log("2",response2);
-    
-
-
     res.redirect('/admin/products_management')
 
   } catch (error) {
@@ -302,7 +289,7 @@ const editImage = async (req, res) => {
 
 
   try {
-    console.log("editimage");
+    
 
     if (req.files) {
       const { filename } = req.files[0];
@@ -310,7 +297,6 @@ const editImage = async (req, res) => {
     }
 
     const { variantId,oldImageName } = req.body;
-    console.log(req.body);
 
   const response1=  await productVariants.updateOne(
       { _id: variantId },
@@ -325,10 +311,6 @@ const editImage = async (req, res) => {
     })
 
 
-    console.log(req.body);
-
-    console.log(response1,response2);
-
     res.json(true);
 
   } catch (error) {
@@ -341,16 +323,16 @@ const editImage = async (req, res) => {
 const deleteImage = async (req, res) => {
 
   try {
-    console.log("inside delteimnage");
+
     const { variantId, imageName } = req.body;
-    console.log(req.body);
-    const response = await productVariants.updateOne(
+
+   await productVariants.updateOne(
       { _id: variantId },
       {
         $pull: { images: imageName },
       }
     );
-    console.log(response);
+
     res.json(true);
   } catch (error) {
     console.log(error);
@@ -361,9 +343,8 @@ const deleteProduct = async (req, res) => {
 
   try {
     
-    console.log("delete");
+
     const { productVarId, productId } = req.body;
-    console.log(productId);
     await productsDB.deleteOne({ product_id: productId });
     await productVariants.deleteOne({ _id: productVarId });
 
@@ -470,13 +451,6 @@ const viewOrder = async (req, res) => {
        options: { strictPopulate: true }
     })
 
-    
-
-    
-
-      log("data form details",JSON.stringify(orderData))
-
-     
 
       res.status(200).render("admin/viewOrder", {
 

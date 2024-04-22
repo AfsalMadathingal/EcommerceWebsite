@@ -9,8 +9,8 @@ const checkSession = (req,res,next)=>{
        
     }else
     {
-        next()
-      //  res.redirect('/admin')
+        // next()
+       res.redirect('/admin')
     }
 
 }

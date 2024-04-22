@@ -11,9 +11,6 @@ const loadOffers = async (req, res) => {
     const category = await catogoryDB.find({});
     const offerData = await offerDB.find({}).populate("offer_category");
     
-    
-
-    console.log(offerData);
     res.render("admin/offersManagement", {
       adminlogin: true,
       layout: "newSidebar",
@@ -52,8 +49,6 @@ const loadAddOffers = async (req, res) => {
 const loadEditOffer = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // const offerData = await offerDB.findOne({_id:id})
 
     const offerData = await offerDB.aggregate([
       {
@@ -135,7 +130,7 @@ const editOffer = async (req, res) => {
 
     console.log("offer id", offerId);
 
-    const Offerrespons = await offerDB.updateOne(
+    await offerDB.updateOne(
       { _id: offerIdToObj },
       {
         offer_title: OfferTitle,
@@ -149,7 +144,7 @@ const editOffer = async (req, res) => {
       }
     );
 
-    const varientResponse = await productVariants.updateMany(
+    await productVariants.updateMany(
       { offer: offerId },
       {
         $unset: {
@@ -171,7 +166,7 @@ const editOffer = async (req, res) => {
 
     forProductId.forEach(async (id) => {
       cont = 0;
-      const respons = await productVariants.updateMany(
+      await productVariants.updateMany(
         { product: id },
         {
           $set: {
@@ -193,6 +188,7 @@ const editOffer = async (req, res) => {
 
 
 const addOffer = async (req, res) => {
+
   if (req.files) {
     let filenames;
 
@@ -241,8 +237,7 @@ const addOffer = async (req, res) => {
     offer_category: catogoryId,
   });
 
-  console.log("data", offerData);
-  console.log("body", req.body);
+
 
   await offerData.save();
 
@@ -262,14 +257,10 @@ const addOffer = async (req, res) => {
 
 const deleteOffer = async (req, res) => {
   try {
+
     const { itemId, offerId } = req.body;
-
-    console.log(itemId);
     id = new mongoose.Types.ObjectId(offerId);
-
-    console.log("id", id);
-
-    const response = await productVariants.updateMany(
+      await productVariants.updateMany(
       { offer: id },
       {
         $unset: {
@@ -277,7 +268,7 @@ const deleteOffer = async (req, res) => {
         },
       }
     );
-    console.log(response);
+
     await offerDB.deleteOne({ _id: offerId });
 
     res.json(true);
@@ -315,6 +306,7 @@ const validation = (req, res) => {
     console.log(error);
   }
 };
+
 module.exports = {
   loadOffers,
   addOffer,

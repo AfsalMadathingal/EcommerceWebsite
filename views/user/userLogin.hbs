@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="css/userLogin.css">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 {{>userNav}}
 
 <div class="user-login-main  ">
@@ -39,6 +40,7 @@
                 <button type="
                                 submit" class="user-login-btn">Login</button>
             </div>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </form>
 
         <h6>Don’t have an account? <a class="click-to-signup" href="/user_signup">Click Here</a> to Signup</h6>

@@ -106,6 +106,7 @@ const loadUserManagement = async (req, res) => {
       pageTitle: "Users",
       layout: "newSidebar",
     });
+    
   } catch (err) {
     res.redirect("/admin");
   }

@@ -32,7 +32,7 @@ const loadCategory = async (req,res)=>{
            } },
         ]);
 
-        console.log(data);
+  
         const count = await categoryDB.countDocuments()
         res.render('admin/categoryManage',
         {adminlogin:true ,data:data ,count:count,pageTitle:"Category" ,layout:'newSidebar'})
@@ -79,7 +79,6 @@ const editCategory = async (req, res) => {
       { $set: { category: newCategoryName } }
     );
 
-    console.log("edit category is working");
 
     res.redirect("/admin/category_management");
   } catch (error) {

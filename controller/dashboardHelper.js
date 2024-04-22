@@ -332,9 +332,6 @@ const salesReportFilter = async (req, res) => {
     const userStartDate = new Date(`${startYear}-${startMonth}-${startDay}`);
     const userEndDate = new Date(`${endYear}-${endMonth}-${endDay}`);
 
-    console.log("User Start Date:", userStartDate);
-    console.log("User End Date:", userEndDate);
-
     const pipeline = [
       {
         $match: {

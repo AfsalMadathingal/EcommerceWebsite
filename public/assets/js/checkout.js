@@ -102,6 +102,7 @@ async function handleCod(selectedAddress, userId) {
 }
 
 async function handlePayment(selectedAddress) {
+    
 const userId = document.getElementById('rzp-button').getAttribute('data-id');
 
 const orderurl = '/profile/payment/orders';

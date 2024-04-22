@@ -47,30 +47,16 @@ const addCoupons = async (req,res)=>{
 
   try {
 
-    console.log(req.body);
-    
-    const {Couponid,Discount,expireDate,userlimit,discription,discountType }=req.body;
 
-   const couponExist = await couponsDB.findOne({code:Couponid})
+    
+  const {Couponid,Discount,expireDate,userlimit,discription,discountType }=req.body;
+  const couponExist = await couponsDB.findOne({code:Couponid})
 
-    if(couponExist)
-    { 
-    
-
-    return res.json({success:false})
-    
-    }
-    
+   if (couponExist) return res.json({success:false})
     //discount type 1 = amount 0= percentage 
     let discountTypeValue;
+    discountType == 'amount' ? (discountTypeValue = 1) : (discountTypeValue = 0);
 
-    if (discountType=="amount")
-    {
-      discountTypeValue=1
-    }else
-    {
-      discountTypeValue=0
-    }
     
     const coupon = new couponsDB ({
 
@@ -84,8 +70,6 @@ const addCoupons = async (req,res)=>{
     })
 
     await coupon.save()
-
- 
     res.json({success:true})
    
 
@@ -101,15 +85,7 @@ const editCoupon = async(req,res)=>{
   try {
 
     const {Couponid,discription,userlimit,expireDate,discountType,Discount,id} =req.body
-
-
-
-    req.session.discount=0
-    if (discountType=="amount")
-    {
-      req.session.discount=1
-    }
-    console.log(req.body);
+    discountType=="amount" ? req.session.discount=1 : req.session.discount=0
     const respons= await couponsDB.updateOne({_id:id},{
       $set:{
         code:Couponid,
@@ -121,8 +97,6 @@ const editCoupon = async(req,res)=>{
       }
     })
 
-    
-    console.log(respons);
     res.redirect('/admin/coupons')
 
   } catch (error) {
@@ -140,8 +114,6 @@ const deleteCoupon = async(req,res)=>{
     
     const {id}=req.body
     const respons= await couponsDB.deleteOne({_id:id})
-    
-    console.log(respons);
 
     res.json(true)
 

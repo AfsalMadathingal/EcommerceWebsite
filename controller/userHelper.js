@@ -1,12 +1,8 @@
-// requiring user model file
 const user = require("../model/userModel");
 const referral = require("../model/referralModel");
 const walletDB = require("../model/walletModel");
-// requiring otp model file
 const userOtp = require("../model/OTPModel");
-// for otp
 var springedge = require("springedge");
-// for encrypt for password
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -243,7 +239,7 @@ const loadHomeUser = async function (req, res) {
 
 //savig data to the data base
 const registerUser = async function (req, res, next) {
-  console.log(process.env.SPRING_EDGE_API_KEY);
+
 
   req.session.password = await bcrypt.hash(req.body.password, saltRounds);
   const currentDate = new Date();
@@ -328,8 +324,7 @@ const otpVerify = async function (req, res) {
     user_id: req.session.currentUserId,
   });
 
-  console.log(otp);
-  console.log(userOtpDetails);
+
 
   if (userOtpDetails.otp == otp) {
     

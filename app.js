@@ -55,7 +55,8 @@ app.use("/admin", adminRoute);
 
 const userRoute = require("./routes/userRoute.js");
 app.use("/", userRoute);
- 
+
+
 app.use((req, res, next) => {
     res.status(404).render('errorpage', { title: 'Page Not Found' });
   });

@@ -602,8 +602,6 @@ const loadHighToLow = async (req, res) => {
 
   imageSave(productData)
 
-  console.log(productData);
-   
    res.render("user/allproducts", {
     user: true,
     userId: req.session.user_id,
@@ -625,8 +623,6 @@ const searchProduct = async (req, res) => {
   try {
 
     const value = req.query.search;
-
-    console.log("sdfdsf",value);
 
     const product_data = await productVariants.aggregate([
       {

@@ -1,8 +1,6 @@
 //Requiring Nessesery Modules
 const express = require("express");
 const adminRoute = express();
-const bcrypt = require("bcrypt");
-//controller
 const adminHelper = require("../controller/adminHelper");
 const category_management = require("../controller/catogoryManagement")
 const productsManagement =require('../controller/productsManagement')
@@ -10,11 +8,9 @@ const dashboarHelper = require('../controller/dashboardHelper')
 const offer = require('../controller/offerHelper')
 const coupons = require('../controller/couponsHelper')
 const adminCustomerServiceHelper = require('../controller/customerServiceAdminSide');
-//middleware
 const auth = require("../middleware/adminAuth");
 const upload =require('../middleware/upload')
-const saltRounds = 10;
-const session = require("express-session")
+
 
 
 

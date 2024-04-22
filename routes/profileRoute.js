@@ -2,10 +2,8 @@
 const express=require('express')
 const profileRoute=express();
 const profile= require ('../controller/userProfile.js');
-const productRoute = require('./productsRoute.js');
 const paymentRouter = require('../routes/payment')
-const Razorpay = require('razorpay');
-const auth = require('../middleware/auth')
+
 
 
 
