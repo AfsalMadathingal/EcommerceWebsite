@@ -3,7 +3,7 @@ const referral = require("../model/referralModel");
 const walletDB = require("../model/walletModel");
 const userOtp = require("../model/OTPModel");
 var springedge = require("springedge");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 
 // OTP API

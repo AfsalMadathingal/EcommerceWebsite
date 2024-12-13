@@ -14,13 +14,12 @@ const server = http.createServer(app);
 
 
 
-mongoose.connect(process.env.MONGO_URL ||'mongodb://127.0.0.1:27017/OURSHOP').then(()=>{
+mongoose.connect('mongodb://127.0.0.1:27017/ecommerce').then(()=>{
     console.log("Database Connected Successfully");
 })
 
 
-
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use('/',session({
@@ -45,7 +44,7 @@ app.set('view engine', 'hbs');
 initializeSocket(server)
 
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log(`connected to http://localhost:${PORT}/`);
 })
 

@@ -111,6 +111,8 @@ const loadHomeUser = async (req, res) => {
         title: "Home Page",
       });
     } else {
+
+
       res.render("user/HomePage", {
         data: product_data,
         category: categoryData
