@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/ecommerce').then(()=>{
+mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log("Database Connected Successfully");
 })
 
