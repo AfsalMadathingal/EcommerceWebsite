@@ -84,9 +84,22 @@ const editCoupon = async(req,res)=>{
     
   try {
 
-    const {Couponid,discription,userlimit,expireDate,discountType,Discount,id} =req.body
+    const {Couponid,discription,userlimit,expireDate,discountType,Discount,objectId} =req.body
+
+    if(!Couponid || !discription || !userlimit || !expireDate || !discountType || !Discount || !objectId) return res.json({success:false , message:"All fields are required"})
+
+
     discountType=="amount" ? req.session.discount=1 : req.session.discount=0
-    const respons= await couponsDB.updateOne({_id:id},{
+
+    const findCoupon = await couponsDB.findOne({code:Couponid})
+
+
+
+    if(findCoupon && findCoupon._id != objectId) return res.json({success:false , message:"Coupon already exist"})
+
+    
+
+    const respons= await couponsDB.updateOne({_id:objectId},{
       $set:{
         code:Couponid,
         discount:Discount,
@@ -97,10 +110,15 @@ const editCoupon = async(req,res)=>{
       }
     })
 
-    res.redirect('/admin/coupons')
+    console.log("respons",respons);
+    
+    
+
+    res.status(200).json({success:true})
 
   } catch (error) {
-    console.log(error);
+
+    res.status(500).json({success:false , message:"Internal Server Error"})
   }
 
 

@@ -345,9 +345,9 @@ const deleteProduct = async (req, res) => {
     
 
     const { productVarId, productId } = req.body;
-    await productsDB.deleteOne({ product_id: productId });
-    await productVariants.deleteOne({ _id: productVarId });
-
+    await productsDB.updateOne({ product_id: productId }, { $set: { is_deleted: true } });
+    await productVariants.updateOne({ _id: productVarId }, { $set: { is_deleted: true } });
+    
     res.json(true);
     
   } catch (error) {
@@ -417,7 +417,9 @@ const loadOrders = async (req, res) => {
       layout: "newSidebar",
       pageTitle: "Orders",
     });
-  } catch (error) {}
+  } catch (error) {
+    res.send(error);
+  }
 };
 
 const changeOrderStatus = async (req, res) => {
@@ -442,14 +444,15 @@ const viewOrder = async (req, res) => {
     
     
 
-    const orderData = await orders.find({_id:req.params.id}).populate({
-      path: "userId deliveryAddress OrderedItems.product_varient_id",
-      options: { strictPopulate: true }
-    }).project({
-      "OrderedItems.product_varient_id.product": 1
-    }).populate({path:"product",
-       options: { strictPopulate: true }
-    })
+    const orderData = await orders.findById(req.params.id)
+      .populate('userId')
+      .populate('deliveryAddress')
+      .populate({
+        path: 'OrderedItems.product_varient_id',
+        populate: {
+          path: 'product'
+        }
+      });
 
 
       res.status(200).render("admin/viewOrder", {
@@ -463,7 +466,7 @@ const viewOrder = async (req, res) => {
       
   } catch (error) {
     
-    console.log(error);
+    console.log("error");
   }
 }
 

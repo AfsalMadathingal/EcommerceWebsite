@@ -27,6 +27,7 @@ profileRoute.delete('/deleteAddress',profile.deleteAddress)
 
 
 //Cart Related Routes
+profileRoute.get('/mycart/count/:id',profile.countCart)
 profileRoute.get('/mycart/load/:id',profile.loadCart)
 profileRoute.post('/mycart/remove',profile.deleteItemCart)
 profileRoute.post('/mycart/update',profile.updateCart)

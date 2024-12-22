@@ -1834,9 +1834,19 @@ const returnProduct = async (req, res) => {
   }
 }
 
+const countCart = async (req, res) => {
+  try {
+    const count = await cart.countDocuments({ userId: req.params.id });
+    res.json(count);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //exporting every middlewares
 
 module.exports = {
+  countCart,
   loadProfile,
   loadAddress,
   loaAddNewAddress,

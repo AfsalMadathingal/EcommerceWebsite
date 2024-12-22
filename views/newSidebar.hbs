@@ -14,6 +14,9 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script async src="http://localhost:3000/browser-sync/browser-sync-client.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/joi@17.6.0/dist/joi-browser.min.js"></script>
+
     <title>{{title}}</title>
 </head>
 
@@ -21,8 +24,8 @@
     <nav class="sidebar close">
         <header>
             <div class="image-text">
-                <span class="image">
-                    <img src="/images/LOGOOURSHOP.PNG" alt="">
+                <span class="image" style="width: 5px; height: auto;">
+                    <img src="/images/LOGOOURSHOP.webp" alt="" style="width: 50%; height: auto;">
                 </span>
 
                 <div class="text logo-text">
@@ -537,9 +540,19 @@ $(document).ready(function () {
         modeText = body.querySelector(".mode-text");
         const div = body.querySelectorAll('tbody')
 
+
+    // Check for saved toggle preference in the browser on page load
+    const savedToggle = localStorage.getItem('toggle');
+    if (savedToggle) {
+
+        sidebar.classList.toggle(savedToggle);
+    }
+
     sidebar.classList.toggle("close");
     
     toggle.addEventListener("click", () => {
+         
+         localStorage.setItem('toggle', sidebar.classList.contains("close") ? "open" : "close");
         sidebar.classList.toggle("close");
        
     })

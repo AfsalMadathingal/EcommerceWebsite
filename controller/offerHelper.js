@@ -5,14 +5,16 @@ const category = require("../model/categoryModel");
 const validator = require("validator");
 const mongoose = require("mongoose");
 const productVariants = require("../model/productVariants");
+const userRoute = require("../routes/userRoute");
 
 const loadOffers = async (req, res) => {
   try {
     const category = await catogoryDB.find({});
     const offerData = await offerDB.find({}).populate("offer_category");
-    
+    const error = req.flash('error');
     res.render("admin/offersManagement", {
       adminlogin: true,
+      error: error,
       layout: "newSidebar",
       categories: category,
       offerData: offerData,
@@ -22,7 +24,21 @@ const loadOffers = async (req, res) => {
   }
 };
 
+// const findOffer = async (req, res) => {
+//   try {
 
+
+//     const offerData = await offerDB.find({category: req.params.id}).populate("offer_category");
+
+
+
+//     res.json(offerData);
+
+//   } catch (error) {
+
+//     console.log(error);
+//   }
+// }
 
 const loadAddOffers = async (req, res) => {
 
@@ -55,6 +71,18 @@ const loadEditOffer = async (req, res) => {
         $match: { _id: new mongoose.Types.ObjectId(id) },
       },
       {
+
+        $lookup: {
+          from: "categorydetails",
+          localField: "offer_category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
         $project: {
           _id: 1,
           offer_title: 1,
@@ -62,6 +90,7 @@ const loadEditOffer = async (req, res) => {
           offer_details: 1,
           discount_type: 1,
           discount_value: 1,
+          category: 1,
           offer_start_date: {
             $dateToString: {
               format: "%Y-%m-%d",
@@ -77,6 +106,10 @@ const loadEditOffer = async (req, res) => {
         },
       },
     ]);
+
+
+    console.log(offerData[0]);
+    
 
 
 
@@ -124,6 +157,22 @@ const editOffer = async (req, res) => {
       });
       req.session.imagepath = filenames;
     }
+
+    const checkTheCatgoryHasOffer = await offerDB.findOne({
+      offer_category: category,
+    });
+
+    if(checkTheCatgoryHasOffer)
+    {
+      if(checkTheCatgoryHasOffer._id.toString() !== offerId)
+      {
+        req.flash('error', 'Category already has offer');
+        res.redirect("/admin/offers");
+        return;
+      }
+    }
+
+    
 
     const categoryId = new mongoose.Types.ObjectId(category);
     const offerIdToObj = new mongoose.Types.ObjectId(offerId);
@@ -189,70 +238,91 @@ const editOffer = async (req, res) => {
 
 const addOffer = async (req, res) => {
 
-  if (req.files) {
-    let filenames;
+  try {
 
-    req.files.forEach(function (file, index, arr) {
-      filenames = file.filename;
+
+
+
+    if (req.files) {
+      let filenames;
+  
+      req.files.forEach(function (file, index, arr) {
+        filenames = file.filename;
+      });
+  
+      req.session.imagepath = filenames;
+    }
+  
+    let {
+      OfferTitle,
+      category,
+      startDate,
+      endDate,
+      discountType,
+      discountValue,
+      offerDetails,
+    } = req.body;
+    let productsId = [];
+  
+    const catogoryId = new mongoose.Types.ObjectId(category);
+  
+    const data = await productDB.find({ category_id: catogoryId });
+    
+    const categoryExists = await offerDB.findOne({ offer_category: catogoryId });
+
+    if (categoryExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category already exists" });
+    }
+  
+  
+    data.forEach((data) => {
+      productsId.push(data._id);
     });
+  
+    //discount type 1 = amount 0= percentage
+  
+    discountType == "amount" ? (discountType = 1) : (discountType = 0);
+    
+  
+  
+    const offerData = new offerDB({
+      offer_title: OfferTitle,
+      offer_banner: req.session.imagepath,
+      offer_details: offerDetails,
+      discount_type: discountType,
+      discount_value: discountValue,
+      offer_start_date: startDate,
+      offer_end_date: endDate,
+      offer_category: catogoryId,
+    });
+  
+  
+  
+    await offerData.save();
+  
+    productsId.forEach(async (id) => {
+      const response = await productVariants.updateOne(
+        { product: id },
+        {
+          offer: offerData._id,
+        }
+      );
+  
+      console.log(response);
+    });
+  
+   return res.status(200).json({success:true});
 
-    req.session.imagepath = filenames;
+
+  } catch (error) {
+
+    res.status(400).json({success:false,message:error.message});
+    
   }
 
-  let {
-    OfferTitle,
-    category,
-    startDate,
-    endDate,
-    discountType,
-    discountValue,
-    offerDetails,
-  } = req.body;
-  let productsId = [];
-
-  const catogoryId = new mongoose.Types.ObjectId(category);
-
-  const data = await productDB.find({ category_id: catogoryId });
-
-
-
-  data.forEach((data) => {
-    productsId.push(data._id);
-  });
-
-  //discount type 1 = amount 0= percentage
-
-  discountType == "amount" ? (discountType = 1) : (discountType = 0);
   
-
-
-  const offerData = new offerDB({
-    offer_title: OfferTitle,
-    offer_banner: req.session.imagepath,
-    offer_details: offerDetails,
-    discount_type: discountType,
-    discount_value: discountValue,
-    offer_start_date: startDate,
-    offer_end_date: endDate,
-    offer_category: catogoryId,
-  });
-
-
-
-  await offerData.save();
-
-  productsId.forEach(async (id) => {
-    const response = await productVariants.updateOne(
-      { product: id },
-      {
-        offer: offerData._id,
-      }
-    );
-
-    console.log(response);
-  });
-
-  res.redirect("/admin/offers");
 };
 
 const deleteOffer = async (req, res) => {

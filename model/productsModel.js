@@ -22,6 +22,10 @@ const product_details = mongoose.Schema({
     type: Boolean,
     require: true,
   },
+  is_deleted: {
+    type: Boolean,
+    default: false,
+  },
   
 }); 
 

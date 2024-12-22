@@ -13,7 +13,7 @@
     <div class=" shadow rounded-5  input-add-pro p-5 bg-white  bg-opacity-75">
 
 
-        <form id="offerForm" method="post"  class="form-add-product" action="/admin/createoffer" enctype="multipart/form-data">
+        <form id="offerForm" class="form-add-product" enctype="multipart/form-data">
 
             <div class="row g-3 p-3 ">
                 <div class="col-md-6">
@@ -25,6 +25,7 @@
 
                     <label class="form-label" for="category">Category</label>
                     <select name="category" id="category" class="form-select">
+                        <option value="">Select Category</option>
                         {{#each category}}
                         <option value="{{this._id}}">{{this.category}}</option>
                         {{/each}}
@@ -33,11 +34,11 @@
                     <label for="recipient-name" class="col-form-label">Start Date</label>
                     <input type="date" name="startDate" placeholder="enter Expire Date" class="form-control"
                         id="start-date">
-                     <h6 id="startDateAlert"></h6>
+                    <h6 id="startDateAlert"></h6>
                     <label for="recipient-name" class="col-form-label">End Date</label>
                     <input type="date" name="endDate" placeholder="enter Expire Date" class="form-control"
                         id="end-date">
-                       <h6 id="endDateAlert"></h6>
+                    <h6 id="endDateAlert"></h6>
                     <div class="mb-3">
                         <label class="form-label">Discount Type</label>
                         <div class="form-check">
@@ -59,15 +60,15 @@
                     <h6 class="alertAddProduct" id="qtyAlert"></h6>
 
                     <label for="recipient-name" class="col-form-label">Discount Value</label>
-                    <input type="text" name="discountValue" placeholder="enter Discount Value" class="form-control"
+                    <input type="number" name="discountValue" placeholder="enter Discount Value" class="form-control"
                         id="discountValue-name">
 
-                <h6 id="discountValueAlert"></h6>
+                    <h6 id="discountValueAlert"></h6>
                 </div>
 
                 <div class="col-md-6">
                     <h5>Chose image for poster</h5>
-                  
+
 
                     <div class="card text-bg-dark">
                         <img id="image-preview" src="/images/picimage.png" class="card-img" alt="...">
@@ -129,8 +130,7 @@
         </div>
     </div>
 </div>
- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="/js/validation.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
 
@@ -141,7 +141,6 @@
 
 
 
-   
 
 
 
@@ -157,18 +156,18 @@
             previewImage(e)
 
         })
-        
+
 
 
         const create = document.querySelector('.create');
 
-        create.addEventListener('click',function(e){
+        create.addEventListener('click', function (e) {
 
             e.preventDefault()
             var offerTitle = document.getElementById("OfferTitle-name").value;
             var category = document.getElementById("category").value;
-            var startDate = document.getElementById("start-date").value; 
-            var endDate = document.getElementById("end-date").value; 
+            var startDate = document.getElementById("start-date").value;
+            var endDate = document.getElementById("end-date").value;
             var discountValue = document.getElementById("discountValue-name").value;
             var offerDetails = document.getElementById("longdescription").value;
             var fullPath = document.getElementById("image-input-1").value;
@@ -184,168 +183,186 @@
 
 
 
-           axios.post('/admin/validation', {
-                offerTitle,category,startDate,endDate,discountValue,offerDetails,imageinput
+            axios.post('/admin/validation', {
+                offerTitle, category, startDate, endDate, discountValue, offerDetails, imageinput
             })
-                .then(function (response) 
-                {
-                    const {offerTitle,category,startDate,endDate,discountValue,offerDetails,imageinput}= response.data
-                    validation(offerTitle,category,startDate,endDate,discountValue,offerDetails,imageinput)
+                .then(function (response) {
+                    const { offerTitle, category, startDate, endDate, discountValue, offerDetails, imageinput } = response.data
+                    validation(offerTitle, category, startDate, endDate, discountValue, offerDetails, imageinput)
                     console.log(response);
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-            
+
         })
 
 
-        function validation(offerTitle,category,startDate,endDate,discountValue,offerDetails,imageinput) {
+        function validation(offerTitle, category, startDate, endDate, discountValue, offerDetails, imageinput) {
 
 
-                const offerTitleAlert = document.getElementById('OfferTitleAlert');
-                const startDateAlert = document.getElementById('startDateAlert');
-                const endDateAlert = document.getElementById('endDateAlert');
-                const discountValueAlert = document.getElementById('discountValueAlert');
-                const imgAlert = document.getElementById('imgAlert');
-                const longAlert = document.getElementById('longAlert');
-                const offerForm= document.getElementById('offerForm');
+            const offerTitleAlert = document.getElementById('OfferTitleAlert');
+            const startDateAlert = document.getElementById('startDateAlert');
+            const endDateAlert = document.getElementById('endDateAlert');
+            const discountValueAlert = document.getElementById('discountValueAlert');
+            const imgAlert = document.getElementById('imgAlert');
+            const longAlert = document.getElementById('longAlert');
+            const offerForm = document.getElementById('offerForm');
 
-                console.log("Entered validation",offerTitle,startDate,endDate,discountValue,offerDetails,imageinput)
-                
+            console.log("Entered validation", offerTitle, startDate, endDate, discountValue, offerDetails, imageinput)
 
-                if (offerTitle)
-                {
 
-                    offerTitleAlert.innerHTML = "Please Enter Offer Title";
-                    offerTitleAlert.style.color = "red";
-                    return
+            if (offerTitle) {
 
-                }else if(!startDate)
-                {
-                    startDateAlert.innerHTML = "Please Enter Start Date";
-                    
-                    startDateAlert.style.color = "red";
-                    return
-                }else if(!endDate)
-                {
-                    endDateAlert.innerHTML = "Please Enter valid End Date";
-                    endDateAlert.style.color = "red";
-                    return
-                }else if(!discountValue)
-                {
-                    discountValueAlert.innerHTML = "Please Enter Discount Value";
-                    discountValueAlert.style.color = "red";
-                    return
-                }else if(offerDetails)
-                {
-                    longAlert.innerHTML = "Please Enter Offer Details";
-                    longAlert.style.color = "red";
-                    return
-                }else if(!imageinput)
-                {
-                    imgAlert.innerHTML = "Please Select Image";
-                    imgAlert.style.color = "red";
-                    return
+                offerTitleAlert.innerHTML = "Please Enter Offer Title";
+                offerTitleAlert.style.color = "red";
+                return
 
-                }else
-                {
-                    offerForm.submit();
-                }
+            } else if (!startDate) {
+                startDateAlert.innerHTML = "Please Enter Start Date";
+
+                startDateAlert.style.color = "red";
+                return
+            } else if (!endDate) {
+                endDateAlert.innerHTML = "Please Enter valid End Date";
+                endDateAlert.style.color = "red";
+                return
+            } else if (!discountValue) {
+                discountValueAlert.innerHTML = "Please Enter Discount Value";
+                discountValueAlert.style.color = "red";
+                return
+            } else if (offerDetails) {
+                longAlert.innerHTML = "Please Enter Offer Details";
+                longAlert.style.color = "red";
+                return
+            } else if (!imageinput) {
+                imgAlert.innerHTML = "Please Select Image";
+                imgAlert.style.color = "red";
+                return
+
+            } else {
+
+                const offerForm = document.getElementById('offerForm');
+                const formData = new FormData(offerForm); // This is the correct FormData object
+
+                // Append additional data if needed (for example, the 'data' you pass to the function)
+
+
+                fetch('/admin/createoffer', {
+                    method: 'POST',
+                    // Remove the 'Content-Type' header. The browser will set it automatically with the correct boundary.
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            swal("Failed!", `${data.message}`, "error");
+                            return;
+                        }
+                        swal("Success!", "Offer Created Successfully", "success")
+                            .then(() => {
+                                location.reload();
+                            });
+                    })
+                    .catch(error => {
+                        swal("Failed!", "Failed to create offer", "error");
+                        console.error('Error:', error);
+                    });
+            }
 
 
 
         }
-        
-
- 
 
 
 
 
 
 
-    function previewImage(event) {
-        const input = event.target;
-        console.log("Entered preview image", input)
-        let number = input.getAttribute("data-id");
-        let productId = input.getAttribute("data-prod");
 
-        console.log(`image-preview`);
-        const preview = document.getElementById(`image-preview`);
-        const imageElement = document.querySelector(`.imagecrop4`);
 
-        console.log("This is input.files", input.files);
 
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
+        function previewImage(event) {
+            const input = event.target;
+            console.log("Entered preview image", input)
+            let number = input.getAttribute("data-id");
+            let productId = input.getAttribute("data-prod");
 
-            reader.onload = function (e) {
-                //preview.src = e.target.result;                    
+            console.log(`image-preview`);
+            const preview = document.getElementById(`image-preview`);
+            const imageElement = document.querySelector(`.imagecrop4`);
 
-                $(document).ready(function () {
-                    $(`#imageModal4`).modal('show');
+            console.log("This is input.files", input.files);
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    //preview.src = e.target.result;                    
+
+                    $(document).ready(function () {
+                        $(`#imageModal4`).modal('show');
+                    });
+
+
+                    let img = document.createElement("img");
+                    img.id = 'image';
+                    img.src = e.target.result;
+
+                    //append this img tag to a modal
+                    imageElement.appendChild(img);
+                    //crop image
+                    cropper = new Cropper(img, {
+                        aspectRatio: 720 / 360, // Set aspect ratio to 720:360 (or 2:1)
+                        viewMode: 1,
+                        dragMode: "move",
+                        minContainerWidth: 720, // Adjust container width to accommodate the desired crop size
+                        minContainerHeight: 360, // Adjust container height to accommodate the desired crop size
+                        minCropBoxWidth: 720, // Set minimum crop box width to 720
+                        minCropBoxHeight: 360, // Set minimum crop box height to 360
+                        minCanvasWidth: 720, // Set minimum canvas width to 720
+                        minCanvasHeight: 360, // Set minimum canvas height to 360
+                    });
+
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+                const cropButton = document.getElementById(`cropButton`);
+                cropButton.addEventListener("click", () => {
+                    const fileInputsrc = document.getElementById('image-input-1');
+
+                    console.log("Entered crop button")
+
+                    let imgsrc = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+
+
+                    preview.src = imgsrc;
+
+
+                    const byteCharacters = atob(imgsrc.split(',')[1]);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                    const croppedFile = new File([blob], 'cropped_image.jpg', { type: 'image/jpeg' });
+                    const fileInput = document.getElementById('image-input-1');
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    fileInput.files = dataTransfer.files;
+
+                    console.log(blob);
+
+                    //close modal
+                    var modal = document.getElementById(`imageModal4`);
+                    var bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
                 });
-
-
-                let img = document.createElement("img");
-                img.id = 'image';
-                img.src = e.target.result;
-
-                //append this img tag to a modal
-                imageElement.appendChild(img);
-                //crop image
-                cropper = new Cropper(img, {
-                    aspectRatio: 720 / 360, // Set aspect ratio to 720:360 (or 2:1)
-                    viewMode: 1,
-                    dragMode: "move",
-                    minContainerWidth: 720, // Adjust container width to accommodate the desired crop size
-                    minContainerHeight: 360, // Adjust container height to accommodate the desired crop size
-                    minCropBoxWidth: 720, // Set minimum crop box width to 720
-                    minCropBoxHeight: 360, // Set minimum crop box height to 360
-                    minCanvasWidth: 720, // Set minimum canvas width to 720
-                    minCanvasHeight: 360, // Set minimum canvas height to 360
-                });
-
-            };
-
-            reader.readAsDataURL(input.files[0]);
-
-            const cropButton = document.getElementById(`cropButton`);
-            cropButton.addEventListener("click", () => {
-                const fileInputsrc = document.getElementById('image-input-1');
-
-                console.log("Entered crop button")
-
-                let imgsrc = cropper.getCroppedCanvas().toDataURL("image/jpeg");
-
-
-                preview.src = imgsrc;
-
-
-                const byteCharacters = atob(imgsrc.split(',')[1]);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: 'image/jpeg' });
-                const croppedFile = new File([blob], 'cropped_image.jpg', { type: 'image/jpeg' });
-                const fileInput = document.getElementById('image-input-1');
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(croppedFile);
-                fileInput.files = dataTransfer.files;
-
-                console.log(blob);
-
-                //close modal
-                var modal = document.getElementById(`imageModal4`);
-                var bootstrapModal = bootstrap.Modal.getInstance(modal);
-                bootstrapModal.hide();
-            });
+            }
         }
-    }
 
 
 

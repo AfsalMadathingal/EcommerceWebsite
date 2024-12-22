@@ -1,7 +1,11 @@
-<link rel="stylesheet" href="/css/table-user.css">
+{{!-- <link rel="stylesheet" href="/css/table-user.css">
 <link rel="stylesheet" href="/css/responsiveTable.css">
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script> --}}
+
+<link rel="stylesheet" href="/css/orderManagement.css">
+
+
 <div class="details-section">
 <div class="ms-auto me-auto mt-1 ">
     <main class="table" id="orders_table ">
@@ -36,22 +40,13 @@
                         <td>{{@index}}</td>
                         <td>{{this.orderNo}}</td>
                         <td> 
-                            <address>
                             {{this.deliveryName}}
-                            <br>
-                            {{this.deliveryAddress1}}
-                            <br>
-                            {{this.deliveryAddress2}}
-                            <br>
-                            {{this.mobile}}
-                            <br>
-                            {{this.city}}
-                            <br>
-                            {{this.state}}
-                            <br>
-                            {{this.type}}
-                            <br>
-                            </address>
+                            , {{this.deliveryAddress1}}
+                            , {{this.deliveryAddress2}}
+                            , {{this.mobile}}
+                            , {{this.city}}
+                            , {{this.state}}
+                            , {{this.type}}
                            
                         </td>
                         <td>{{this.orderAmount}}</td>
@@ -90,11 +85,6 @@
         </section>
     </main>
 </div>
-
-
-
-
-
 
 
 </div>
@@ -451,4 +441,4 @@ const downloadFile = function (data, fileType, fileName = '') {
 
 
 
-    </script>
+</script>

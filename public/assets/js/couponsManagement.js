@@ -1,466 +1,364 @@
+// document.addEventListener('DOMContentLoaded', () => {
+//   // Elements
+//   const elements = {
+//       couponId: document.getElementById("coupon-id"),
+//       couponDescription: document.getElementById("couponDiscription"),
+//       userLimit: document.getElementById("user-limit"),
+//       expireDate: document.getElementById("expire-date"),
+//       discountValue: document.getElementById("discount-value"),
+//       discountValueError: document.querySelector("#discount-value").closest(".mb-3").querySelector(".alert-for-error"),
+//       userLimitError: document.querySelector("#user-limit").closest(".mb-3").querySelector(".alert-for-error"),
+//       alertForError: document.querySelectorAll(".alert-for-error"),
+//       submitButton: document.getElementById("submitCoupon"),
+//       alert: document.getElementById('alert-for-distype'),
+//       deleteButtons: document.querySelectorAll(".delete-button"),
+//       editModal: document.getElementById("EditModal")
+//   };
 
-    document.addEventListener('DOMContentLoaded', function () {
+//   const regex = {
+//       nullWhiteSpace: /^(?!\s*$).+/,
+//       number: /^\d+$/,
+//       numberNoWhitespace: /^\S*\d\S*$/,
+//       date: /^\d{4}-\d{2}-\d{2}$/
+//   };
 
-      const couponId = document.getElementById("coupon-id");
-      const couponDiscription = document.getElementById("couponDiscription");
-      const userlimit = document.getElementById("user-limit");
-      const date = document.getElementById("expire-date");
-      const discountValue = document.getElementById("discount-value");
-      const discountValueInput = document.getElementById("discount-value");
-      const discountValueError = discountValueInput.closest(".mb-3").querySelector(".alert-for-error");
-      const alterForError = document.querySelectorAll(".alert-for-error");
-      const userLimitInput = document.getElementById("user-limit");
-      const userLimitError = userLimitInput.closest(".mb-3").querySelector(".alert-for-error");
-      const nullWhiteSpace = /^(?!\s*$).+/;
-      const numberRegex = /^\d+$/;
-      const numberNoWhitespaceRegex = /^\S*\d\S*$/;
-      const submit=document.getElementById("submitCoupon");
-      const dateRegx = /^\d{4}-\d{2}-\d{2}$/;
-      const alert = document.getElementById('alert-for-distype')
-      let  selectedRadioButton = document.querySelectorAll('.form-check-input')
-      let discountType;
+//   let discountType;
 
-      selectedRadioButton.forEach((el) => {
-        el.addEventListener('change', function () {
-          selectedRadioButton = this;
-            discountType = selectedRadioButton.value
-        })
-       
+//   // Discount Type Selection
+//   document.querySelectorAll('.form-check-input').forEach((radioButton) => {
+//       radioButton.addEventListener('change', (e) => {
+//           discountType = e.target.value;
+//       });
+//   });
+
+//   // Clear Alert Messages
+//   const clearAlerts = () => {
+//       elements.alertForError.forEach((el) => {
+//           el.style.color = "red";
+//           el.innerHTML = "";
+//       });
+//   };
+
+//   // Submit Button Click Event
+//   elements.submitButton.addEventListener("click", (e) => {
+//       e.preventDefault();
+//       clearAlerts();
+
+//       const { couponId, couponDescription, userLimit, expireDate, discountValue, discountValueError, userLimitError, alert } = elements;
+
+//       if (!regex.nullWhiteSpace.test(couponId.value)) {
+//           couponId.nextElementSibling.innerHTML = "Coupon ID field cannot contain only white spaces.";
+//       } else if (!regex.nullWhiteSpace.test(couponDescription.value)) {
+//           couponDescription.nextElementSibling.innerHTML = "Coupon Description field cannot contain only white spaces.";
+//       } else if (!regex.number.test(userLimit.value)) {
+//           userLimitError.innerHTML = "Should be a Number";
+//       } else if (!regex.date.test(expireDate.value)) {
+//           expireDate.nextElementSibling.innerHTML = "Invalid Date.";
+//       } else if (!discountType) {
+//           alert.innerHTML = "Please select discount type";
+//       } else if (!regex.numberNoWhitespace.test(discountValue.value)) {
+//           discountValueError.innerHTML = "Should be a Number";
+//       } else {
+//           fetch("/admin/createCoupon", {
+//               method: "POST",
+//               headers: { "Content-Type": "application/json" },
+//               body: JSON.stringify({
+//                   Couponid: couponId.value,
+//                   description: couponDescription.value,
+//                   userlimit: userLimit.value,
+//                   expireDate: expireDate.value,
+//                   Discount: discountValue.value,
+//                   discountType
+//               })
+//           })
+//               .then((response) => response.json())
+//               .then((data) => {
+//                   if (data.success) {
+//                       window.location.reload();
+//                   } else {
+//                       swal("Error!", "Coupon already exists. Please try again.", "error");
+//                   }
+//               });
+//       }
+//   });
+
+//   // Delete Button Event
+//   elements.deleteButtons.forEach((button) => {
+//       button.addEventListener("click", (e) => {
+//           const id = e.target.getAttribute("data-id");
+
+//           swal({
+//               title: "Are you sure?",
+//               text: "Once deleted, you will not be able to recover this coupon!",
+//               icon: "warning",
+//               buttons: true,
+//               dangerMode: true
+//           }).then((willDelete) => {
+//               if (willDelete) {
+//                   fetch("/admin/deletecoupon", {
+//                       method: "POST",
+//                       headers: { "Content-Type": "application/json" },
+//                       body: JSON.stringify({ id })
+//                   })
+//                       .then((response) => response.json())
+//                       .then((data) => {
+//                           if (data) {
+//                               swal("Success!", "The coupon has been successfully deleted.", "success").then(() => location.reload());
+//                           }
+//                       })
+//                       .catch((error) => console.error("Error:", error));
+//               }
+//           });
+//       });
+//   });
+
+//   // Edit Modal Event
+//   if (elements.editModal) {
+//       elements.editModal.addEventListener("show.bs.modal", (event) => {
+//           const button = event.relatedTarget;
+//           const modalData = {
+//               category: button.getAttribute("data-coupon"),
+//               nameId: button.getAttribute("data-nameId"),
+//               description: button.getAttribute("data-description"),
+//               expire: button.getAttribute("data-expire"),
+//               value: button.getAttribute("data-discountValue"),
+//               limit: button.getAttribute("data-userlimit"),
+//               id: button.getAttribute("data-id")
+//           };
+
+//           document.getElementById("editModalLabel").textContent = `Edit Coupon : ${modalData.category}`;
+//           document.getElementById("editcategory-name").value = modalData.category;
+//           document.getElementById("editcoupon-id").value = modalData.nameId;
+//           document.getElementById("editcouponDiscription").value = modalData.description;
+//           document.getElementById("editexpire-date").value = modalData.expire;
+//           document.getElementById("editdiscount-value").value = modalData.value;
+//           document.getElementById("edituser-limit").value = modalData.limit;
+//           document.getElementById("editcategory-id").value = modalData.id;
+//       });
+//   }
+// });
+
+
+
+function updateCoupon(data) {
+
+
+}
   
-      })
+function openModal(modalId , initialData =null) {
+  document.getElementById(modalId).classList.remove('hidden');
+
+  if (initialData) {
+
+    console.log(initialData);
+
+        document.getElementById('objectId').value = initialData._id;
+     document.getElementById('editCouponId').innerHTML = initialData.code;
+     // Set the value of Coupon ID
+    document.getElementById('edit-coupon-id').value = initialData.code;
+
+    // Set the value of User Limit
+    document.getElementById('edit-user-limit').value = Number( initialData.userLimit);
+
+    // Set the checked radio button for Discount Type
+    // if (initialData.discountType === 'amount') {
+    //     document.querySelector('input[name="discountType"][value="amount"]').checked = true;
+    // }
+    // Set the value of Coupon Description
+    document.getElementById('edit-coupon-description').value = initialData.discription;
+    // Set the value of Expire Date
+    document.getElementById('edit-expire-date').value = initialData.expireDate;
+    // Set the value of Discount Value
+    document.getElementById('edit-discount-value').value = initialData.discount;
   
-      
-      submit.addEventListener("click", function (e) {
-          e.preventDefault();
-    
-
-      function alertClear(){
-
-        alterForError.forEach((el) => {
-          el.style.color = "red";
-          el.innerHTML = "";
-        });
-
-      }
-
-      alertClear();
-         
-          
-          if (!nullWhiteSpace.test(couponId.value)) {
-
-            const couponIdError = couponId.nextElementSibling;
-            couponIdError.innerHTML = "Coupon ID field cannot contain only white spaces.";
-             
-              
-            }else if(!nullWhiteSpace.test(couponDiscription.value)){
-
-              couponDiscription.nextElementSibling.innerHTML = "Coupon Discription field cannot contain only white spaces.";
-              
-              
-            }
-            
-            else if (!numberRegex.test(userlimit.value)) {
-
-              
-              userLimitError.style.color = "red";
-              userLimitError.innerHTML = "Should be a Number";
-             
-            } else if(!dateRegx.test(date.value)){
-              
-              date.nextElementSibling.innerHTML = "Invalid Date.";
-
-      
-             
-            }else if(discountType==null){
-              
-              alert.style.color = "red";
-              alert.innerHTML = "Pleace select discount type";
-            
-              
-
-            } else if (!numberNoWhitespaceRegex.test(discountValue.value)) {
-              
-              discountValueError.style.color = "red";
-              discountValueError.innerHTML = "Should be a Number";
-              
-            }
-            else {
-              
-              fetch("/admin/createCoupon", {
-                method: "POST",
-                headers: {
-                    
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  
-                  Couponid: couponId.value,
-                  discription: couponDiscription.value,
-                  userlimit: userlimit.value,
-                  expireDate: date.value,
-                  Discount: discountValue.value,
-                  discountType: discountType.value,
-                  
-                })
-                
-              }).then((response) => response.json())
-              .then((data) => {
-                
-                console.log("Success:", data);
-  
-                if (data.success) {
-  
-                  window.location.reload();
-                  
-                }else
-                {
-                  swal("Error!", "Coupon already exists. Please try again.", "error");
-                }
-  
-  
-  
-              })
-            }
-  
-            
-  
-      })
-  
-   
-  
-
-
-    })
-    
-
-   
-  
-  
-const deletebutton = document.querySelectorAll(".delete-button");
-
-deletebutton.forEach((button) => {
-  button.addEventListener("click", function (e) {
-    const id = e.target.getAttribute("data-id");
-    console.log(id);
-
-    swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this coupon!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        deletecoupon(id);
-      }
-    });
-    function deletecoupon(id) {
-      fetch("/admin/deletecoupon", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-
-          if (data) {
-            swal(
-              "Success!",
-              "The coupon has been successfully deleted.",
-              "success"
-            ).then(() => {
-              location.reload();
-            });
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
-  });
-});
-
-const editmodal = document.getElementById("EditModal");
-
-if (editmodal) {
-  editmodal.addEventListener("show.bs.modal", (event) => {
-    // Button that triggered the modal
-    const button = event.relatedTarget;
-
-    // Extract info from data-bs-* attributes
-    const category = button.getAttribute("data-coupon");
-    const nameid = button.getAttribute("data-nameId");
-    const discription = button.getAttribute("data-discription");
-    const expire = button.getAttribute("data-expire");
-    const value = button.getAttribute("data-discountValue");
-    const limit = button.getAttribute("data-userlimit");
-    const id = button.getAttribute("data-id");
-
-    // Update the modal's content.
-    const modalTitle = document.getElementById("editModalLabel");
-    const categoryname = document.getElementById("editcategory-name");
-    const expiredate = document.getElementById("editexpire-date");
-    const discountvalue = document.getElementById("editdiscount-value");
-    const discriptionText = document.getElementById("editcouponDiscription");
-    const CouponName = document.getElementById("editcoupon-id");
-    const userLimit = document.getElementById("edituser-limit");
-    const couponId = document.getElementById("editcategory-id");
-
-    nameid.value = CouponName;
-    expiredate.value = expire;
-    discountvalue.value = value;
-    discriptionText.value = discription;
-    CouponName.value = nameid;
-    userLimit.value = limit;
-    couponId.value = id;
-    modalTitle.textContent = `Edit Coupon : ${category}`;
-    categoryname.value = category;
-  });
+  }
 }
 
-const search = document.querySelector(".input-group1 input"),
-  table_rows = document.querySelectorAll("tbody tr"),
-  table_headings = document.querySelectorAll("thead th");
-
-// 1. Searching for specific data of HTML table
-search.addEventListener("input", searchTable);
-
-function searchTable() {
-  table_rows.forEach((row, i) => {
-    let table_data = row.textContent.toLowerCase(),
-      search_data = search.value.toLowerCase();
-
-    row.classList.toggle("hide", table_data.indexOf(search_data) < 0);
-    row.style.setProperty("--delay", i / 25 + "s");
-  });
-
-  document.querySelectorAll("tbody tr:not(.hide)").forEach((visible_row, i) => {
-    visible_row.style.backgroundColor =
-      i % 2 == 0 ? "transparent" : "#0000000b";
-  });
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.add('hidden');
 }
 
-// 2. Sorting | Ordering data of HTML table
 
-table_headings.forEach((head, i) => {
-  let sort_asc = true;
-  head.onclick = () => {
-    table_headings.forEach((head) => head.classList.remove("active"));
-    head.classList.add("active");
+function createCoupon(e) {
+  e.preventDefault(); // Prevent form submission
 
-    document
-      .querySelectorAll("td")
-      .forEach((td) => td.classList.remove("active"));
-    table_rows.forEach((row) => {
-      row.querySelectorAll("td")[i].classList.add("active");
-    });
+  // Get form element
+  const form = document.getElementById('couponForm');
+  
+  // Collect data from the form
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
 
-    head.classList.toggle("asc", sort_asc);
-    sort_asc = head.classList.contains("asc") ? false : true;
+  console.log('Form data:', data);
 
-    sortTable(i, sort_asc);
+  // Destructure data for validation
+  const { 
+    Couponid, 
+    discription, 
+      userlimit, 
+      expireDate, 
+      discountType, 
+      Discount 
+  } = data;
+
+  // Regex for validation
+  const regex = {
+      nullWhiteSpace: /^(?!\s*$).+/, // Matches non-whitespace characters
+      number: /^\d+$/,      // Matches numbers
+      date: /^\d{4}-\d{2}-\d{2}$/, // Matches date format YYYY-MM-DD
+      numberNoWhitespace: /^\d+$/  // Matches numbers with no whitespace
   };
-});
 
-function sortTable(column, sort_asc) {
-  [...table_rows]
-    .sort((a, b) => {
-      let first_row = a
-          .querySelectorAll("td")
-          [column].textContent.toLowerCase(),
-        second_row = b.querySelectorAll("td")[column].textContent.toLowerCase();
 
-      return sort_asc
-        ? first_row < second_row
-          ? 1
-          : -1
-        : first_row < second_row
-        ? -1
-        : 1;
-    })
-    .map((sorted_row) =>
-      document.querySelector("tbody").appendChild(sorted_row)
-    );
+
+  // Reset error messages
+  document.querySelectorAll('.error').forEach(el => (el.innerHTML = ""));
+
+ 
+
+// Initialize validation state
+let isValid = true;
+
+// Validate coupon ID
+if (!regex.nullWhiteSpace.test(Couponid) || !Couponid) {
+    document.getElementById('couponIdError').innerHTML = "Coupon ID cannot contain only white spaces.";
+    isValid = false;
+} else {
+    document.getElementById('couponIdError').innerHTML = ""; // Clear error message
 }
 
-// 3. Converting HTML table to PDF
+// Validate coupon description
+if (!regex.nullWhiteSpace.test(discription) || !discription) {
+    document.getElementById('couponDescriptionError').innerHTML = "Coupon Description cannot contain only white spaces.";
+    isValid = false;
 
-const pdf_btn = document.querySelector("#toPDF");
-const customers_table = document.querySelector("#customers_table");
+} else {
+    document.getElementById('couponDescriptionError').innerHTML = ""; // Clear error message
+}
 
-const toPDF = function (customers_table) {
-  const html_code = `
-    <!DOCTYPE html>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <main class="table" id="customers_table">${customers_table.innerHTML}</main>`;
+// Validate user limit
+if (!regex.number.test(userlimit) || !userlimit) {
+    document.getElementById('userLimitError').innerHTML = "User Limit should be a number.";
+    isValid = false;
+} else {
+    document.getElementById('userLimitError').innerHTML = ""; // Clear error message
+}
 
-  const new_window = window.open();
-  new_window.document.write(html_code);
+// Validate expire date
+if (!regex.date.test(expireDate) || !expireDate) {
+    document.getElementById('expireDateError').innerHTML = "Invalid date format. Use YYYY-MM-DD.";
+    isValid = false;
+} else {
+    document.getElementById('expireDateError').innerHTML = ""; // Clear error message
+}
 
-  setTimeout(() => {
-    new_window.print();
-    new_window.close();
-  }, 400);
-};
+// Validate discount type
+if (!discountType) {
+    document.getElementById('discountTypeError').innerHTML = "Please select a discount type.";
+    isValid = false;
+} else {
+    document.getElementById('discountTypeError').innerHTML = ""; // Clear error message
+}
 
-pdf_btn.onclick = () => {
-  toPDF(customers_table);
-};
+// Validate discount value
+if (!regex.numberNoWhitespace.test(Discount) || !Discount) {
+    document.getElementById('discountValueError').innerHTML = "Discount value should be a number.";
+    isValid = false;
+} else {
+    document.getElementById('discountValueError').innerHTML = ""; // Clear error message
+}
 
-// 4. Converting HTML table to JSON
+  if (!isValid) {
+      return; // Stop execution if validation fails
+  }
+  document.querySelectorAll('.text-red-500').forEach(el => (el.innerHTML = ""));
+  // Make API call if validation passes
+  fetch("/admin/createCoupon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+  })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              window.location.reload();
+          } else {
+              swal("Error!", "Coupon already exists. Please try again.", "error");
+          }
+      })
+      .catch(error => {
+          console.error("Error creating coupon:", error);
+          swal("Error!", "Something went wrong. Please try again.", "error");
+      });
+}
 
-const json_btn = document.querySelector("#toJSON");
 
-const toJSON = function (table) {
-  let table_data = [],
-    t_head = [],
-    t_headings = table.querySelectorAll("th"),
-    t_rows = table.querySelectorAll("tbody tr");
+function editCoupon(e) {
+    e.preventDefault();
+    
+    const form = document.getElementById('editCouponForm');
+    const formData = new FormData(form);
+    const coupon = Object.fromEntries(formData);
+    
+    console.log('Form data:', coupon);
 
-  for (let t_heading of t_headings) {
-    let actual_head = t_heading.textContent.trim().split(" ");
+    const {Couponid, discription, userlimit, expireDate, discountType, Discount, objectId} = coupon;
 
-    t_head.push(
-      actual_head
-        .splice(0, actual_head.length - 1)
-        .join(" ")
-        .toLowerCase()
-    );
+    if (!Couponid || !discription || !userlimit || !expireDate || !discountType || !Discount) {
+        swal("Error!", "Please fill in all fields.", "error");
+        return;
+    }
+
+    fetch("/admin/editCoupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({Couponid, discription, userlimit, expireDate, discountType, Discount, objectId})
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
+            if (data.success) {
+                window.location.reload();
+            } else {
+                swal("Error!", `${data.message}`, "error");
+            }
+        })
+        .catch(error => {
+            console.error("Error creating coupon:", error);
+            swal("Error!", "Something went wrong. Please try again.", "error");
+        });
+    
+    
   }
 
-  t_rows.forEach((row) => {
-    const row_object = {},
-      t_cells = row.querySelectorAll("td");
 
-    t_cells.forEach((t_cell, cell_index) => {
-      const img = t_cell.querySelector("img");
-      if (img) {
-        row_object["customer image"] = decodeURIComponent(img.src);
-      }
-      row_object[t_head[cell_index]] = t_cell.textContent.trim();
+
+function deleteCoupon(id) {
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this coupon!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+    }).then((willDelete) => {
+        if (willDelete) {
+
+            fetch("/admin/deletecoupon", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id })
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data) {
+                        swal("Success!", "The coupon has been successfully deleted.", "success").then(() => location.reload());
+                    }
+                })
+                .catch((error) => console.error("Error:", error));
+        }
     });
-    table_data.push(row_object);
-  });
 
-  return JSON.stringify(table_data, null, 4);
-};
 
-json_btn.onclick = () => {
-  const json = toJSON(customers_table);
-  downloadFile(json, "json");
-};
-
-// 5. Converting HTML table to CSV File
-
-const csv_btn = document.querySelector("#toCSV");
-
-const toCSV = function (table) {
-  // Code For SIMPLE TABLE
-  // const t_rows = table.querySelectorAll('tr');
-  // return [...t_rows].map(row => {
-  //     const cells = row.querySelectorAll('th, td');
-  //     return [...cells].map(cell => cell.textContent.trim()).join(',');
-  // }).join('\n');
-
-  const t_heads = table.querySelectorAll("th"),
-    tbody_rows = table.querySelectorAll("tbody tr");
-
-  const headings =
-    [...t_heads]
-      .map((head) => {
-        let actual_head = head.textContent.trim().split(" ");
-        return actual_head
-          .splice(0, actual_head.length - 1)
-          .join(" ")
-          .toLowerCase();
-      })
-      .join(",") +
-    "," +
-    "image name";
-
-  const table_data = [...tbody_rows]
-    .map((row) => {
-      const cells = row.querySelectorAll("td"),
-        img = decodeURIComponent(row.querySelector("img").src),
-        data_without_img = [...cells]
-          .map((cell) => cell.textContent.replace(/,/g, ".").trim())
-          .join(",");
-
-      return data_without_img + "," + img;
-    })
-    .join("\n");
-
-  return headings + "\n" + table_data;
-};
-
-csv_btn.onclick = () => {
-  const csv = toCSV(customers_table);
-  downloadFile(csv, "csv", "customer orders");
-};
-
-// 6. Converting HTML table to EXCEL File
-
-const excel_btn = document.querySelector("#toEXCEL");
-
-const toExcel = function (table) {
-  // Code For SIMPLE TABLE
-  // const t_rows = table.querySelectorAll('tr');
-  // return [...t_rows].map(row => {
-  //     const cells = row.querySelectorAll('th, td');
-  //     return [...cells].map(cell => cell.textContent.trim()).join('\t');
-  // }).join('\n');
-
-  const t_heads = table.querySelectorAll("th"),
-    tbody_rows = table.querySelectorAll("tbody tr");
-
-  const headings =
-    [...t_heads]
-      .map((head) => {
-        let actual_head = head.textContent.trim().split(" ");
-        return actual_head
-          .splice(0, actual_head.length - 1)
-          .join(" ")
-          .toLowerCase();
-      })
-      .join("\t") +
-    "\t" +
-    "image name";
-
-  const table_data = [...tbody_rows]
-    .map((row) => {
-      const cells = row.querySelectorAll("td"),
-        img = decodeURIComponent(row.querySelector("img").src),
-        data_without_img = [...cells]
-          .map((cell) => cell.textContent.trim())
-          .join("\t");
-
-      return data_without_img + "\t" + img;
-    })
-    .join("\n");
-
-  return headings + "\n" + table_data;
-};
-
-excel_btn.onclick = () => {
-  const excel = toExcel(customers_table);
-  downloadFile(excel, "excel");
-};
-
-const downloadFile = function (data, fileType, fileName = "") {
-  const a = document.createElement("a");
-  a.download = fileName;
-  const mime_types = {
-    json: "application/json",
-    csv: "text/csv",
-    excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  };
-  a.href = `
-        data:${mime_types[fileType]};charset=utf-8,${encodeURIComponent(data)}
-    `;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
+}

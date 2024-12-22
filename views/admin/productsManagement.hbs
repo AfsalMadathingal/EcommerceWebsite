@@ -1,18 +1,5 @@
-<link rel="stylesheet" href="/css/table-user.css">
-<link rel="stylesheet" href="/css/responsiveTable.css">
-<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
-
-
+<link rel="stylesheet" href="/css/ProductManageV2.css">
 <div class="details-section">
-    <div class="top-options">
-        <div class="user1-count">
-            <h3>Total Products</h3>
-            <h2>{{count}}</h2>
-        </div>
-
-    </div>
-
 
     <div class="ms-auto me-auto mt-1">
 
@@ -22,12 +9,12 @@
 
                 <div class="input-group1">
                     <input type="search" placeholder="Search Data...">
-                    <i class="fa-solid fa-magnifying-glass bg-transparent "></i>
+                  
                 </div>
 
-                <div class="export__file" >
-                    <button for="export-file" class="export__file-btn " id="add-product-button"
-                        title="Add product"></button>
+                <div class="export__file" style="display: flex; align-items: center;">
+                    <button for="export-file" class="add-product-btn" id="add-product-button"
+                        title="Add product" style="background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; border: none; font-size: 16px;">+</button>
                 </div>
 
             </section>
@@ -53,7 +40,7 @@
                             <td>{{inc @index}}</td>
                             <td>{{this.product_name}}</td>
                             <td>{{this.product_id}}</td>
-                            <td>{{this.about_product}}</td>
+                            <td>{{#if (gt (strlen this.about_product) 50)}}{{substr this.about_product 0 50}}...{{else}}{{this.about_product}}{{/if}}</td>
                             <td>{{this.category}}</td>
                             <td>{{this.price}}</td>
                             <td>{{this.stock}}</td>
@@ -84,145 +71,5 @@
     </div>
 </div>
 
-
-
-
-<script>
-
-
-
-    const addproductButton = document.getElementById('add-product-button')
-
-    addproductButton.addEventListener('click', (e) => {
-
-
-        console.log("hey fromn add")
-        window.location.href = '/admin/add_products'
-
-    })
-
-
-    const deleteButton = document.getElementById('delete-button')
-
-    deleteButton.addEventListener('click', (e) => {
-
-        const productId = e.target.getAttribute('data-product-id')
-        const productVarId = e.target.getAttribute('data-productvarid')
-
-        fetch('/admin/delete_product', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ productId: productId, productVarId: productVarId })
-        })
-            .then(response => response.json())
-            .then(data => {
-
-                if (data) {
-
-                    swal({
-                        icon: 'success',
-                        text: 'product has been deleted',
-                        button: 'OK'
-                    })
-                    console.log('Success:', data);}
-                })
-    
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-           } )
-
-
-
-    
-
-
-
-
-
-    const search = document.querySelector('.input-group1 input'),
-        table_rows = document.querySelectorAll('tbody tr'),
-        table_headings = document.querySelectorAll('thead th');
-
-    // 1. Searching for specific data of HTML table
-    search.addEventListener('input', searchTable);
-
-    function searchTable() {
-        table_rows.forEach((row, i) => {
-            let table_data = row.textContent.toLowerCase(),
-                search_data = search.value.toLowerCase();
-
-            row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
-            row.style.setProperty('--delay', i / 25 + 's');
-        })
-
-        document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
-            visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
-        });
-    }
-
-
-    // 2. Sorting | Ordering data of HTML table
-
-    table_headings.forEach((head, i) => {
-        let sort_asc = true;
-        head.onclick = () => {
-            table_headings.forEach(head => head.classList.remove('active'));
-            head.classList.add('active');
-
-            document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
-            table_rows.forEach(row => {
-                row.querySelectorAll('td')[i].classList.add('active');
-            })
-
-            head.classList.toggle('asc', sort_asc);
-            sort_asc = head.classList.contains('asc') ? false : true;
-
-            sortTable(i, sort_asc);
-        }
-    })
-
-
-    function sortTable(column, sort_asc) {
-        [...table_rows].sort((a, b) => {
-            let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase(),
-                second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
-
-            return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
-        })
-            .map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
-    }
-
-
-</script>
-
-<style>
-    .user1-count {
-        background-color: white;
-        color: black;
-        padding: 15px;
-        /* Adjust padding as needed */
-        border: 1px solid #ccc;
-        /* Optional: Add a border for better visibility */
-        border-radius: 10px;
-        /* Add border-radius for curved corners */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        /* Add a subtle box shadow */
-        margin: 10px;
-        /* Add margin for spacing */
-        text-align: center;
-    }
-
-    @media (max-width: 767px) {
-
-        /* Adjust styles for smaller screens if needed */
-        .user1-count {
-            padding: 10px;
-            /* Adjust padding for smaller screens */
-            margin: 5px;
-            /* Adjust margin for smaller screens */
-        }
-    }
-</style>
+<script src="/js/productsManagement.js"></script>
+<script src="/js/ProductManageV2.js"></script>

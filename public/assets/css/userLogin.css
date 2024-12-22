@@ -1,140 +1,159 @@
-body
-{
-    background-color: rgb(0, 0, 0);
-    font-family: Jost;
-    background-image: url('../images/loginbg.webp');
-    
-    background-position: center;
-    background-repeat: no-repeat;
-    
-}
-
-/* loading fonts */
-
-.logo-image
-{
-   display: flex;
-   justify-content: center;
-   padding: 10px;
-}
-.logo-signup
-{
-
-    height: 30px; 
-    
-}
-
-.jost-font {
-
-    font-family: "Jost", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 100;
-    font-style: normal;
-  }
-
-/* loading fonts */
-.user_login_title
-{
-    color: #ffffff;
-    text-align: center;
-    font-family: Jost;
-    font-style: normal;
-    font-weight: 400;
-    text-transform: capitalize;
-    padding-top: 30px;
-    padding-bottom: 15px;
-}
-.user-login-main
-{
-    height: 75%;
-    width: 40%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 100px;
-    font-family: jost;
-    background: #FFF;
-    box-shadow: 0px 33.117px 99.35px 0px rgba(13, 12, 13, 0.20);
-    border: black;
-    border-radius: 30px;
-    background-color:rgba(68, 68, 68, 0.377);
-    overflow: auto; /* or overflow: auto; */
-    border-radius: 25px;
-    font-family: jost;
-    backdrop-filter: blur(8px);
-    color: white;
-    
-}
-.subtitle-loginpage
-{
-    text-align: center;
-    color: #ffffff;
-}
-
-.input-email-user
-{
-    
-    border: 1px solid black; 
-    padding: 5px; 
-    width: 100%;
-  
-}
-.input-for-login
-{
-    padding-top: 20px;
-    /* padding-left: 30px; */
-}
-.forgot_password
-{
-    text-align: end;
-    /* padding-right: 60px; */
-    padding-top: 40px;
-   
-}
-.login-form-for-user
-{
- margin:  30px;
-  
-
-}
-#forgot-password-link
-{
-    color: red;
-}
-.user-login-btn
-{
-    color: white;
-    background-color: black;
-    width: 20%;
-    height: 50px
-}
-.login-button
-{
-    padding-top: 20px;
+body {
+    background-color: #000000;
+    font-family: 'Jost', sans-serif;
+    min-height: 100vh;
+    margin: 0;
     display: flex;
-    justify-content: end;
-}
-.click-to-signup
-{
-    color: red;
-}
-#bottom-text
-{
-    text-align: center;
-    padding-top: 10px;
+    flex-direction: column;
+    align-items: center;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/loginbg.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
-@media screen and (max-width: 500px) {
-    .user-login-main
-    {
-        width: 90%;
-    }
-    
+.user-login-main {
+    width: 400px;
+    margin: 50px auto;
+    padding: 40px;
+    background: rgba(25, 25, 25, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(200, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user_login_title {
+    color: #ffffff;
+    font-size: 2.2em;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 10px 0;
+    letter-spacing: 1px;
+}
+
+.subtitle-loginpage {
+    color: #cccccc;
+    text-align: center;
+    font-size: 1em;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.input-for-login {
+    margin-bottom: 25px;
+}
+
+.input-for-login label {
+    display: block;
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.input-email-user {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.input-email-user:focus {
+    outline: none;
+    border-color: #ff0000;
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+}
+
+.forgot_password {
+    text-align: right;
+    margin: 15px 0 25px;
+}
+
+#forgot-password-link {
+    color: #ff0000;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+#forgot-password-link:hover {
+    color: #ff3333;
+}
+
+.user-login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-login-btn:hover {
+    background: #cc0000;
+}
+
+.login-form-for-user h6 {
+    text-align: center;
+    color: #ffffff;
+    margin-top: 25px;
+}
+
+.click-to-signup {
+    color: #ff0000;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.click-to-signup:hover {
+    color: #ff3333;
+}
+
+.alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.alert-danger {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    color: #ff3333;
+}
+
+#bottom-text {
+    color: #ffffff;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    opacity: 0.7;
 }
 
 @media screen and (max-width: 768px) {
-    .user-login-main
-    {
-        width: 90%;
+    .user-login-main {
+        width: 85%;
+        padding: 30px;
+        margin: 30px auto;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .user-login-main {
+        width: 95%;
+        padding: 20px;
     }
     
+    .user_login_title {
+        font-size: 1.8em;
+    }
 }

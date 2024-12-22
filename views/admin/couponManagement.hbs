@@ -1,246 +1,388 @@
-<link rel="stylesheet" href="/css/table-user.css">
-<link rel="stylesheet" href="/css/responsiveTable.css">
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="details-section">
-    <div class="top-options">
+{{!-- <link rel="stylesheet" href="/css/couponManageV2.css"> --}}
+<script src="https://cdn.tailwindcss.com"></script>
 
-        <div class="user1-count m-auto mt-2">
-            <h3>Active Coupons</h3>
-            <h2>{{count}}</h2>
-        </div>
-
-    </div>
-
-    <div class="ms-auto me-auto mt-1">
-
-        <main class="table" id="customers_table">
-            <section class="table__header">
-                <h1>Coupons Details</h1>
-
-                <div class="input-group1">
-                    <input type="search" placeholder="Search Data...">
-                    <i class="fa-solid fa-magnifying-glass bg-transparent "></i>
+{{!-- Coupon Management Template --}}
+<div class="min-h-screen bg-gray-50 p-8">
+    <div class="max-w-7xl mx-auto bg-white rounded-lg shadow-md">
+        <header class="p-6 border-b border-gray-200">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h1 class="text-2xl font-bold text-gray-800">Coupons</h1>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative">
+                        <input type="search" placeholder="Search coupons..."
+                            class="pl-10 pr-4 py-2 w-full sm:w-64 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-150 ease-in-out flex items-center justify-center gap-2"
+                         onclick="openModal('couponModal')">
+                        <i class="fa-solid fa-plus"></i>
+                        Create Coupon
+                    </button>
                 </div>
-                <div class="export__file" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <label for="export-file" class="export__file-btn" title="Create Coupons"></label>
-                    <input type="checkbox" id="export-file">
-                </div>
+            </div>
+        </header>
 
-            </section>
-            <section class="table__body1">
-                <table>
-                    <thead>
-                        <tr>
-                            <th> SL <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Coupons ID/Name <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Discount Type <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Discount Value <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Limit <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Expire Date [YYYY-MM-DD] <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Discription <span class="icon-arrow">&UpArrow;</span></th>
-                            <th> Change <span class="icon-arrow">&UpArrow;</span></th>
-                        </tr>
-                    </thead>
+        <div class="p-6 overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Coupon ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Limit
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Expires</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
                     {{#each couponData}}
-                    <tbody>
-                        <tr data-category-id={{this._id}}>
-                            <td>{{inc @index}} </td>
-                            <td id="coupon">{{this.code}}</td>
-                            {{#if this.discountType}}
-
-                            <td id="discount">Amount</td>
-                            {{else}}
-                            <td id="discount">Percentage</td>
-                            {{/if}}
-                            <td id="discountValue">{{this.discount}}</td>
-                            <td id="userLimit"> {{this.userLimit}}</td>
-                            <td id="expire"> {{this.expireDate}}</td>
-                            <td id="discription"> {{this.discription}}</td>
-
-                            <td>
-                                <button class="btn btn-danger  delete-button" data-id="{{this._id}}"> <i
-                                        class="fa-solid fa-trash "> </i>
-                                    Remove</button>
-                                <button class="btn btn-info  edit-button pe-5  " data-bs-toggle="modal"
-                                    data-bs-target="#EditModal" data-coupon="{{this.code}}" data-nameId="{{this.code}}"
-                                    data-discription="{{this.discription}}" data-expire="{{this.expireDate}}"
-                                    data-discountValue=" {{this.discount}}" data-userlimit="{{this.userLimit}}"
-                                    data-id="{{this._id}}">
-
-                                    <i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{inc @index}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{this.code}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{#if this.discountType}}Amount{{else}}Percentage{{/if}}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{this.discount}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{this.userLimit}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{this.expireDate}}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{this.discription}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button onclick="openModal('editCouponModal', {{json this}})"
+                                class="bg-gray-100 py-2 px-4 border border-gray-300 rounded-md  text-blue-600 hover:text-blue-900 transition duration-150 ease-in-out">
+                                <i class="fa-solid fa-pen-to-square mr-1"></i>
+                                Edit
+                            </button>
+                            <button
+                                onclick="deleteCoupon('{{this._id}}')"
+                                class="text-red-600 hover:text-red-900 transition duration-150 ease-in-out delete-btn"
+                                data-id="{{this._id}}">
+                                <i class="fa-solid fa-trash mr-1"></i>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
                     {{/each}}
-                </table>
-            </section>
-        </main>
-
-
-    </div>
-
-
-    {{!-- modal for create coupon starts --}}
-
-
-
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-dark bg-opacity-50  ">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Coupons</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="couponForm" >
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupons Number/ID</label>
-                            <input type="text" name="Couponid" placeholder="Enter Coupon ID/NUMBER" class="form-control"
-                                id="coupon-id">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupons Discription</label>
-                            <input type="text" name="discription" placeholder="Enter discription" class="form-control"
-                                id="couponDiscription">
-                            <p class="alert-for-error"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">User Limit</label>
-                            <input type="text" name="userlimit" placeholder="Max user Allowed" class="form-control"
-                                id="user-limit">
-                            <p class="alert-for-error"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Expire Date</label>
-                            <input type="date" name="expireDate" placeholder="Max user Allowed" class="form-control"
-                                id="expire-date">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                        <label class="form-label">Discount Type</label>
-                         <p id="alert-for-distype"></p>
-                        <div class="form-check">
-
-                            <input class="form-check-input" name="discountType" type="radio" id="discountPercentage" 
-                                value="percentage" >
-                            <label class="form-check-label" for="discountPercentage">
-                                Discount Percentage
-                            </label>
-
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" name="discountType" type="radio" id="discountAmount" 
-                                value="amount">
-                            <label class="form-check-label" for="discountAmount">
-                                Discount Amount
-                            </label>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Discount Value In Number</label>
-                            <input type="text" name="Discount" placeholder="Enter Value in Number" class="form-control"
-                                id="discount-value">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" id="submitCoupon" class="btn btn-primary">Create</button>
-
-                </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
-    {{!-- modal for create category end --}}
-
-    {{!-- modal for edit coupon --}}
-    <div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-warning ">
-                    <h1 class="modal-title fs-5" id="editModalLabel"></h1>
-                </div>
-                <div class="modal-body">
-                    <form action="/admin/editcoupon" method="post">
-                        <div class="mb-3">
-                            <input type="hidden" name="id" placeholder="enter category name" class="form-control"
-                                id="editcategory-id">
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupons Number/ID</label>
-                            <input type="text" name="Couponid" placeholder="Enter Coupon ID/NUMBER" class="form-control"
-                                id="editcoupon-id">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Coupons Discription</label>
-                            <input type="text" name="discription" placeholder="Enter discription" class="form-control"
-                                id="editcouponDiscription">
-                            <p class="alert-for-error"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">User Limit</label>
-                            <input type="text" name="userlimit" placeholder="Max user Allowed" class="form-control"
-                                id="edituser-limit">
-                            <p class="alert-for-error"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Expire Date</label>
-                            <input type="date" name="expireDate" placeholder="Max user Allowed" class="form-control"
-                                id="editexpire-date">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                        <label class="form-label">Discount Type</label>
-                        <div class="form-check">
-
-                            <input class="form-check-input" type="radio" name="discountType" id="editdiscountPercentage"
-                                value="percentage" checked>
-                            <label class="form-check-label" for="discountPercentage">
-                                Discount Percentage
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="discountType" id="editdiscountAmount"
-                                value="amount">
-                            <label class="form-check-label" for="discountAmount">
-                                Discount Amount
-                            </label>
-                        </div>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Discount Value In Number</label>
-                            <input type="text" name="Discount" placeholder="Enter discription" class="form-control"
-                                id="editdiscount-value">
-                            <p class="alert-for-error"></p>
-                        </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-warning">Save</button>
-                    </form>
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
-    {{!-- modal for edit category --}}
 </div>
+{{!-- modal for create coupon starts --}}
+<div 
+    id="couponModal" 
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center hidden z-50">
+    <div class="bg-white rounded-lg w-full max-w-3xl mx-4 shadow-2xl">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+            <h2 class="text-base font-semibold">Create New Coupon</h2>
+            <button 
+                class="text-white hover:text-gray-200 transition-colors duration-200"
+                onclick="closeModal('couponModal')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-4">
+            <form id="couponForm">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div class="space-y-4">
+                        <!-- Coupon ID -->
+                        <div class="space-y-1">
+                            <label for="coupon-id" class="block text-sm font-medium text-gray-700">
+                                Coupon Number/ID
+                            </label>
+                            <input 
+                                type="text" 
+                                id="coupon-id" 
+                                name="Couponid" 
+                                placeholder="Enter Coupon ID/NUMBER" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="couponIdError"></span>
+                        </div>
+
+                        <!-- User Limit -->
+                        <div class="space-y-1">
+                            <label for="user-limit" class="block text-sm font-medium text-gray-700">
+                                User Limit
+                            </label>
+                            <input 
+                                type="number" 
+                                id="user-limit" 
+                                name="userlimit" 
+                                placeholder="Max users allowed" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="userLimitError"></span>
+                        </div>
+
+                        <!-- Discount Type -->
+                        <div class="space-y-1">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Discount Type
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input 
+                                        type="radio" 
+                                        name="discountType" 
+                                        value="amount" 
+                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Amount</span>
+                                </label>
+                            </div>
+                            <span class="text-red-500 text-sm" id="discountTypeError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-4">
+                        <!-- Coupon Description -->
+                        <div class="space-y-1">
+                            <label for="couponDiscription" class="block text-sm font-medium text-gray-700">
+                                Coupon Description
+                            </label>
+                            <input 
+                                type="text" 
+                                id="couponDiscription" 
+                                name="discription" 
+                                placeholder="Enter description" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="couponDescriptionError"></span>
+                        </div>
+
+                        <!-- Expire Date -->
+                        <div class="space-y-1">
+                            <label for="expire-date" class="block text-sm font-medium text-gray-700">
+                                Expire Date
+                            </label>
+                            <input 
+                                type="date" 
+                                id="expire-date" 
+                                name="expireDate" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="expireDateError"></span>
+                        </div>
+
+                        <!-- Discount Value -->
+                        <div class="space-y-1">
+                            <label for="discount-value" class="block text-sm font-medium text-gray-700">
+                                Discount Value
+                            </label>
+                            <input 
+                                type="number" 
+                                id="discount-value" 
+                                name="Discount" 
+                                placeholder="Enter value in number" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="discountValueError"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end px-4 py-3 bg-gray-50 rounded-b-lg space-x-3">
+            <button 
+                class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 text-sm"
+                onclick="closeModal('couponModal')">
+                Cancel
+            </button>
+            <button 
+                onclick="createCoupon(event)"
+                class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition duration-200 shadow-sm text-sm">
+                Create Coupon
+            </button>
+        </div>
+
+
+
+    </div>
+</div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end px-4 py-3 bg-gray-50 rounded-b-lg space-x-3">
+            <button 
+                class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 text-sm"
+                onclick="closeModal('couponModal')">
+                Cancel
+            </button>
+            <button 
+                onclick="createCoupon(event)"
+                class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition duration-200 shadow-sm text-sm">
+                Create Coupon
+            </button>
+        </div>
+
+
+    </div>
+</div>
+
+
+{{!-- modal for create category end --}}
+
+
+
+<div 
+    id="editCouponModal" 
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center hidden z-50">
+    <div class="bg-white rounded-lg w-full max-w-3xl mx-4 shadow-2xl">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+            <h2 class="text-base font-semibold ">Edit Coupon <span class="text-red-500" id="editCouponId"></span></h2>
+            <button 
+                class="text-white hover:text-gray-200 transition-colors duration-200"
+                onclick="closeModal('editCouponModal')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-4">
+            <form id="editCouponForm">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div class="space-y-4">
+                        <!-- Coupon ID -->
+                        <div class="space-y-1">
+                            <input type="text" id="objectId" name="objectId"  hidden>
+                            <label for="edit-coupon-id" class="block text-sm font-medium text-gray-700">
+                                Coupon Number/ID
+                            </label>
+                            <input 
+                                type="text" 
+                                id="edit-coupon-id" 
+                                name="Couponid" 
+                                placeholder="Enter Coupon ID/NUMBER" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="editCouponIdError"></span>
+                        </div>
+
+                        <!-- User Limit -->
+                        <div class="space-y-1">
+                            <label for="edit-user-limit" class="block text-sm font-medium text-gray-700">
+                                User Limit
+                            </label>
+                            <input 
+                                type="number" 
+                                id="edit-user-limit" 
+                                name="userlimit" 
+                                placeholder="Max users allowed" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="editUserLimitError"></span>
+                        </div>
+
+                        <!-- Discount Type -->
+                        <div class="space-y-1 hidden">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Discount Type
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input 
+                                        checked
+                                        type="radio" 
+                                        name="discountType" 
+                                        value="amount" 
+                                        hidden 
+                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Amount</span>
+                                </label>
+                            </div>
+                            <span class="text-red-500 text-sm" id="editDiscountTypeError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-4">
+                        <!-- Coupon Description -->
+                        <div class="space-y-1">
+                            <label for="edit-coupon-description" class="block text-sm font-medium text-gray-700">
+                                Coupon Description
+                            </label>
+                            <input 
+                                type="text" 
+                                id="edit-coupon-description" 
+                                name="discription" 
+                                placeholder="Enter description" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="editCouponDescriptionError"></span>
+                        </div>
+
+                        <!-- Expire Date -->
+                        <div class="space-y-1">
+                            <label for="edit-expire-date" class="block text-sm font-medium text-gray-700">
+                                Expire Date
+                            </label>
+                            <input 
+                                type="date" 
+                                id="edit-expire-date" 
+                                name="expireDate" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="editExpireDateError"></span>
+                        </div>
+
+                        <!-- Discount Value -->
+                        <div class="space-y-1">
+                            <label for="edit-discount-value" class="block text-sm font-medium text-gray-700">
+                                Discount Value
+                            </label>
+                            <input 
+                                type="number" 
+                                id="edit-discount-value" 
+                                name="Discount" 
+                                placeholder="Enter value in number" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <span class="text-red-500 text-sm" id="editDiscountValueError"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end px-4 py-3 bg-gray-50 rounded-b-lg space-x-3">
+            <button 
+                class="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 text-sm"
+                onclick="closeModal('editCouponModal')">
+                Cancel
+            </button>
+            <button 
+                onclick="editCoupon(event)"
+                class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition duration-200 shadow-sm text-sm">
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 
 </div>
 </div>
 <script src="/js/couponsManagement.js"></script>
-

@@ -565,7 +565,7 @@
 					<div class="block2">
 						<div class="block2-pic hov-img0">
 							<img src="/uploads/{{this.images}}" alt="IMG-PRODUCT">
-							{{#if this.offer}}
+							{{#if this.offer.isValid}}
 							<div class="top-right-text">
 										SALE
 									</div>
@@ -766,7 +766,23 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		</span>
 	</div>
 
-	
+	<script>
+
+	const user = "{{user}}";
+
+	const userData = JSON.parse(user);
+
+	console.log("User Nav====================");
+
+	if(userData){
+		const count  = fetch('/profile/getwishlistcount', {
+			
+		})
+	}
+
+	console.log(userData);
+
+</script>
 
 <!--===============================================================================================-->	
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>

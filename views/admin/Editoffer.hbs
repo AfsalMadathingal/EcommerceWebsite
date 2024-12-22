@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/cropper/cropper.css">
 <script src="/cropper/cropper.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/editOffer.js"></script>
 
 
 <div class="details-section p-3 ">
@@ -25,8 +26,9 @@
 
                     <label class="form-label" for="category">Category</label>
                     <select name="category" id="category" class="form-select">
+                        <option value="{{offerData.category._id}}">{{offerData.category.category}}</option>
                         {{#each category}}
-                        <option value="{{this._id}}">{{this.category}}</option>
+                        <option value="{{this._id}}">{{category}}</option>
                         {{/each}}
                     </select>
 
@@ -134,7 +136,11 @@
 
 <script>
 
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
+
 
         let cropper;
 

@@ -40,11 +40,40 @@ function formatDate(hbs) {
       });
 }
 
+function stringHelpers(hbs) {
+    
+    hbs.registerHelper('strlen', function(value) {
+        return value.length;
+    });
+
+    hbs.registerHelper('substr', function(value, start, length) {
+        return value.substring(start, start + length);
+    });
+
+    hbs.registerHelper('gt', function(value1, value2) {
+        return value1 > value2;
+    });
+}
+
+function updateCouponHelper(hbs) {
+    hbs.registerHelper('json', function(data) {
+        // Escape quotes inside JSON to prevent syntax errors
+        return new hbs.SafeString(
+            JSON.stringify(data).replace(/"/g, '&quot;')
+        );
+    });
+}
+
+
+
+
 module.exports = {
 
+    updateCouponHelper,
     incHelper,
     mulHelper,
     subHelper,
     addHelper,
-    formatDate
+    formatDate,
+    stringHelpers
 }

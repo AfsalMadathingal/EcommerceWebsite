@@ -9,7 +9,17 @@ const profileRoute = require('./profileRoute.js')
 const couponRoute = require('./couponRoute.js')
 const referralRoute = require('./ReferralRoute.js')
 const customerServiceRoute = require('./customerServiceRoute.js')
+const logger = require('morgan');
 
+userRoute.use(
+    logger('dev', {
+        skip: (req) => {
+            // Skip requests for static files based on common extensions
+            const staticExtensions = /\.(css|js.map|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i;
+            return staticExtensions.test(req.url);
+        },
+    })
+);
 
 
 userRoute.use('/refferal',referralRoute)

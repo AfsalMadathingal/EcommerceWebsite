@@ -10,12 +10,19 @@ const coupons = require('../controller/couponsHelper')
 const adminCustomerServiceHelper = require('../controller/customerServiceAdminSide');
 const auth = require("../middleware/adminAuth");
 const upload =require('../middleware/upload')
+const logger = require('morgan');
 
 
-
-
-
-
+// Middleware for Logging Only API Requests
+adminRoute.use(
+    logger('dev', {
+        skip: (req) => {
+            // Skip requests for static files based on common extensions
+            const staticExtensions = /\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i;
+            return staticExtensions.test(req.url);
+        },
+    })
+);
 
 //Admin Login Related Routes
 adminRoute.get("/",adminHelper.loadadminLogin);
@@ -57,6 +64,7 @@ adminRoute.get('/ordersManagement/:id',auth.checkSession,productsManagement.view
 
 //manage offers and coupons
 adminRoute.get('/offers',auth.checkSession,offer.loadOffers)
+// adminRoute.get('/offer/:id',auth.checkSession,offer.findOffer)
 adminRoute.get('/createoffer',auth.checkSession,offer.loadAddOffers)
 adminRoute.get('/editoffer/:id',auth.checkSession,offer.loadEditOffer)
 adminRoute.post('/editoffer',upload,auth.checkSession,offer.editOffer)

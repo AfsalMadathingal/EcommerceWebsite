@@ -102,6 +102,9 @@ const loadHomeUser = async (req, res) => {
     });
     
 
+    console.log(product_data[0]);
+    
+
     if (req.session.user_id) {
       res.render("user/HomePage", {
         user: true,
@@ -125,248 +128,356 @@ const loadHomeUser = async (req, res) => {
   }
 };
 
-const loadProduct = async (req, res) => {
+// const loadProduct = async (req, res) => {
 
-  if (req.session.user_id) {
-    try {
-      const id = req.params.id;
+//   if (req.session.user_id) {
+//     try {
+//       const id = req.params.id;
       
-      const offer = await offerChecker(id);
+//       const offer = await offerChecker(id);
 
   
 
-      const data = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-        {
-          $lookup: {
-            from: "product_details",
-            foreignField: "_id",
-            localField: "product",
-            as: "productDetails",
-          },
-        },
-        {
-          $unwind: {
-            path: "$productDetails",
-          },
-        },
-        {
-          $project: {
-            price: 1,
-            product_name: "$productDetails.product_name",
-            product_about: "$productDetails.about_product",
-            images: 1,
-          },
-        },
-      ]);
+//       const data = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(req.params.id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "product_details",
+//             foreignField: "_id",
+//             localField: "product",
+//             as: "productDetails",
+//           },
+//         },
+//         {
+//           $unwind: {
+//             path: "$productDetails",
+//           },
+//         },
+//         {
+//           $project: {
+//             price: 1,
+//             product_name: "$productDetails.product_name",
+//             product_about: "$productDetails.about_product",
+//             images: 1,
+//           },
+//         },
+//       ]);
 
-      const colors = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-        {
-          $lookup: {
-            from: "colors",
-            foreignField: "_id",
-            localField: "color_id",
-            as: "colors",
-          },
-        },
-        {
-          $unwind: "$colors",
-        },
-        {
-          $project: {
-            colors: "$colors.color",
-          },
-        },
-      ]);
+//       const colors = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(req.params.id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "colors",
+//             foreignField: "_id",
+//             localField: "color_id",
+//             as: "colors",
+//           },
+//         },
+//         {
+//           $unwind: "$colors",
+//         },
+//         {
+//           $project: {
+//             colors: "$colors.color",
+//           },
+//         },
+//       ]);
 
-      const size = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-        {
-          $lookup: {
-            from: "sizes",
-            foreignField: "_id",
-            localField: "size_id",
-            as: "sizes",
-          },
-        },
-        {
-          $unwind: "$sizes",
-        },
-        {
-          $project: {
-            sizes: "$sizes.size",
-          },
-        }
-      ])
+//       const size = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(req.params.id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "sizes",
+//             foreignField: "_id",
+//             localField: "size_id",
+//             as: "sizes",
+//           },
+//         },
+//         {
+//           $unwind: "$sizes",
+//         },
+//         {
+//           $project: {
+//             sizes: "$sizes.size",
+//           },
+//         }
+//       ])
 
-      if (offer.discount_type)
-      {
-        const toDiscount = offer.discount_value
-        data[0].offerprice = data[0].price - toDiscount;
-        data[0].offerEndDate= offer.offer_end_date;
-      }else
-      {
-        const toDiscount = (offer.discount_value/100)*data[0].price;
+//       if (offer.discount_type)
+//       {
+//         const toDiscount = offer.discount_value
+//         data[0].offerprice = data[0].price - toDiscount;
+//         data[0].offerEndDate= offer.offer_end_date;
+//       }else
+//       {
+//         const toDiscount = (offer.discount_value/100)*data[0].price;
   
-        data[0].offerprice = data[0].price - toDiscount;
-        data[0].offerEndDate= offer.offer_end_date;
+//         data[0].offerprice = data[0].price - toDiscount;
+//         data[0].offerEndDate= offer.offer_end_date;
      
-      }
+//       }
       
-      // getting the first image path form the array to display in product page
-      const images = data[0].images;
-      data[0].image1 = `/uploads/${images[0]}`;
-      data[0].image2 = `/uploads/${images[1]}`;
-      data[0].image3 = `/uploads/${images[2]}`;
+//       // getting the first image path form the array to display in product page
+//       const images = data[0].images;
+//       data[0].image1 = `/uploads/${images[0]}`;
+//       data[0].image2 = `/uploads/${images[1]}`;
+//       data[0].image3 = `/uploads/${images[2]}`;
 
-      res.render("user/productsView", {
-        userId: req.session.user_id,
-        data: data,
-        colors: colors,
-        user: true,
-        size: size,
-        title: "Product",
-      });
-    } catch (error) {
-      res.render("errorpage",{title:"Error"});
-      console.log(error);
-    }
+//       res.render("user/productsView", {
+//         userId: req.session.user_id,
+//         data: data,
+//         colors: colors,
+//         user: true,
+//         size: size,
+//         title: "Product",
+//       });
+//     } catch (error) {
+//       res.render("errorpage",{title:"Error"});
+//       console.log(error);
+//     }
     
-  } else {
-    try {
-      const id = req.params.id;
+//   } else {
+//     try {
+//       const id = req.params.id;
 
-      const offer = await offerChecker(id);
+//       const offer = await offerChecker(id);
 
 
-      const data = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(id),
-          },
-        },
-        {
-          $lookup: {
-            from: "product_details",
-            foreignField: "_id",
-            localField: "product",
-            as: "productDetails",
-          },
-        },
-        {
-          $unwind: {
-            path: "$productDetails",
-          },
-        },
-        {
-          $project: {
-            price: 1,
-            product_name: "$productDetails.product_name",
-            product_about: "$productDetails.about_product",
-            images: 1,
-          },
-        },
-      ]);
+//       const data = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "product_details",
+//             foreignField: "_id",
+//             localField: "product",
+//             as: "productDetails",
+//           },
+//         },
+//         {
+//           $unwind: {
+//             path: "$productDetails",
+//           },
+//         },
+//         {
+//           $project: {
+//             price: 1,
+//             product_name: "$productDetails.product_name",
+//             product_about: "$productDetails.about_product",
+//             images: 1,
+//           },
+//         },
+//       ]);
 
-      if (offer.discount_type)
+//       if (offer.isValid)
+//       {
+//         console.log("if",data);
+//         console.log("offer",offer);
+//       }else
+//       {
+//         const toDiscount = (offer.discount_value/100)*data[0].price;
+//         console.log("toDiscount",toDiscount);
+//         data[0].offerprice = data[0].price - toDiscount;
+//         data[0].offerEndDate= offer.offer_end_date;
+//         console.log("else",data);
+//         console.log("offer",offer);
+//       }
+
+//       const colors = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "colors",
+//             foreignField: "_id",
+//             localField: "color_id",
+//             as: "colors",
+//           },
+//         },
+//         {
+//           $unwind: "$colors",
+//         },
+//         {
+//           $project: {
+//             colors: "$colors.color",
+//           },
+//         },
+//       ]);
+
+
+//       const size = await productVariants.aggregate([
+//         {
+//           $match: {
+//             _id: new mongoose.Types.ObjectId(req.params.id),
+//           },
+//         },
+//         {
+//           $lookup: {
+//             from: "sizes",
+//             foreignField: "_id",
+//             localField: "size_id",
+//             as: "sizes",
+//           },
+//         },
+//         {
+//           $unwind: "$sizes",
+//         },
+//         {
+//           $project: {
+//             sizes: "$sizes.size",
+//           },
+//         }
+//       ])
+
+//       console.log("sixe",size);
+//       console.log(data);
+//       console.log(colors);
+
+//       //setting the path with images
+//       const images = data[0].images;
+//       data[0].image1 = `/uploads/${images[0]}`;
+//       data[0].image2 = `/uploads/${images[1]}`;
+//       data[0].image3 = `/uploads/${images[2]}`;
+
+//       res.render("user/productsView", {
+//         data: data,
+//         colors: colors,
+//         size: size,
+//         title: "Product",
+//       });
+//     } catch (error) {
+//       res.render("errorpage");
+//       console.log(error);
+//     }
+//   }
+// };
+
+
+const loadProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    
+    // Common aggregation pipeline for product details
+    const productPipeline = [
       {
-        console.log("if",data);
-        console.log("offer",offer);
-      }else
-      {
-        const toDiscount = (offer.discount_value/100)*data[0].price;
-        console.log("toDiscount",toDiscount);
-        data[0].offerprice = data[0].price - toDiscount;
-        data[0].offerEndDate= offer.offer_end_date;
-        console.log("else",data);
-        console.log("offer",offer);
-      }
-
-      const colors = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(id),
-          },
-        },
-        {
-          $lookup: {
-            from: "colors",
-            foreignField: "_id",
-            localField: "color_id",
-            as: "colors",
-          },
-        },
-        {
-          $unwind: "$colors",
-        },
-        {
-          $project: {
-            colors: "$colors.color",
-          },
-        },
-      ]);
-
-
-      const size = await productVariants.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-        {
-          $lookup: {
-            from: "sizes",
-            foreignField: "_id",
-            localField: "size_id",
-            as: "sizes",
-          },
-        },
-        {
-          $unwind: "$sizes",
-        },
-        {
-          $project: {
-            sizes: "$sizes.size",
-          },
+        $match: {
+          _id: new mongoose.Types.ObjectId(id)
         }
-      ])
+      },
+      {
+        $lookup: {
+          from: "product_details",
+          foreignField: "_id",
+          localField: "product",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$productDetails"
+        }
+      },
+      {
+        $project: {
+          price: 1,
+          product_name: "$productDetails.product_name",
+          product_about: "$productDetails.about_product",
+          images: 1
+        }
+      }
+    ];
 
-      console.log("sixe",size);
-      console.log(data);
-      console.log(colors);
+    // Helper function for attribute lookups (colors, sizes)
+    const getAttributes = async (attribute) => {
+      const pipeline = [
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(id)
+          }
+        },
+        {
+          $lookup: {
+            from: attribute === 'colors' ? 'colors' : 'sizes',
+            foreignField: "_id",
+            localField: attribute === 'colors' ? 'color_id' : 'size_id',
+            as: attribute
+          }
+        },
+        {
+          $unwind: `$${attribute}`
+        },
+        {
+          $project: {
+            [attribute]: `$${attribute}.${attribute === 'colors' ? 'color' : 'size'}`
+          }
+        }
+      ];
+      return await productVariants.aggregate(pipeline);
+    };
 
-      //setting the path with images
-      const images = data[0].images;
-      data[0].image1 = `/uploads/${images[0]}`;
-      data[0].image2 = `/uploads/${images[1]}`;
-      data[0].image3 = `/uploads/${images[2]}`;
+    // Helper function for offer calculations
+    const applyOffer = (data, offer) => {
+      if (!offer.isValid) return data;
+      
+      const toDiscount = offer.discount_type 
+        ? offer.discount_value  // Fixed amount
+        : (offer.discount_value/100) * data[0].price;  // Percentage
+      
+      data[0].offerprice = data[0].price - toDiscount;
+      data[0].offerEndDate = offer.offer_end_date;
+      return data;
+    };
 
-      res.render("user/productsView", {
-        data: data,
-        colors: colors,
-        size: size,
-        title: "Product",
-      });
-    } catch (error) {
-      res.render("errorpage");
-      console.log(error);
-    }
+    // Fetch all required data
+    const [data, colors, size, offer] = await Promise.all([
+      productVariants.aggregate(productPipeline),
+      getAttributes('colors'),
+      getAttributes('sizes'),
+      offerChecker(id)
+    ]);
+
+    // Apply offer if valid
+    applyOffer(data, offer);
+
+    // Process images
+    const images = data[0].images;
+    data[0].image1 = `/uploads/${images[0]}`;
+    data[0].image2 = `/uploads/${images[1]}`;
+    data[0].image3 = `/uploads/${images[2]}`;
+
+    // Render with appropriate context
+    res.render("user/productsView", {
+      userId: req.session.user_id || null,
+      user: !!req.session.user_id,
+      data,
+      colors,
+      size,
+      title: "Product"
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.render("errorpage", { title: "Error" });
   }
 };
-
 const addToCart = async (req, res) => {
 
   if (req.session.user_id) {
@@ -459,7 +570,7 @@ const loadAllproduct = async (req, res) =>
           price: 1,
           stock: 1,
           images: 1,
-          offer:1,
+          offer: 1,
         },
       },
       {
@@ -484,10 +595,39 @@ const loadAllproduct = async (req, res) =>
           stock: 1,
           category: "$category.category",
           images: 1,
-          offer:1,
+          offer: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "offers",
+          foreignField: "_id",
+          localField: "offer",
+          as: "offer",
+        },
+      },
+      {
+        $unwind: {
+          path: "$offer",
+          preserveNullAndEmptyArrays: true, // Prevents errors on missing offers
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          product_id: 1,
+          product: 1,
+          product_name: 1,
+          about_product: 1,
+          price: 1,
+          stock: 1,
+          category: 1,
+          images: 1,
+          offer: 1,
         },
       },
     ]);
+    
 
    
 
@@ -495,9 +635,12 @@ const loadAllproduct = async (req, res) =>
 
   imageSave(product_data)
 
+  console.log("product_data");
 
 
 
+  console.log(product_data);
+  
 
     if (req.session.user_id) {
       res.render("user/allProducts", {
@@ -514,7 +657,10 @@ const loadAllproduct = async (req, res) =>
         title: "All Products",
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res.send("something error please go back to home");
+  }
 };
 
 

@@ -53,7 +53,11 @@ const product_varient = mongoose.Schema({
 
     type:mongoose.Schema.Types.ObjectId,
     ref:"offers"
-  }
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false, 
+  },
 });
 
 module.exports= mongoose.model("product_varients",product_varient)

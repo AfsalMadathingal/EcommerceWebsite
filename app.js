@@ -11,7 +11,7 @@ require('dotenv').config()
 const hbsHelper = require('./controller/hbsHelper.js')
 const {initializeSocket} = require('./controller/customerServiceAdminSide.js')
 const server = http.createServer(app);
-
+const flash = require('connect-flash');
 
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
@@ -27,15 +27,16 @@ app.use('/',session({
     resave: false,
     saveUninitialized: true,
 }))
+app.use(flash());
 
 
-// app.use(logger('dev'))
+
 
 
 app.use(express.static('public/assets'));
 app.use(nocache())
 hbs.registerPartials(__dirname + '/views/partials');
-hbs.registerHelper(hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
+hbs.registerHelper(hbsHelper.updateCouponHelper(hbs) ,hbsHelper.stringHelpers(hbs),hbsHelper.formatDate(hbs), hbsHelper.incHelper(hbs), hbsHelper.mulHelper(hbs), hbsHelper.subHelper(hbs), hbsHelper.addHelper(hbs));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -49,6 +50,8 @@ server.listen(PORT, "0.0.0.0", () => {
 })
 
 
+
+
 const adminRoute = require("./routes/adminRoute.js");
 app.use("/admin", adminRoute);
 
@@ -59,3 +62,7 @@ app.use("/", userRoute);
 app.use((req, res, next) => {
     res.status(404).render('errorpage', { title: 'Page Not Found' });
   });
+
+  app.on('listening', (parent) => {
+    console.log('Server is running on port 3000',parent);
+})

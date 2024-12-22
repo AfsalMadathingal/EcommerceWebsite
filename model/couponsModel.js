@@ -29,6 +29,12 @@ const coupon = mongoose.Schema({
         type:Boolean,
         require:true,
         
+    },
+    isValid:
+    {
+        type:Boolean,
+        require:true,
+        default:true
     }
    
 })
