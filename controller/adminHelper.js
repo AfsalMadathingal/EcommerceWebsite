@@ -99,7 +99,7 @@ const loadUserManagement = async (req, res) => {
     });
 
 
-    res.render("admin/userDetails", {
+    res.render("admin/UserDetails", {
       adminlogin: true,
       usersData: usersData,
       count: count,
